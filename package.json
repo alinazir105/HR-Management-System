@@ -1,0 +1,19 @@
+{
+  "name": "hr-management-system",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install-all": "(cd frontend && npm install) && (cd backend && npm install)",
+    "start": "concurrently \"cd frontend && npm run dev\" \"cd backend && cd src && nodemon server.js\"",
+    "backend": "cd backend && nodemon server",
+    "frontend": "cd frontend && npm run dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
