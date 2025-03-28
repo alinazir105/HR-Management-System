@@ -73,12 +73,12 @@ const Login = () => {
   return (
     <>
       <div className="mainContainer flex min-h-screen justify-between items-center">
-        <div className="w-full md:w-1/2 flex justify-center items-center p-10">
+        <div className="w-full lg:w-1/2 flex justify-center items-center p-10">
           <form
             className="flex justify-center items-center"
             onSubmit={handleLogin}
           >
-            <div className=" p-10 flex flex-col gap-7 sm:w-[25em] md:w-[22em] lg:w-[30em] xl:w-[35em]">
+            <div className=" p-10 flex flex-col gap-7 sm:w-[28em] lg:w-[28em] xl:w-[35em]">
               <div className="flex flex-col gap-2">
                 <div>
                   <h1 className="text-5xl text-blue-600 font-bold">Login</h1>
