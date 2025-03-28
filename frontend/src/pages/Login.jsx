@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import axios from "axios";
 
 const Login = () => {
   const [Email, setEmail] = useState("");
@@ -61,7 +62,6 @@ const Login = () => {
         );
         if (response.status === 200) {
           toast.success("Login successful!");
-          console.log("Login Success:", response.data);
         }
       } catch (error) {
         toast.error("Invalid email or password!");
@@ -185,7 +185,7 @@ const Login = () => {
           </form>
         </div>
         {/* Image */}
-        <div className="hidden md:block w-1/2 h-screen relative">
+        <div className="hidden lg:block w-1/2 h-screen relative">
           <div className="absolute z-10 bottom-35 lg:bottom-40 left-10 right-10">
             <h1 className="text-3xl lg:text-4xl font-bold text-white">
               Manage all <span className="text-yellow-400">HR Operations</span>{" "}
