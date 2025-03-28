@@ -64,6 +64,7 @@ const Login = () => {
           toast.success("Login successful!");
         }
       } catch (error) {
+        console.error(error)
         toast.error("Invalid email or password!");
         // toast("bla", { style: { backgroundColor: "red" } });
       }
