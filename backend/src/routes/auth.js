@@ -5,7 +5,8 @@ import bcrypt from "bcrypt";
 const router = express.Router();
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { password } = req.body;
+  const email = req.body.Email;
 
   const results = await pool.query("Select * from users where email=$1", [
     email,
