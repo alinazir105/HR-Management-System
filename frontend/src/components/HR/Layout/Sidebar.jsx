@@ -13,6 +13,9 @@ import {
 import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import api from "@/lib/api";
+import { toast } from "sonner";
 
 const items = [
   {
@@ -43,6 +46,19 @@ const items = [
 ];
 
 const HRSidebar = () => {
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    try {
+      await api.post("/auth/logout", {}, { withCredentials: true });
+      toast.success("Logout successful!")
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed", error);
+      toast.error("Logout failed! Please try again.")
+    }
+  }
+
   return (
     <>
       <Sidebar>
@@ -87,10 +103,10 @@ const HRSidebar = () => {
           <SidebarMenu>
             <SidebarMenuItem className={"p-3"}>
               <SidebarMenuButton asChild>
-                <a href={"/logout"} className="flex items-center gap-3 text-lg">
+                <button onClick={handleLogout} className="flex items-center gap-3 text-lg cursor-pointer">
                   <LogOut className="rotate-180" />
-                  <span className="text-lg font-medium">Logout</span>{" "}
-                </a>
+                  <span className="text-lg font-medium">Logout</span>
+                </button>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
