@@ -25,7 +25,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", auth);
 app.use("/api/util", insertUser);
 
-const PORT = process.env.SERVER_PORT || 5000;
+const PORT = process.env.SERVER_PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
