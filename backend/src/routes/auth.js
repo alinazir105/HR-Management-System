@@ -26,7 +26,14 @@ router.post("/login", async (req, res) => {
     id: userData.id,
     role: userData.role,
   };
-  res.status(200).json({ message: "Login Successful" });
+  req.session.save((err) => {
+    // Explicitly save session
+    if (err) {
+      console.error("Session save error:", err);
+      return res.status(500).json({ message: "Session save failed" });
+    }
+    res.status(200).json({ message: "Login Successful" });
+  });
 });
 
 router.post("/logout", (req, res) => {

@@ -10,10 +10,11 @@ const ProtectedRoute = ({ allowedRole }) => {
 
   const fetchUserData = useCallback(async () => {
     try {
-      const response = await api.get("/auth/me", { credentials: "include" });
+      const response = await api.get("/auth/me", { withCredentials: true });
 
       if (response.status === 200) {
         const userRole = response.data.message.role;
+        console.log("🚀 ~ fetchUserData ~ userRole:", userRole);
 
         if (allowedRole !== userRole) {
           toast.error("Unauthorized");

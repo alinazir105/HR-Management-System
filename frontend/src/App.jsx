@@ -4,8 +4,8 @@ import Home from "./pages/Home";
 import Error404 from "./pages/Error404";
 import Login from "./pages/Login";
 import { Toaster } from "sonner";
-import ProtectedRoute from './components/ProtectedRoute';
-
+import ProtectedRoute from "./components/ProtectedRoute";
+import HRLayout from "./components/HR/Layout/HRLayout";
 
 const App = () => {
   return (
@@ -16,7 +16,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
 
         <Route element={<ProtectedRoute allowedRole="hr" />}>
-          <Route path="/hr/dashboard">
+          <Route path="/hr/dashboard" element={<HRLayout />}>
             {/* HR Routes will go here */}
             <Route index />
             <Route path="" />
