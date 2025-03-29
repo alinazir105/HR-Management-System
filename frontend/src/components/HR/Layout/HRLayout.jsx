@@ -9,7 +9,7 @@ const HRLayout = () => {
       <SidebarProvider>
         <HRSidebar />
         <main>
-          <SidebarTrigger />
+          <SidebarTrigger className="w-12 h-12 p-3 rounded-full hover:bg-gray-300 transition-all"></SidebarTrigger>
           <Outlet />
         </main>
       </SidebarProvider>
