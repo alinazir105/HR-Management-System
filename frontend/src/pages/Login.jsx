@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 
 const Login = () => {
   const [Email, setEmail] = useState("");
@@ -13,6 +14,7 @@ const Login = () => {
   const [emailError, setemailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [CheckboxError, setCheckboxError] = useState("");
+  const [buttonClicked, setButtonClicked] = useState(false);
 
   function handleEmailChange(event) {
     setEmail(event.target.value);
@@ -30,6 +32,7 @@ const Login = () => {
 
   async function handleLogin(event) {
     event.preventDefault();
+    setButtonClicked(true);
     let valid = true;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -64,11 +67,12 @@ const Login = () => {
           toast.success("Login successful!");
         }
       } catch (error) {
-        console.error(error)
+        console.error(error);
         toast.error("Invalid email or password!");
         // toast("bla", { style: { backgroundColor: "red" } });
       }
     }
+    setButtonClicked(false);
   }
 
   return (
@@ -105,6 +109,7 @@ const Login = () => {
                       type="text"
                       placeholder="Email"
                       value={Email}
+                      id="email"
                       onChange={handleEmailChange}
                     />
                   </div>
@@ -130,6 +135,7 @@ const Login = () => {
                       type="password"
                       placeholder="Password"
                       value={password}
+                      id="password"
                       onChange={handlePasswordChange}
                     />
                   </div>
@@ -170,7 +176,9 @@ const Login = () => {
                     className={
                       "w-full bg-blue-700 hover:bg-blue-800 cursor-pointer"
                     }
+                    disabled={buttonClicked ? true : false}
                   >
+                    {buttonClicked && <Loader2 className="animate-spin" />}
                     Login
                   </Button>
                 </div>
