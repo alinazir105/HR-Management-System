@@ -14,7 +14,6 @@ const ProtectedRoute = ({ allowedRole }) => {
 
       if (response.status === 200) {
         const userRole = response.data.message.role;
-        console.log("🚀 ~ fetchUserData ~ userRole:", userRole);
 
         if (allowedRole !== userRole) {
           toast.error("Unauthorized");

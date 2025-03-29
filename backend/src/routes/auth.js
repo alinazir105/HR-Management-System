@@ -27,7 +27,6 @@ router.post("/login", async (req, res) => {
     role: userData.role,
   };
   req.session.save((err) => {
-    // Explicitly save session
     if (err) {
       console.error("Session save error:", err);
       return res.status(500).json({ message: "Session save failed" });

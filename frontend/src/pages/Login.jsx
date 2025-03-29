@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [Email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberCheckbox, setRememberCheckbox] = useState(false);
@@ -61,10 +62,12 @@ const Login = () => {
       try {
         const response = await axios.post(
           "http://localhost:3000/api/auth/login",
-          { Email, password }
+          { Email, password },
+          { withCredentials: true }
         );
         if (response.status === 200) {
           toast.success("Login successful!");
+          navigate("/hr/dashboard")
         }
       } catch (error) {
         console.error(error);
