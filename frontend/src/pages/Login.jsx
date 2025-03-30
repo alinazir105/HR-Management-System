@@ -60,14 +60,15 @@ const Login = () => {
 
     if (valid) {
       try {
+        const email = Email;
         const response = await axios.post(
           "http://localhost:3000/api/auth/login",
-          { Email, password },
+          { email, password },
           { withCredentials: true }
         );
         if (response.status === 200) {
           toast.success("Login successful!");
-          navigate("/hr/dashboard")
+          navigate(`/${response.data.role}/dashboard`);
         }
       } catch (error) {
         console.error(error);

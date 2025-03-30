@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import { Toaster } from "sonner";
 import ProtectedRoute from "./components/ProtectedRoute";
 import HRLayout from "./components/HR/Layout/HRLayout";
+import EmployeeLayout from "./components/Employee/Layout/EmployeeLayout";
 
 const App = () => {
   return (
@@ -24,7 +25,7 @@ const App = () => {
         </Route>
 
         <Route element={<ProtectedRoute allowedRole="employee" />}>
-          <Route path="/employee/dashboard">
+          <Route path="/employee/dashboard" element={<EmployeeLayout />}>
             {/* Employee Routes will go here */}
             <Route index />
             <Route path="" />

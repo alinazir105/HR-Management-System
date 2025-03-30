@@ -6,8 +6,7 @@ import { authMiddleware } from "./../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/login", async (req, res) => {
-  const { password } = req.body;
-  const email = req.body.Email;
+  const { password, email } = req.body;
 
   const results = await pool.query("Select * from users where email=$1", [
     email,
@@ -31,7 +30,7 @@ router.post("/login", async (req, res) => {
       console.error("Session save error:", err);
       return res.status(500).json({ message: "Session save failed" });
     }
-    res.status(200).json({ message: "Login Successful" });
+    res.status(200).json({ message: "Login Successful", role: userData.role });
   });
 });
 
