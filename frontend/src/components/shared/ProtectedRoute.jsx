@@ -24,8 +24,7 @@ const ProtectedRoute = ({ allowedRole }) => {
           setIsAuthorized(true);
         }
       }
-    } catch (e) {
-      console.error(e);
+    } catch {
       toast.error("Failed to fetch data.");
       navigate("/login");
     }

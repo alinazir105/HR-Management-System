@@ -6,9 +6,12 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
+import { useSession } from "@/contexts/Session/SessionContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { refreshSession } = useSession();
+
   const [Email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberCheckbox, setRememberCheckbox] = useState(false);
@@ -66,10 +69,9 @@ const Login = () => {
           { email, password },
           { withCredentials: true }
         );
-        if (response.status === 200) {
-          toast.success("Login successful!");
-          navigate(`/${response.data.role}/dashboard`);
-        }
+        toast.success("Login successful!");
+        refreshSession();
+        navigate(`/${response.data.role}/dashboard`);
       } catch (error) {
         console.error(error);
         toast.error("Invalid email or password!");

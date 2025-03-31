@@ -24,6 +24,8 @@ router.post("/login", async (req, res) => {
   req.session.data = {
     id: userData.id,
     role: userData.role,
+    username: userData.username,
+    email: userData.email,
   };
   req.session.save((err) => {
     if (err) {

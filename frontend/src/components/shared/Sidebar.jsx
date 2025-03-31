@@ -10,52 +10,26 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "@/lib/api";
 import { toast } from "sonner";
+import { useSession } from "@/contexts/Session/SessionContext";
 
-const items = [
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-];
-
-const HRSidebar = () => {
+const DashboardSidebar = ({ navItems }) => {
   const navigate = useNavigate();
+  const { sessionData, setSessionData } = useSession();
 
   async function handleLogout() {
     try {
       await api.post("/auth/logout", {}, { withCredentials: true });
-      toast.success("Logout successful!")
+      toast.success("Logout successful!");
+      setSessionData(null);
       navigate("/login");
     } catch (error) {
       console.error("Logout failed", error);
-      toast.error("Logout failed! Please try again.")
+      toast.error("Logout failed! Please try again.");
     }
   }
 
@@ -76,22 +50,33 @@ const HRSidebar = () => {
                   </Avatar>
                 </div>
                 <div>
-                  <p className="font-semibold text-lg italic">Full Name</p>
+                  <p className="font-semibold text-lg">
+                    {sessionData?.username.charAt(0).toUpperCase() +
+                      sessionData?.username.slice(1) || "Guest"}
+                  </p>
+                  <p>
+                    {sessionData?.role
+                      ? sessionData.role === "hr"
+                        ? "HR"
+                        : sessionData.role.charAt(0).toUpperCase() +
+                          sessionData.role.slice(1)
+                      : "Guest"}
+                  </p>
                 </div>
               </div>
-              <SidebarMenu className={"mt-4"}>
-                {items.map((item) => (
-                  <SidebarMenuItem key={item.title} className="p-3">
+              <SidebarMenu className={"mt-5"}>
+                {navItems.map((item) => (
+                  <SidebarMenuItem key={item.title} className="px-3 py-1">
                     <SidebarMenuButton asChild>
-                      <a
-                        href={item.url}
+                      <Link
+                        to={item.url}
                         className="flex items-center gap-3 text-lg"
                       >
                         <item.icon className="w-6 h-6" />{" "}
-                        <span className="text-lg font-medium">
+                        <span className="text-[1.1em] font-medium mb-0.5">
                           {item.title}
                         </span>{" "}
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -103,9 +88,14 @@ const HRSidebar = () => {
           <SidebarMenu>
             <SidebarMenuItem className={"p-3"}>
               <SidebarMenuButton asChild>
-                <button onClick={handleLogout} className="flex items-center gap-3 text-lg cursor-pointer">
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-3  cursor-pointer"
+                >
                   <LogOut className="rotate-180" />
-                  <span className="text-lg font-medium">Logout</span>
+                  <span className="text-[1.1em] font-medium mb-0.5">
+                    Logout
+                  </span>
                 </button>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -116,4 +106,4 @@ const HRSidebar = () => {
   );
 };
 
-export default HRSidebar;
+export default DashboardSidebar;
