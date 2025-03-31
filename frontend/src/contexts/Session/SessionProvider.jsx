@@ -33,9 +33,9 @@ export const SessionProvider = ({ children }) => {
             } else {
               navigate("/login");
             }
-          }, 2000);
+          }, 1500);
         }
-      }, 100);
+      }, 500);
     } catch {
       navigate("/login");
     } finally {
