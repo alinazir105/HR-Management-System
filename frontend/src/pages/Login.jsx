@@ -6,11 +6,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
-import { useSession } from "@/contexts/Session/SessionContext";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { refreshSession } = useSession();
 
   const [Email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -70,7 +68,6 @@ const Login = () => {
           { withCredentials: true }
         );
         toast.success("Login successful!");
-        refreshSession();
         navigate(`/${response.data.role}/dashboard`);
       } catch (error) {
         console.error(error);

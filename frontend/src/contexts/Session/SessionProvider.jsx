@@ -6,10 +6,15 @@ import api from "@/lib/api";
 export const SessionProvider = ({ children }) => {
   const [sessionData, setSessionData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [, setRefreshKey] = useState(0);
   const navigate = useNavigate();
 
   const fetchSessionData = useCallback(async () => {
+    if (sessionData) {
+      console.log("Session data already fetched, skipping fetch.");
+      return;
+    }
+    console.log("Fetching session data from server");
+
     setIsLoading(true);
     try {
       const response = await api.get("/auth/me", { withCredentials: true });
@@ -30,15 +35,26 @@ export const SessionProvider = ({ children }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [navigate]);
+  }, [navigate, sessionData]);
 
   useEffect(() => {
     fetchSessionData();
   }, [fetchSessionData]);
 
-  const refreshSession = () => {
+  const refreshSession = async () => {
     console.log("Refreshing session...");
-    setRefreshKey((prevKey) => prevKey + 1);
+    setIsLoading(true);
+    try {
+      const response = await api.get("/auth/me", { withCredentials: true });
+      const data = response.data.message;
+      setSessionData(data);
+      console.log("Session refreshed:", data);
+    } catch {
+      setSessionData(null);
+      navigate("/login");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
