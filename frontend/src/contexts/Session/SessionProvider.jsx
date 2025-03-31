@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { SessionContext } from "./SessionContext";
 import api from "@/lib/api";
 
@@ -8,6 +8,7 @@ export const SessionProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation(); // Get the current route
 
   const fetchSessionData = useCallback(async () => {
     if (sessionData) {
@@ -21,21 +22,6 @@ export const SessionProvider = ({ children }) => {
       const response = await api.get("/auth/me", { withCredentials: true });
       const data = response.data.message;
       setSessionData(data);
-
-      setTimeout(() => {
-        if (data && window.location.pathname.includes("/login")) {
-          setIsRedirecting(true);
-          setTimeout(() => {
-            if (data.role === "hr") {
-              navigate("/hr/dashboard");
-            } else if (data.role === "employee") {
-              navigate("/employee/dashboard");
-            } else {
-              navigate("/login");
-            }
-          }, 1500);
-        }
-      }, 500);
     } catch {
       navigate("/login");
     } finally {
@@ -47,6 +33,23 @@ export const SessionProvider = ({ children }) => {
   useEffect(() => {
     fetchSessionData();
   }, [fetchSessionData]);
+
+  useEffect(() => {
+    if (sessionData && location.pathname === "/login") {
+      console.log("User is already authenticated, redirecting...");
+
+      setIsRedirecting(true);
+      setTimeout(() => {
+        if (sessionData.role === "hr") {
+          navigate("/hr/dashboard");
+        } else if (sessionData.role === "employee") {
+          navigate("/employee/dashboard");
+        } else {
+          navigate("/login");
+        }
+      }, 1700);
+    }
+  }, [location.pathname, sessionData, navigate]);
 
   const refreshSession = async () => {
     console.log("Refreshing session...");
