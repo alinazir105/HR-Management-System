@@ -3,6 +3,8 @@ import React, { useEffect, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Outlet } from "react-router-dom";
+import { Loader2 } from "lucide-react";
+import LoadingIcon from "./LoadingIcon";
 
 const ProtectedRoute = ({ allowedRole }) => {
   const [isAuthorized, setIsAuthorized] = useState(null);
@@ -16,7 +18,7 @@ const ProtectedRoute = ({ allowedRole }) => {
         const userRole = response.data.message.role;
 
         if (allowedRole !== userRole) {
-          toast.error("Unauthorized");
+          toast.error("Unauthorized access.");
 
           navigate("/login");
           setIsAuthorized(false);
@@ -35,7 +37,7 @@ const ProtectedRoute = ({ allowedRole }) => {
   }, [fetchUserData]);
 
   if (isAuthorized === null) {
-    return <div>Loading...</div>;
+    return <LoadingIcon />;
   }
 
   return isAuthorized ? <Outlet /> : null;

@@ -5,10 +5,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import axios from "axios";
-import { Loader2 } from "lucide-react";
+import { Loader2, Loader2Icon } from "lucide-react";
+import { useSession } from "@/contexts/Session/SessionContext";
+import LoadingIcon from "@/components/shared/LoadingIcon";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { isLoading, isRedirecting } = useSession();
 
   const [Email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -78,9 +81,21 @@ const Login = () => {
     setButtonClicked(false);
   }
 
+  if (isLoading) {
+    return <LoadingIcon />;
+  }
+
   return (
     <>
       <div className="mainContainer flex min-h-screen justify-between items-center">
+        {isRedirecting && (
+          <div className="absolute inset-0 bg-gray-950 opacity-70 flex justify-center items-center z-50">
+            <div className="text-white text-lg flex items-center gap-3 mb-2">
+              <LoadingIcon />
+              <div>Session found! Redirecting to your dashboard...</div>
+            </div>
+          </div>
+        )}
         <div className="w-full lg:w-1/2 flex justify-center items-center p-10">
           <form
             className="flex justify-center items-center"

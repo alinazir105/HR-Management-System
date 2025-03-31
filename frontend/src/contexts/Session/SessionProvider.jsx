@@ -6,6 +6,7 @@ import api from "@/lib/api";
 export const SessionProvider = ({ children }) => {
   const [sessionData, setSessionData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
 
   const fetchSessionData = useCallback(async () => {
@@ -21,19 +22,25 @@ export const SessionProvider = ({ children }) => {
       const data = response.data.message;
       setSessionData(data);
 
-      if (data && window.location.pathname.includes("/login")) {
-        if (data.role === "hr") {
-          navigate("/hr/dashboard");
-        } else if (data.role === "employee") {
-          navigate("/employee/dashboard");
-        } else {
-          navigate("/login");
+      setTimeout(() => {
+        if (data && window.location.pathname.includes("/login")) {
+          setIsRedirecting(true);
+          setTimeout(() => {
+            if (data.role === "hr") {
+              navigate("/hr/dashboard");
+            } else if (data.role === "employee") {
+              navigate("/employee/dashboard");
+            } else {
+              navigate("/login");
+            }
+          }, 2000);
         }
-      }
+      }, 100);
     } catch {
       navigate("/login");
     } finally {
       setIsLoading(false);
+      setIsRedirecting(false);
     }
   }, [navigate, sessionData]);
 
@@ -64,6 +71,7 @@ export const SessionProvider = ({ children }) => {
         isLoading,
         refreshSession,
         setSessionData,
+        isRedirecting,
       }}
     >
       {children}

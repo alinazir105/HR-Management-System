@@ -3,11 +3,12 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import DashboardSidebar from "./Sidebar";
 import { useSession } from "@/contexts/Session/SessionContext";
+import LoadingIcon from "./LoadingIcon";
 
 const DashboardLayout = ({ navItems }) => {
   const { isLoading } = useSession();
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingIcon />;
   }
   return (
     <>
