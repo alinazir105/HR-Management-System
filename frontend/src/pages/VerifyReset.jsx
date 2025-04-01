@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   InputOTP,
   InputOTPGroup,
@@ -9,9 +9,8 @@ import { Button } from "@/components/ui/button";
 import { useLocation, useNavigate } from "react-router-dom";
 import { sendResetCode } from "@/lib/sendResetCode";
 import { toast } from "sonner";
-import LoadingIcon from "@/components/ui/LoadingIcon";
-import api from "@/lib/api";
 import LoadingScreen from "@/components/ui/LoadingScreen";
+import api from "@/lib/api";
 
 const VerifyReset = () => {
   const navigate = useNavigate();
@@ -19,51 +18,56 @@ const VerifyReset = () => {
   const [email] = useState(useLocation().state?.email);
   const [loading, setLoading] = useState(false);
   const [canResend, setCanResend] = useState(false);
-  const [, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(0);
 
-  function handleResendCode() {
-    if (email) {
-      setLoading(true);
-      sendResetCode(email);
-
-      setCanResend(false);
-      let timer = 10;
-      const interval = setInterval(() => {
-        timer--;
-        setCountdown(timer);
-        if (timer === 0) {
-          setCanResend(true);
-          clearInterval(interval);
-        }
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
       }, 1000);
     } else {
+      setCanResend(true);
+    }
+    return () => clearInterval(timer);
+  }, [countdown]);
+
+  async function handleResendCode() {
+    if (!email) {
       toast.error(
-        "An error occured while resending the code. Please enter email again."
+        "An error occurred while resending the code. Please enter your email again."
       );
       navigate("/reset-password/request");
+      return;
     }
+
+    setLoading(true);
+    await sendResetCode(email);
+
+    setCanResend(false);
+    setCountdown(10);
+
     setLoading(false);
   }
 
-  function verifyCode(e) {
+  async function verifyCode(e) {
     e.preventDefault();
 
     if (!otpCode || otpCode.length < 6) {
       toast.error("Please enter a valid 6-digit code.");
       return;
     }
+
     setLoading(true);
-    let response;
     try {
-      response = api.post("/password-reset/verify", {
+      const response = await api.post("/password-reset/verify", {
         email,
         otpCode,
       });
       toast.success(response.data.message);
-      navigate("/reset-password/new-password");
+      navigate("/reset-password/new-password", { state: { pure: true } });
     } catch {
-      toast.error(response.data.message);
-      navigate("/reset-password/request");
+      toast.error("Invalid code. Please try again.");
     }
     setLoading(false);
   }
@@ -72,74 +76,52 @@ const VerifyReset = () => {
     <div className="flex justify-center items-center h-screen">
       {loading && <LoadingScreen />}
       <div>
-        <form onSubmit={verifyCode} className="flex flex-col gap-7 p-10 ">
+        <form onSubmit={verifyCode} className="flex flex-col gap-7 p-10">
           <div className="flex flex-col gap-1">
-            <div>
-              <h1 className="text-4xl text-blue-600 font-bold">
-                Verification Code
-              </h1>
-            </div>
-            <div>
-              <p className="text-neutral-500 text-sm">
-                Enter the 6-digit verification code sent to your email address.
-              </p>
-            </div>
+            <h1 className="text-4xl text-blue-600 font-bold">
+              Verification Code
+            </h1>
+            <p className="text-neutral-500 text-sm">
+              Enter the 6-digit verification code sent to your email address.
+            </p>
           </div>
           <div className="mx-auto">
-            <div>
-              <InputOTP
-                value={otpCode}
-                maxLength={6}
-                onChange={(value) => setOtpCode(value)}
-              >
-                <InputOTPGroup>
+            <InputOTP
+              value={otpCode}
+              maxLength={6}
+              onChange={(value) => setOtpCode(value)}
+              disabled={loading}
+            >
+              <InputOTPGroup>
+                {[...Array(6)].map((_, index) => (
                   <InputOTPSlot
-                    index={0}
+                    key={index}
+                    index={index}
+                    disabled={loading}
                     className="w-11 h-11 sm:w-14 sm:h-14 text-2xl text-center text-neutral-500"
                   />
-                  <InputOTPSlot
-                    index={1}
-                    className="w-11 h-11 sm:w-14 sm:h-14 text-2xl text-center text-neutral-500"
-                  />
-                  <InputOTPSlot
-                    index={2}
-                    className="w-11 h-11 sm:w-14 sm:h-14 text-2xl text-center text-neutral-500"
-                  />
-                  <InputOTPSlot
-                    index={3}
-                    className="w-11 h-11 sm:w-14 sm:h-14 text-2xl text-center text-neutral-500"
-                  />
-                  <InputOTPSlot
-                    index={4}
-                    className="w-11 h-11 sm:w-14 sm:h-14 text-2xl text-center text-neutral-500"
-                  />
-                  <InputOTPSlot
-                    index={5}
-                    className="w-11 h-11 sm:w-14 sm:h-14 text-2xl text-center text-neutral-500"
-                  />
-                </InputOTPGroup>
-              </InputOTP>
-            </div>
+                ))}
+              </InputOTPGroup>
+            </InputOTP>
           </div>
           <div>
-            <div>
-              <Button
-                type="submit"
-                className={
-                  "w-full bg-blue-700 hover:bg-blue-800 cursor-pointer font-semibold"
-                }
-              >
-                Verify Code
-              </Button>
-            </div>
-            <div className="flex justify-center mt-1.5 ">
+            <Button
+              type="submit"
+              className="w-full bg-blue-700 hover:bg-blue-800 cursor-pointer font-semibold"
+              disabled={loading}
+            >
+              Verify Code
+            </Button>
+            <div className="flex justify-center mt-1.5">
               <button
                 type="button"
-                className="text-neutral-500 text-sm hover:underline mt-1 cursor-pointer transition-all"
+                className={`text-neutral-500 text-sm  mt-1 ${
+                  canResend ? "cursor-pointer hover:underline" : "cursor-auto"
+                } transition-all`}
                 onClick={handleResendCode}
-                disabled={canResend}
+                disabled={!canResend}
               >
-                Resend Code
+                {canResend ? "Resend Code" : `Resend in ${countdown}s`}
               </button>
             </div>
           </div>

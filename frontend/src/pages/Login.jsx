@@ -127,6 +127,7 @@ const Login = () => {
                       value={Email}
                       id="email"
                       onChange={handleEmailChange}
+                      disabled={buttonClicked}
                     />
                   </div>
                   <div>
@@ -153,6 +154,7 @@ const Login = () => {
                       value={password}
                       id="password"
                       onChange={handlePasswordChange}
+                      disabled={buttonClicked}
                     />
                   </div>
                   <div>
@@ -170,6 +172,7 @@ const Login = () => {
                       id="terms"
                       checked={rememberCheckbox}
                       onCheckedChange={handleRememberCheckboxChange}
+                      disabled={buttonClicked}
                     />
                     <label
                       htmlFor="terms"
@@ -192,14 +195,14 @@ const Login = () => {
                     className={
                       "w-full bg-blue-700 hover:bg-blue-800 cursor-pointer font-semibold"
                     }
-                    disabled={buttonClicked ? true : false}
+                    disabled={buttonClicked}
                   >
                     {buttonClicked && <Loader2 className="animate-spin" />}
                     Login
                   </Button>
                 </div>
                 <div className="flex justify-center mt-2 ">
-                  <Button variant="link">
+                  <Button variant="link" disabled={buttonClicked}>
                     <Link
                       className="text-neutral-500"
                       to="/reset-password/request"

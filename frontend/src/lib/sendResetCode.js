@@ -4,7 +4,7 @@ import api from "./api";
 export async function sendResetCode(email) {
   try {
     await api.post(
-      "http://localhost:3000/api/password-reset/request",
+      "/password-reset/request",
       { email },
       { withCredentials: true }
     );

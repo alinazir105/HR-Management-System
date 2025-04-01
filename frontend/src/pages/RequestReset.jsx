@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { sendResetCode } from "@/lib/sendResetCode";
 import { Loader2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const RequestReset = () => {
   const navigate = useNavigate();
@@ -32,13 +33,29 @@ const RequestReset = () => {
     }
 
     if (valid) {
-      const success = sendResetCode(email);
+      const success = await sendResetCode(email);
       if (success) {
         navigate("/reset-password/verify", { state: { email } });
       }
     }
     setButtonClicked(false);
   }
+
+  useEffect(() => {
+    if (buttonClicked) {
+      window.history.pushState(null, "", window.location.href);
+      const handlePopState = () => {
+        toast.info("Please wait until the process is complete!");
+        window.history.pushState(null, "", window.location.href);
+      };
+
+      window.addEventListener("popstate", handlePopState);
+
+      return () => {
+        window.removeEventListener("popstate", handlePopState);
+      };
+    }
+  }, [buttonClicked]);
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -68,6 +85,7 @@ const RequestReset = () => {
                 value={email}
                 id="email"
                 onChange={handleEmailChange}
+                disabled={buttonClicked}
               />
             </div>
             <div>
@@ -92,7 +110,7 @@ const RequestReset = () => {
               </Button>
             </div>
             <div className="flex justify-center mt-1.5 ">
-              <Button variant="link">
+              <Button variant="link" disabled={buttonClicked ? true : false}>
                 <Link className="text-neutral-500" to="/login">
                   Return To Login
                 </Link>
