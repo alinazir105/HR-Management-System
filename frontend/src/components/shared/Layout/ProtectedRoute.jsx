@@ -3,7 +3,7 @@ import React, { useEffect, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Outlet } from "react-router-dom";
-import LoadingIcon from "./LoadingIcon";
+import LoadingIcon from "../../ui/LoadingIcon";
 
 const ProtectedRoute = ({ allowedRole }) => {
   const [isAuthorized, setIsAuthorized] = useState(null);

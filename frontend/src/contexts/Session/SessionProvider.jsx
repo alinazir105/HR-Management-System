@@ -3,6 +3,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { SessionContext } from "./SessionContext";
 import api from "@/lib/api";
 
+const publicRoutes = [
+  "/reset-password/request",
+  "/reset-password/verify",
+  "/reset-password/new-password",
+];
+
 export const SessionProvider = ({ children }) => {
   const [sessionData, setSessionData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,6 +21,9 @@ export const SessionProvider = ({ children }) => {
       console.log("Session data already fetched, skipping fetch.");
       return;
     }
+    if (publicRoutes.includes(location.pathname)) {
+      return;
+    }
     console.log("Fetching session data from server");
 
     setIsLoading(true);
@@ -23,12 +32,14 @@ export const SessionProvider = ({ children }) => {
       const data = response.data.message;
       setSessionData(data);
     } catch {
-      navigate("/login");
+      if (!publicRoutes.includes(location.pathname)) {
+        navigate("/login");
+      }
     } finally {
       setIsLoading(false);
       setIsRedirecting(false);
     }
-  }, [navigate, sessionData]);
+  }, [navigate, sessionData, location.pathname]);
 
   useEffect(() => {
     fetchSessionData();

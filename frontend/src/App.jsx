@@ -3,11 +3,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Error404 from "./pages/Error404";
 import Login from "./pages/Login";
 import { Toaster } from "sonner";
-import DashboardLayout from "./components/shared/DashboardLayout";
-import ProtectedRoute from "./components/shared/ProtectedRoute";
+import DashboardLayout from "./components/shared/Layout/DashboardLayout";
+import ProtectedRoute from "./components/shared/Layout/ProtectedRoute";
 import { SessionProvider } from "./contexts/Session/SessionProvider";
 import { Home, Calendar, Inbox } from "lucide-react";
 import HomeComp from "./pages/Home";
+import RequestReset from "./pages/RequestReset";
+import VerifyReset from "./pages/VerifyReset";
+import NewPassword from "./pages/NewPassword";
 
 const hrNavItems = [
   { title: "Dashboard", url: "/", icon: Home },
@@ -27,6 +30,13 @@ const App = () => {
         <Toaster position="top-center" />
         <Routes>
           <Route index path="/login" element={<Login />} />
+
+          <Route path="/reset-password/request" element={<RequestReset />} />
+          <Route path="/reset-password/verify" element={<VerifyReset />} />
+          <Route
+            path="/reset-password/new-password"
+            element={<NewPassword />}
+          />
 
           <Route element={<ProtectedRoute allowedRole="hr" />}>
             <Route

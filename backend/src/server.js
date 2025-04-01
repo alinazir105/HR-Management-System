@@ -7,6 +7,7 @@ import insertUser from "./util/insertUser.js";
 import userRoutes from "./routes/userRoutes.js";
 import auth from "./routes/auth.js";
 import pool from "./db.js";
+import passwordResetRoutes from "./routes/passwordResetRoutes.js";
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use(
 );
 
 app.use("/api/users", userRoutes);
+app.use("/api/password-reset", passwordResetRoutes);
 app.use("/api/auth", auth);
 app.use("/api/util", insertUser);
 
