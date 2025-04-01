@@ -3,7 +3,6 @@ import React, { useEffect, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Outlet } from "react-router-dom";
-import { Loader2 } from "lucide-react";
 import LoadingIcon from "./LoadingIcon";
 
 const ProtectedRoute = ({ allowedRole }) => {
@@ -27,7 +26,7 @@ const ProtectedRoute = ({ allowedRole }) => {
         }
       }
     } catch {
-      toast.error("Failed to fetch data.");
+      toast.error("Session expired. Please log in again.");
       navigate("/login");
     }
   }, [navigate, allowedRole]);

@@ -2,24 +2,16 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import session from "express-session";
-import pg from "pg";
 import pgSession from "connect-pg-simple";
 import insertUser from "./util/insertUser.js";
 import userRoutes from "./routes/userRoutes.js";
 import auth from "./routes/auth.js";
+import pool from "./db.js";
 
 dotenv.config();
 
 const app = express();
 const PgStore = pgSession(session);
-
-const pool = new pg.Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: String(process.env.DB_PASS),
-  port: Number(process.env.DB_PORT),
-});
 
 app.use(
   cors({

@@ -8,7 +8,7 @@ export const SessionProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // Get the current route
+  const location = useLocation();
 
   const fetchSessionData = useCallback(async () => {
     if (sessionData) {
