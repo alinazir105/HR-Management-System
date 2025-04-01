@@ -7,7 +7,8 @@ import { toast } from "sonner";
 import axios from "axios";
 import { Loader2, Loader2Icon } from "lucide-react";
 import { useSession } from "@/contexts/Session/SessionContext";
-import LoadingIcon from "@/components/shared/LoadingIcon";
+import LoadingIcon from "@/components/ui/LoadingIcon";
+import LoadingScreen from "@/components/ui/LoadingScreen";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -89,14 +90,11 @@ const Login = () => {
     <>
       <div className="mainContainer flex min-h-screen justify-between items-center">
         {isRedirecting && (
-          <div className="absolute inset-0 bg-gray-950 opacity-70 flex justify-center items-center z-50">
-            <div className="text-white text-lg flex items-center gap-3 mb-2">
-              <Loader2 className="animate-spin" />
-              <div>Session found! Redirecting to your dashboard...</div>
-            </div>
-          </div>
+          <LoadingScreen
+            message={"Session found! Redirecting to dashboard..."}
+          />
         )}
-        <div className="w-full lg:w-1/2 flex justify-center items-center p-10">
+        <div className="w-full h-screen lg:w-1/2 flex justify-center items-center p-10">
           <form
             className="flex justify-center items-center"
             onSubmit={handleLogin}
@@ -192,7 +190,7 @@ const Login = () => {
                   <Button
                     type="submit"
                     className={
-                      "w-full bg-blue-700 hover:bg-blue-800 cursor-pointer"
+                      "w-full bg-blue-700 hover:bg-blue-800 cursor-pointer font-semibold"
                     }
                     disabled={buttonClicked ? true : false}
                   >
@@ -202,7 +200,10 @@ const Login = () => {
                 </div>
                 <div className="flex justify-center mt-2 ">
                   <Button variant="link">
-                    <Link className="text-neutral-500" to="">
+                    <Link
+                      className="text-neutral-500"
+                      to="/reset-password/request"
+                    >
                       Reset Password?
                     </Link>
                   </Button>
