@@ -14,12 +14,18 @@ router.post("/request", cleanupExpiredTokens, async (req, res) => {
 
     const expirationTime = Date.now() + 30 * 60 * 1000;
 
+    try {
+      await sendResetEmail(email, resetCode);
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ message: error.message || "Email sending failed." });
+    }
+
     await pool.query(
       "INSERT INTO password_resets(email, reset_code, expiration_time) VALUES($1, $2, $3) RETURNING *",
       [email, resetCode, expirationTime]
     );
-
-    await sendResetEmail(email, resetCode);
 
     res.status(200).json({ message: "Reset email sent successfully" });
   } catch (error) {

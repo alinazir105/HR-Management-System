@@ -6,21 +6,26 @@ import { Toaster } from "sonner";
 import DashboardLayout from "./components/shared/Layout/DashboardLayout";
 import ProtectedRoute from "./components/shared/Layout/ProtectedRoute";
 import { SessionProvider } from "./contexts/Session/SessionProvider";
-import { Home, Calendar, Inbox } from "lucide-react";
 import HomeComp from "./pages/Home";
 import RequestReset from "./pages/RequestReset";
 import VerifyReset from "./pages/VerifyReset";
 import NewPassword from "./pages/NewPassword";
+import { Home, Calendar, Inbox, ListChecks, Users, DoorOpen, CreditCard, CircleDollarSign, Megaphone, Star, UserPen, Clock } from "lucide-react";
 
 const hrNavItems = [
-  { title: "Dashboard", url: "/", icon: Home },
-  { title: "Schedule", url: "/hr/dashboard/schedule", icon: Calendar },
+  { title: "Home", url: "/hr/dashboard", icon: Home },
+  { title: "Employees", url: "/hr/dashboard/employees", icon: Users },
   { title: "Inbox", url: "/inbox", icon: Inbox },
 ];
 const employeeNavItems = [
-  { title: "Dashboard", url: "/", icon: Home },
-  { title: "Schedule", url: "/schedule", icon: Calendar },
-  { title: "Inbox", url: "/inbox", icon: Inbox },
+  { title: "Home", url: "/employee/dashboard", icon: Home },
+  { title: "My Tasks", url: "/employee/dashboard/tasks", icon: ListChecks },
+  { title: "Attendance", url: "/employee/dashboard/attendance", icon: Clock },
+  { title: "Leave Requests", url: "/employee/dashboard/leave", icon: DoorOpen },
+  { title: "Payroll", url: "/employee/dashboard/payroll", icon: CircleDollarSign },
+  { title: "Announcements", url: "/employee/dashboard/announcements", icon: Megaphone },
+  { title: "Performance Review", url: "/employee/dashboard/performance", icon: Star },
+  { title: "User Profile", url: "/employee/dashboard/profile", icon: UserPen },
 ];
 
 const App = () => {

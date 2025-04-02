@@ -12,12 +12,13 @@ import {
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import { useSession } from "@/contexts/Session/SessionContext";
 
 const DashboardSidebar = ({ navItems }) => {
+  const location = useLocation();
   const navigate = useNavigate();
   const { sessionData, setSessionData } = useSession();
 
@@ -59,38 +60,41 @@ const DashboardSidebar = ({ navItems }) => {
                       ? sessionData.role === "hr"
                         ? "HR"
                         : sessionData.role.charAt(0).toUpperCase() +
-                          sessionData.role.slice(1)
+                        sessionData.role.slice(1)
                       : "Guest"}
                   </p>
                 </div>
               </div>
-              <SidebarMenu className={"mt-5"}>
-                {navItems.map((item) => (
-                  <SidebarMenuItem key={item.title} className="px-3 py-1">
-                    <SidebarMenuButton asChild>
-                      <Link
-                        to={item.url}
-                        className="flex items-center gap-3 text-lg"
-                      >
-                        <item.icon className="w-6 h-6" />{" "}
-                        <span className="text-[1.1em] font-medium mb-0.5">
-                          {item.title}
-                        </span>{" "}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+              <SidebarMenu className={"mt-6"}>
+                {navItems.map((item) => {
+                  const isActive = location.pathname === item.url; return (
+
+                    <SidebarMenuItem key={item.title} className={`mt-1 hover:bg-gray-100 rounded-md ${isActive ? "bg-gray-100" : ""}`}>
+                      <SidebarMenuButton asChild>
+                        <Link
+                          to={item.url}
+                          className={`flex items-center px-5 py-5 gap-3 text-lg hover:px-6 hover:bg-transparent`}
+                        >
+                          <item.icon className="w-7 h-7" />{" "}
+                          <span className={`text-[1.1em] font-medium mb-0.5 `}>
+                            {item.title}
+                          </span>{" "}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter>
+        <SidebarFooter className={"mb-0.5"}>
           <SidebarMenu>
-            <SidebarMenuItem className={"p-3"}>
+            <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-3  cursor-pointer"
+                  className="flex items-center gap-3 px-5 py-5 cursor-pointer hover:px-6"
                 >
                   <LogOut className="rotate-180" />
                   <span className="text-[1.1em] font-medium mb-0.5">

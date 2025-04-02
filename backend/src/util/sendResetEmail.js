@@ -19,7 +19,7 @@ export const sendResetEmail = async (email, resetCode) => {
   try {
     await transporter.sendMail(mailOptions);
   } catch (error) {
-    console.error("Error sending email:", error);
-    throw new Error("Error sending reset email");
+    console.error("Error sending email");
+    throw new Error(error.message || "Error sending reset email");
   }
 };
