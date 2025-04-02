@@ -15,12 +15,15 @@ import { Home, Calendar, Inbox, ListChecks, Users, DoorOpen, CreditCard, CircleD
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
   { title: "Employees", url: "/hr/dashboard/employees", icon: Users },
-  { title: "Inbox", url: "/inbox", icon: Inbox },
+  { title: "Attendance & Leave", url: "/hr/dashboard/attendance-leave", icon: Inbox },
+  { title: "Payroll Management", url: "/hr/dashboard/payroll", icon: Inbox },
+  { title: "Performance Evaluation", url: "/hr/dashboard/performance", icon: Inbox },
+  { title: "Recruitment Portal", url: "/hr/dashboard/recruitment", icon: Inbox },
 ];
 const employeeNavItems = [
   { title: "Home", url: "/employee/dashboard", icon: Home },
   { title: "My Tasks", url: "/employee/dashboard/tasks", icon: ListChecks },
-  { title: "Attendance", url: "/employee/dashboard/attendance", icon: Clock },
+  { title: "My Attendance", url: "/employee/dashboard/attendance", icon: Clock },
   { title: "Leave Requests", url: "/employee/dashboard/leave", icon: DoorOpen },
   { title: "Payroll", url: "/employee/dashboard/payroll", icon: CircleDollarSign },
   { title: "Announcements", url: "/employee/dashboard/announcements", icon: Megaphone },
