@@ -72,7 +72,7 @@ const Login = () => {
           { withCredentials: true }
         );
         toast.success("Login successful!");
-        navigate(`/${response.data.role}/dashboard`);
+        navigate(`/${response.data.role}/dashboard`, { state: { isLoggedIn: true } });
       } catch (error) {
         console.error(error);
         toast.error("Invalid email or password!");
