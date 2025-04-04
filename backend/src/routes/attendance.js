@@ -60,8 +60,8 @@ router.post("/check-out", async (req, res) => {
     }
 
     await pool.query(
-      "UPDATE ATTENDANCE SET checkout = $1, status = $2 WHERE userid = $3 AND date = $4 AND checkout IS NULL",
-      [checkOutTime, status, id, date]
+      "UPDATE ATTENDANCE SET checkout = $1, status = $2,workhours=$3 WHERE userid = $4 AND date = $5 AND checkout IS NULL",
+      [checkOutTime, status, hoursWorked, id, date]
     );
 
     res.status(200).json({
@@ -76,7 +76,7 @@ router.post("/check-out", async (req, res) => {
   }
 });
 
-router.get("/attendance/today", async (req, res) => {
+router.get("/my-today", async (req, res) => {
   const { id } = req.session.data;
 
   const now = new Date();
@@ -96,6 +96,28 @@ router.get("/attendance/today", async (req, res) => {
 
     const { checkin, checkout } = result.rows[0];
     res.status(200).json({ checkin, checkout });
+  } catch (error) {
+    console.error("Error fetching attendance data:", error);
+    res.status(500).json({ message: "Error fetching attendance data" });
+  }
+});
+
+router.get("/my-all", async (req, res) => {
+  const { id } = req.session.data;
+
+  try {
+    const result = await pool.query(
+      "SELECT * FROM ATTENDANCE WHERE userid = $1",
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res
+        .status(200)
+        .json({ attendance: [], message: "No attendance found" });
+    }
+
+    res.status(200).json({ attendance: result.rows });
   } catch (error) {
     console.error("Error fetching attendance data:", error);
     res.status(500).json({ message: "Error fetching attendance data" });
