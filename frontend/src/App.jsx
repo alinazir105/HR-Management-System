@@ -33,8 +33,8 @@ const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
   { title: "Employees", url: "/hr/dashboard/manage-employees", icon: Users },
   {
-    title: "Attendance & Leave",
-    url: "/hr/dashboard/attendance-leave",
+    title: "Leave Management",
+    url: "/hr/dashboard/leave",
     icon: Inbox,
   },
   { title: "Payroll Management", url: "/hr/dashboard/payroll", icon: Inbox },

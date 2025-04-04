@@ -11,7 +11,9 @@ const publicRoutes = [
 
 export const SessionProvider = ({ children }) => {
   const [sessionData, setSessionData] = useState(null);
+
   const [isLoading, setIsLoading] = useState(true);
+
   const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();

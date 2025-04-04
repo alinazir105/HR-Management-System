@@ -55,10 +55,10 @@ const NotificationItem = ({ notification, setNotifications }) => {
                             } overflow-hidden transition-all duration-300`}
                     >
                         <p className='text-gray-600'>
-                            {notification?.description.trim()}
+                            {notification?.description || ""}
                         </p>
                     </div>
-                    {!showFullDescription && notification.description.length > 60 && (
+                    {!showFullDescription && notification?.description?.length > 60 && (
                         <button
                             className="text-blue-600 font-semibold cursor-pointer hover:underline"
                             onClick={() => setShowFullDescription(true)}
@@ -66,7 +66,7 @@ const NotificationItem = ({ notification, setNotifications }) => {
                             View More
                         </button>
                     )}
-                    {showFullDescription && notification.description.length > 60 && (
+                    {showFullDescription && notification?.description?.length > 60 && (
                         <button
                             className="text-blue-600 font-semibold cursor-pointer hover:underline"
                             onClick={() => setShowFullDescription(false)}

@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 
 const LeaveRequests = () => {
   const [allLeaves, setAllLeaves] = useState([])
+  const [refreshData, setRefreshData] = useState(false)
 
   useEffect(() => {
     async function fetchAllMyLeaves() {
@@ -19,12 +20,13 @@ const LeaveRequests = () => {
       }
     }
     fetchAllMyLeaves()
-  }, [])
+    setRefreshData(false)
+  }, [refreshData])
 
   return (
     <div className='ml-10 mt-2 mr-8'>
-      <LeaveRequestsHeader />
-      <LeaveRequestsTable allLeaves={allLeaves} />
+      <LeaveRequestsHeader setRefreshData={setRefreshData} />
+      <LeaveRequestsTable allLeaves={allLeaves} setRefreshData={setRefreshData} />
     </div>
   )
 }

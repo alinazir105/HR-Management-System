@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import React from 'react'
+import LeaveRequestCancel from './LeaveRequestCancel';
 
 const headings = [
     "Leave Type",
@@ -13,8 +14,7 @@ const headings = [
 ];
 
 
-const LeaveRequestsTable = ({ allLeaves }) => {
-
+const LeaveRequestsTable = ({ allLeaves, setRefreshData }) => {
     return (
         <div className='mt-8 mb-6'>
             <div className="overflow-auto max-h-[70vh] rounded-lg border border-gray-300 ">
@@ -43,11 +43,20 @@ const LeaveRequestsTable = ({ allLeaves }) => {
                                 className={"text-[1rem] px-4 py-2 hover:bg-transparent"}
                             >
                                 {Object.values(row).map((value, i) => (
-                                    <TableCell key={i} className="px-4 py-2">
-                                        {value}
-                                    </TableCell>
+                                    <>
+                                        {value !== row.id && <TableCell key={i} className="px-4 py-2">
+                                            {value || "N/A"}
+                                        </TableCell>}
+                                    </>
+
                                 ))}
-                                <Button>Hello</Button>
+                                {row.status == 'Pending' &&
+                                    <TableCell className={"px-4 py-2"}>
+                                        <LeaveRequestCancel leaveID={row.id} setRefreshData={setRefreshData} />
+                                    </TableCell>
+                                }
+
+
                             </TableRow>
                         ))}
 

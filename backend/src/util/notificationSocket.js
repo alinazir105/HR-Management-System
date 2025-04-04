@@ -3,7 +3,7 @@ let users = [];
 
 let io;
 
-export const initializeSocket = (server, id, role) => {
+export const initializeSocket = (server) => {
   io = new Server(server, {
     cors: {
       origin: "http://localhost:5173",
@@ -25,8 +25,6 @@ export const initializeSocket = (server, id, role) => {
         },
       ];
 
-      console.log(`ID ${id} role ${role} has been added to the array!`);
-
       console.log("🚀 ~ users:", users);
     });
 
@@ -37,11 +35,24 @@ export const initializeSocket = (server, id, role) => {
   });
 };
 
-export const sendNotificationToClient = (userId, message) => {
-  const user = users.find((u) => u.userId === userId);
-  if (user) {
-    io.to(user.socketId).emit("new-notification", { userId, message });
+export const sendNotification = (notification) => {
+  const { user_id } = notification;
+
+  if (user_id !== "hr") {
+    const user = users.find((u) => u.userId === user_id);
+    if (user) {
+      io.to(user.socketId).emit("new-notification", notification);
+    } else {
+      console.log(`User with ID "${user_id}" not found or not connected.`);
+    }
   } else {
-    console.log(`User ${userId} not found or not connected.`);
+    const matchedUsers = users.filter((u) => u.role === "hr");
+    if (matchedUsers.length > 0) {
+      matchedUsers.forEach((user) => {
+        io.to(user.socketId).emit("new-notification", notification);
+      });
+    } else {
+      console.log(`No users with HR Role are connected.`);
+    }
   }
 };

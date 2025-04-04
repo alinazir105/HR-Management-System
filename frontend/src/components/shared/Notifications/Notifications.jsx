@@ -6,47 +6,43 @@ import api from '@/lib/api';
 import { toast } from 'sonner';
 import { useSession } from '@/contexts/Session/SessionContext';
 
-const Notifications = ({ isLoggedIn }) => {
-    const { sessionData } = useSession()
-
+const Notifications = () => {
+    const { sessionData, isLoading } = useSession()
     const [notifications, setNotifications] = useState([]);
     const [isOpen, setIsOpen] = useState(false)
 
     const fetchNotifications = useCallback(async () => {
-        if (isLoggedIn) {
-            try {
-                const response = await api.get("/notifications", { withCredentials: true });
-                setNotifications(response.data.notifications)
-
-            } catch {
-                console.error("Error fetching notifications")
-                toast.error("Error fetching notifications")
-            }
-
+        try {
+            const response = await api.get("/notifications", { withCredentials: true });
+            setNotifications(response.data.notifications);
+        } catch {
+            console.error("Error fetching notifications");
+            toast.error("Error fetching notifications");
         }
-    }, [isLoggedIn]);
+    }, []);
 
     useEffect(() => {
-        fetchNotifications();
-
-    }, [fetchNotifications]);
+        if (!isLoading && sessionData) {
+            fetchNotifications();
+        }
+    }, [fetchNotifications, isLoading, sessionData]);
 
     useEffect(() => {
-        connectSocket();
+        if (!isLoading && sessionData) {
+            connectSocket();
 
-        if (sessionData) {
             const { id, role } = sessionData;
-            socket.emit("register", { id, role })
+            socket.emit("register", { id, role });
+
+            listenForNotifications((notification) => {
+                setNotifications((prev) => [notification, ...prev]);
+            });
+
+            return () => {
+                disconnectSocket();
+            };
         }
-
-        listenForNotifications((notification) => {
-            setNotifications((prev) => [...prev, notification]);
-        });
-
-        return () => {
-            disconnectSocket();
-        };
-    }, [sessionData])
+    }, [isLoading, sessionData]);
 
     return (
         <>

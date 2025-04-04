@@ -16,6 +16,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import { useSession } from "@/contexts/Session/SessionContext";
+import { disconnectSocket } from "@/lib/socketService";
 
 const DashboardSidebar = ({ navItems }) => {
   const location = useLocation();
@@ -27,6 +28,7 @@ const DashboardSidebar = ({ navItems }) => {
       await api.post("/auth/logout", {}, { withCredentials: true });
       toast.success("Logout successful!");
       setSessionData(null);
+      disconnectSocket()
       navigate("/login");
     } catch (error) {
       console.error("Logout failed", error);

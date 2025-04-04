@@ -26,6 +26,7 @@ const sendNotification = (notification) => {
 const disconnectSocket = () => {
   if (socket) {
     socket.disconnect();
+    socket = null;
   }
 };
 
