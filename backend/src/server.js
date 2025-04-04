@@ -12,6 +12,7 @@ import pool from "./db.js";
 import passwordResetRoutes from "./routes/passwordResetRoutes.js";
 import notifications from "./routes/notifications.js";
 import { initializeSocket } from "./util/notificationSocket.js";
+import employees from "./routes/employees.js";
 
 dotenv.config();
 
@@ -50,6 +51,7 @@ app.use("/api/password-reset", passwordResetRoutes);
 app.use("/api/auth", auth);
 app.use("/api/util", insertUser);
 app.use("/api/notifications", notifications);
+app.use("/api/employees", employees);
 
 const PORT = process.env.SERVER_PORT || 3000;
 server.listen(PORT, () => {

@@ -24,19 +24,36 @@ import {
   UserPen,
   Clock,
 } from "lucide-react";
+import ManageEmployees from "./components/HR/ManageEmployees/ManageEmployees";
 
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
-  { title: "Employees", url: "/hr/dashboard/employees", icon: Users },
-  { title: "Attendance & Leave", url: "/hr/dashboard/attendance-leave", icon: Inbox },
+  { title: "Employees", url: "/hr/dashboard/manage-employees", icon: Users },
+  {
+    title: "Attendance & Leave",
+    url: "/hr/dashboard/attendance-leave",
+    icon: Inbox,
+  },
   { title: "Payroll Management", url: "/hr/dashboard/payroll", icon: Inbox },
-  { title: "Performance Evaluation", url: "/hr/dashboard/performance", icon: Inbox },
-  { title: "Recruitment Portal", url: "/hr/dashboard/recruitment", icon: Inbox },
+  {
+    title: "Performance Evaluation",
+    url: "/hr/dashboard/performance",
+    icon: Inbox,
+  },
+  {
+    title: "Recruitment Portal",
+    url: "/hr/dashboard/recruitment",
+    icon: Inbox,
+  },
 ];
 const employeeNavItems = [
   { title: "Home", url: "/employee/dashboard", icon: Home },
   { title: "My Tasks", url: "/employee/dashboard/tasks", icon: ListChecks },
-  { title: "My Attendance", url: "/employee/dashboard/attendance", icon: Clock },
+  {
+    title: "My Attendance",
+    url: "/employee/dashboard/attendance",
+    icon: Clock,
+  },
   { title: "Leave Requests", url: "/employee/dashboard/leave", icon: DoorOpen },
   {
     title: "Payroll",
@@ -78,7 +95,10 @@ const App = () => {
             >
               {/* HR Routes will go here */}
               <Route index element={<HrHome />} />
-              <Route path="" />
+              <Route
+                path="/hr/dashboard/manage-employees"
+                element={<ManageEmployees />}
+              />
             </Route>
           </Route>
 
