@@ -1,0 +1,105 @@
+import express from "express";
+import pool from "../db.js";
+
+const router = express.Router();
+
+router.post("/check-in", async (req, res) => {
+  const { id } = req.session.data;
+  const now = new Date();
+  const date = now.toISOString().split("T")[0];
+  const checkInTime = now.toTimeString().split(" ")[0];
+  try {
+    await pool.query(
+      "INSERT INTO ATTENDANCE (userid, date, checkin) VALUES ($1, $2, $3)",
+      [id, date, checkInTime]
+    );
+    res
+      .status(200)
+      .json({ message: "Check-in successful!", date, checkInTime });
+  } catch {
+    console.error("Error inserting in attendance table");
+    res.status(500).json({ message: "Couldn't check-in. Please try again!" });
+  }
+});
+
+router.post("/check-out", async (req, res) => {
+  const { id } = req.session.data;
+  const now = new Date();
+  const date = now.toISOString().split("T")[0];
+  const checkOutTime = now.toTimeString().split(" ")[0];
+
+  try {
+    const { rows } = await pool.query(
+      "SELECT checkin FROM ATTENDANCE WHERE userid = $1 AND date = $2 AND checkout IS NULL",
+      [id, date]
+    );
+
+    if (rows.length === 0) {
+      return res.status(400).json({
+        message: "You haven't checked in or already checked out today!",
+      });
+    }
+
+    const checkInTime = rows[0].checkin;
+
+    const checkInDate = new Date(`${date}T${checkInTime}`);
+    const checkOutDate = new Date(`${date}T${checkOutTime}`);
+
+    const timeDifference = checkOutDate - checkInDate;
+
+    const hoursWorked = timeDifference / (1000 * 60 * 60);
+
+    let status = "Absent";
+
+    if (hoursWorked >= 7) {
+      status = "Present";
+    } else if (hoursWorked >= 4) {
+      status = "Half-day";
+    } else if (hoursWorked < 4) {
+      status = "Absent";
+    }
+
+    await pool.query(
+      "UPDATE ATTENDANCE SET checkout = $1, status = $2 WHERE userid = $3 AND date = $4 AND checkout IS NULL",
+      [checkOutTime, status, id, date]
+    );
+
+    res.status(200).json({
+      message: "Check-out successful!",
+      date,
+      checkOutTime,
+      status,
+    });
+  } catch (error) {
+    console.error("Error updating check-out time:", error);
+    res.status(500).json({ message: "Couldn't check-out. Please try again!" });
+  }
+});
+
+router.get("/attendance/today", async (req, res) => {
+  const { id } = req.session.data;
+
+  const now = new Date();
+  const date = now.toISOString().split("T")[0];
+
+  try {
+    const result = await pool.query(
+      "SELECT checkin, checkout FROM ATTENDANCE WHERE userid = $1 AND date = $2",
+      [id, date]
+    );
+
+    if (result.rowCount === 0) {
+      return res
+        .status(200)
+        .json({ message: "No attendance record for today" });
+    }
+
+    const { checkin, checkout } = result.rows[0];
+    res.status(200).json({ checkin, checkout });
+  } catch (error) {
+    console.error("Error fetching attendance data:", error);
+    res.status(500).json({ message: "Error fetching attendance data" });
+  }
+});
+
+export default router;

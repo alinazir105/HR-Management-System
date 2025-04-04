@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-let users = [{}];
+let users = [];
 
 let io;
 
@@ -8,33 +8,40 @@ export const initializeSocket = (server, id, role) => {
     cors: {
       origin: "http://localhost:5173",
       methods: ["GET", "POST"],
+      credentials: true,
     },
   });
 
   io.on("connection", (socket) => {
     console.log(`A user connected: ${socket.id}`);
-    users = [
-      ...users,
-      {
-        socketId: socket.id,
-        userId: id,
-        role: role,
-      },
-    ];
 
-    socket.on("send-notification", (notification) => {
-      const { userId } = notification;
-      if (users[userId]) {
-        io.to(users[userId]).emit("new-notification", notification);
-      }
+    socket.on("register", ({ id, role }) => {
+      users = [
+        ...users,
+        {
+          socketId: socket.id,
+          userId: id,
+          role: role,
+        },
+      ];
+
+      console.log(`ID ${id} role ${role} has been added to the array!`);
+
+      console.log("🚀 ~ users:", users);
     });
 
     socket.on("disconnect", () => {
       console.log(`A user disconnected: ${socket.id}`);
+      users = users.filter((user) => user.socketId !== socket.id);
     });
   });
 };
 
-export const sendNotificationToClient = (notification) => {
-  io.emit("new-notification", { notification });
+export const sendNotificationToClient = (userId, message) => {
+  const user = users.find((u) => u.userId === userId);
+  if (user) {
+    io.to(user.socketId).emit("new-notification", { userId, message });
+  } else {
+    console.log(`User ${userId} not found or not connected.`);
+  }
 };

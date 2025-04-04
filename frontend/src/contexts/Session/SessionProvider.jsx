@@ -48,7 +48,6 @@ export const SessionProvider = ({ children }) => {
   useEffect(() => {
     if (sessionData && location.pathname === "/login") {
       console.log("User is already authenticated, redirecting...");
-
       setIsRedirecting(true);
       setTimeout(() => {
         if (sessionData.role === "hr") {

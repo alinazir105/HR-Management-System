@@ -11,6 +11,7 @@ import RequestReset from "./pages/RequestReset";
 import VerifyReset from "./pages/VerifyReset";
 import NewPassword from "./pages/NewPassword";
 import { Home, Calendar, Inbox, ListChecks, Users, DoorOpen, CreditCard, CircleDollarSign, Megaphone, Star, UserPen, Clock } from "lucide-react";
+import MyAttendance from "./components/Employee/Attendance/MyAttendance";
 
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
@@ -64,7 +65,7 @@ const App = () => {
             >
               {/* Employee Routes will go here */}
               <Route index />
-              <Route path="" />
+              <Route path="/employee/dashboard/attendance" element={<MyAttendance />} />
             </Route>
           </Route>
 
