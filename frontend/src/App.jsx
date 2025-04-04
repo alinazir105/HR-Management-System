@@ -6,28 +6,70 @@ import { Toaster } from "sonner";
 import DashboardLayout from "./components/shared/Layout/DashboardLayout";
 import ProtectedRoute from "./components/shared/Layout/ProtectedRoute";
 import { SessionProvider } from "./contexts/Session/SessionProvider";
-import HomeComp from "./pages/Home";
 import RequestReset from "./pages/RequestReset";
 import VerifyReset from "./pages/VerifyReset";
 import NewPassword from "./pages/NewPassword";
-import { Home, Calendar, Inbox, ListChecks, Users, DoorOpen, CreditCard, CircleDollarSign, Megaphone, Star, UserPen, Clock } from "lucide-react";
+import HrHome from "./components/HR/Homepage/Home";
+import {
+  Home,
+  Calendar,
+  Inbox,
+  ListChecks,
+  Users,
+  DoorOpen,
+  CreditCard,
+  CircleDollarSign,
+  Megaphone,
+  Star,
+  UserPen,
+  Clock,
+} from "lucide-react";
+import ManageEmployees from "./components/HR/ManageEmployees/ManageEmployees";
 
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
-  { title: "Employees", url: "/hr/dashboard/employees", icon: Users },
-  { title: "Attendance & Leave", url: "/hr/dashboard/attendance-leave", icon: Inbox },
+  { title: "Employees", url: "/hr/dashboard/manage-employees", icon: Users },
+  {
+    title: "Attendance & Leave",
+    url: "/hr/dashboard/attendance-leave",
+    icon: Inbox,
+  },
   { title: "Payroll Management", url: "/hr/dashboard/payroll", icon: Inbox },
-  { title: "Performance Evaluation", url: "/hr/dashboard/performance", icon: Inbox },
-  { title: "Recruitment Portal", url: "/hr/dashboard/recruitment", icon: Inbox },
+  {
+    title: "Performance Evaluation",
+    url: "/hr/dashboard/performance",
+    icon: Inbox,
+  },
+  {
+    title: "Recruitment Portal",
+    url: "/hr/dashboard/recruitment",
+    icon: Inbox,
+  },
 ];
 const employeeNavItems = [
   { title: "Home", url: "/employee/dashboard", icon: Home },
   { title: "My Tasks", url: "/employee/dashboard/tasks", icon: ListChecks },
-  { title: "My Attendance", url: "/employee/dashboard/attendance", icon: Clock },
+  {
+    title: "My Attendance",
+    url: "/employee/dashboard/attendance",
+    icon: Clock,
+  },
   { title: "Leave Requests", url: "/employee/dashboard/leave", icon: DoorOpen },
-  { title: "Payroll", url: "/employee/dashboard/payroll", icon: CircleDollarSign },
-  { title: "Announcements", url: "/employee/dashboard/announcements", icon: Megaphone },
-  { title: "Performance Review", url: "/employee/dashboard/performance", icon: Star },
+  {
+    title: "Payroll",
+    url: "/employee/dashboard/payroll",
+    icon: CircleDollarSign,
+  },
+  {
+    title: "Announcements",
+    url: "/employee/dashboard/announcements",
+    icon: Megaphone,
+  },
+  {
+    title: "Performance Review",
+    url: "/employee/dashboard/performance",
+    icon: Star,
+  },
   { title: "User Profile", url: "/employee/dashboard/profile", icon: UserPen },
 ];
 
@@ -52,8 +94,11 @@ const App = () => {
               element={<DashboardLayout navItems={hrNavItems} />}
             >
               {/* HR Routes will go here */}
-              <Route index element={<HomeComp />} />
-              <Route path="" />
+              <Route index element={<HrHome />} />
+              <Route
+                path="/hr/dashboard/manage-employees"
+                element={<ManageEmployees />}
+              />
             </Route>
           </Route>
 
