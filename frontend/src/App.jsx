@@ -25,8 +25,9 @@ import {
   Clock,
 } from "lucide-react";
 import ManageEmployees from "./components/HR/ManageEmployees/ManageEmployees";
-import { Home, Calendar, Inbox, ListChecks, Users, DoorOpen, CreditCard, CircleDollarSign, Megaphone, Star, UserPen, Clock } from "lucide-react";
 import MyAttendance from "./components/Employee/Attendance/MyAttendance";
+import LeaveRequests from "./components/Employee/LeaveRequests/LeaveRequests";
+
 
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
@@ -112,6 +113,7 @@ const App = () => {
               {/* Employee Routes will go here */}
               <Route index />
               <Route path="/employee/dashboard/attendance" element={<MyAttendance />} />
+              <Route path="/employee/dashboard/leave" element={<LeaveRequests />} />
             </Route>
           </Route>
 

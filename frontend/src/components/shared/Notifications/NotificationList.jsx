@@ -21,7 +21,7 @@ const NotificationList = ({ notifications, setNotifications }) => {
     }
 
     return (
-        <div className={`absolute bg-gray-50 py-2 px-2 right-7 w-[28em] rounded-md pb-2 max-h-[40em] overflow-y-auto`}>
+        <div className={`absolute z-50 shadow-xl bg-gray-100 py-2 px-2 right-7 w-[28em] rounded-md pb-2 max-h-[40em] overflow-y-auto`}>
             <div className='border-b pb-2 flex items-center justify-between px-5'>
                 <h1 className='font-semibold'>Notifications</h1>
                 <div>
