@@ -1,9 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import EmployeeTable from "./EmployeeTable";
 
 import AddEmployeeForm from "./AddEmployeeForm";
+import api from "@/lib/api";
+import { toast } from "sonner";
 
 const ManageEmployees = () => {
+  const [allEmployees, setAllEmployees] = useState([]);
+  useEffect(() => {
+    async function fetchAllEmployees() {
+      let response;
+      try {
+        response = await api.get("/employees/all", { withCredentials: true });
+        setAllEmployees(response.data.employees);
+      } catch {
+        toast.error(response.data.message);
+      }
+    }
+    fetchAllEmployees();
+  }, []);
+
   return (
     <>
       <div className="ml-10 mr-10 mt-3">
@@ -13,7 +29,7 @@ const ManageEmployees = () => {
           </h1>
           <AddEmployeeForm />
         </div>
-        <EmployeeTable />
+        <EmployeeTable allEmployees={allEmployees} />
       </div>
     </>
   );
