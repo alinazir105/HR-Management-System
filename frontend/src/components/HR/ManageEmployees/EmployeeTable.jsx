@@ -21,19 +21,8 @@ const headings = [
   "Gender",
   "Actions",
 ];
-const rows = [
-  {
-    Name: "Amal Khalili",
-    Email: "amal@gmail.com",
-    Dept: "IT.",
-    JobTitle: "Backend Engineer",
-    Startdate: "29/04/2022",
-    Category: "Fulltime",
-    Salary: "$2300",
-    Gender: "Female",
-  },
-];
-const EmployeeTable = () => {
+
+const EmployeeTable = ({ allEmployees }) => {
   return (
     <>
       <div className="overflow-hidden rounded-lg border border-gray-300 ">
@@ -51,15 +40,19 @@ const EmployeeTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rows.map((row, index) => (
+            {allEmployees.map((row, index) => (
               <TableRow
                 key={index}
                 className={"text-[1rem] px-4 py-2 hover:bg-transparent"}
               >
                 {Object.values(row).map((value, i) => (
-                  <TableCell key={i} className="px-4 py-2">
-                    {value}
-                  </TableCell>
+                  <>
+                    {value !== row.id && (
+                      <TableCell key={i} className="px-4 py-2">
+                        {value}
+                      </TableCell>
+                    )}
+                  </>
                 ))}
 
                 <TableCell className="px-4 py-2">
