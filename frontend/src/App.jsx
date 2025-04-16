@@ -27,11 +27,16 @@ import {
 import ManageEmployees from "./components/HR/ManageEmployees/ManageEmployees";
 import MyAttendance from "./components/Employee/Attendance/MyAttendance";
 import LeaveRequests from "./components/Employee/LeaveRequests/LeaveRequests";
-
+import Announcements from "./components/shared/Announcements/Announcements";
 
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
   { title: "Employees", url: "/hr/dashboard/manage-employees", icon: Users },
+  {
+    title: "Announcements",
+    url: "/hr/dashboard/announcements",
+    icon: Megaphone,
+  },
   {
     title: "Leave Management",
     url: "/hr/dashboard/leave",
@@ -102,6 +107,10 @@ const App = () => {
                 path="/hr/dashboard/manage-employees"
                 element={<ManageEmployees />}
               />
+              <Route
+                path="/hr/dashboard/announcements"
+                element={<Announcements />}
+              />
             </Route>
           </Route>
 
@@ -112,8 +121,18 @@ const App = () => {
             >
               {/* Employee Routes will go here */}
               <Route index />
-              <Route path="/employee/dashboard/attendance" element={<MyAttendance />} />
-              <Route path="/employee/dashboard/leave" element={<LeaveRequests />} />
+              <Route
+                path="/employee/dashboard/attendance"
+                element={<MyAttendance />}
+              />
+              <Route
+                path="/employee/dashboard/leave"
+                element={<LeaveRequests />}
+              />
+              <Route
+                path="/employee/dashboard/announcements"
+                element={<Announcements />}
+              />
             </Route>
           </Route>
 

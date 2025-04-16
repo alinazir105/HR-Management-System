@@ -16,10 +16,9 @@ const DashboardLayout = ({ navItems }) => {
       <SidebarProvider>
         <DashboardSidebar navItems={navItems} />
         <main className="w-full">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center sticky top-0 z-10 bg-white">
             <SidebarTrigger className="w-12 h-12 p-3 rounded-full hover:bg-gray-300 cursor-pointer transition-all"></SidebarTrigger>
             <Notifications />
-
           </div>
 
           <Outlet />
