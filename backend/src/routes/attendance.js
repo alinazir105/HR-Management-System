@@ -10,14 +10,14 @@ router.post("/check-in", async (req, res) => {
   const checkInTime = now.toTimeString().split(" ")[0];
   try {
     await pool.query(
-      "INSERT INTO ATTENDANCE (userid, date, checkin) VALUES ($1, $2, $3)",
-      [id, date, checkInTime]
+      "INSERT INTO attendance (userid, date, checkin) VALUES ($1, $2, $3)",
+      [id, date, now]
     );
     res
       .status(200)
       .json({ message: "Check-in successful!", date, checkInTime });
-  } catch {
-    console.error("Error inserting in attendance table");
+  } catch (e) {
+    console.error("Error inserting in attendance table" + e);
     res.status(500).json({ message: "Couldn't check-in. Please try again!" });
   }
 });
@@ -42,12 +42,14 @@ router.post("/check-out", async (req, res) => {
 
     const checkInTime = rows[0].checkin;
 
-    const checkInDate = new Date(`${date}T${checkInTime}`);
-    const checkOutDate = new Date(`${date}T${checkOutTime}`);
+    const checkInDate = new Date(checkInTime);
+    const checkOutDate = new Date();
 
     const timeDifference = checkOutDate - checkInDate;
 
-    const hoursWorked = timeDifference / (1000 * 60 * 60);
+    let hoursWorked = timeDifference / (1000 * 60 * 60);
+
+    hoursWorked = Math.floor(hoursWorked);
 
     let status = "Absent";
 
@@ -61,7 +63,7 @@ router.post("/check-out", async (req, res) => {
 
     await pool.query(
       "UPDATE ATTENDANCE SET checkout = $1, status = $2,workhours=$3 WHERE userid = $4 AND date = $5 AND checkout IS NULL",
-      [checkOutTime, status, hoursWorked, id, date]
+      [now, status, hoursWorked, id, date]
     );
 
     res.status(200).json({
@@ -107,7 +109,7 @@ router.get("/my-all", async (req, res) => {
 
   try {
     const result = await pool.query(
-      "SELECT * FROM ATTENDANCE WHERE userid = $1",
+      "SELECT date,checkin,checkout,workhours,status FROM ATTENDANCE WHERE userid = $1",
       [id]
     );
 

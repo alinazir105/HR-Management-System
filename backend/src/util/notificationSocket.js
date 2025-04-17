@@ -38,21 +38,30 @@ export const initializeSocket = (server) => {
 export const sendNotification = (notification) => {
   const { user_id } = notification;
 
-  if (user_id !== "hr") {
+  if (user_id === "hr") {
+    const hrUsers = users.filter((u) => u.role === "hr");
+    if (hrUsers.length > 0) {
+      hrUsers.forEach((user) => {
+        io.to(user.socketId).emit("new-notification", notification);
+      });
+    } else {
+      console.log("No HR users connected.");
+    }
+  } else if (user_id === "employees") {
+    const employeeUsers = users.filter((u) => u.role === "employee");
+    if (employeeUsers.length > 0) {
+      employeeUsers.forEach((user) => {
+        io.to(user.socketId).emit("new-notification", notification);
+      });
+    } else {
+      console.log("No employee users connected.");
+    }
+  } else {
     const user = users.find((u) => u.userId === user_id);
     if (user) {
       io.to(user.socketId).emit("new-notification", notification);
     } else {
       console.log(`User with ID "${user_id}" not found or not connected.`);
-    }
-  } else {
-    const matchedUsers = users.filter((u) => u.role === "hr");
-    if (matchedUsers.length > 0) {
-      matchedUsers.forEach((user) => {
-        io.to(user.socketId).emit("new-notification", notification);
-      });
-    } else {
-      console.log(`No users with HR Role are connected.`);
     }
   }
 };

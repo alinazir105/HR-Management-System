@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Outlet } from "react-router-dom";
 import LoadingIcon from "../../ui/LoadingIcon";
+import LoadingScreen from "@/components/ui/LoadingScreen";
 
 const ProtectedRoute = ({ allowedRole }) => {
   const [isAuthorized, setIsAuthorized] = useState(null);
@@ -36,7 +37,7 @@ const ProtectedRoute = ({ allowedRole }) => {
   }, [fetchUserData]);
 
   if (isAuthorized === null) {
-    return <LoadingIcon />;
+    return <LoadingScreen />;
   }
 
   return isAuthorized ? <Outlet /> : null;

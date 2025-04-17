@@ -11,11 +11,27 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import api from "@/lib/api";
+import { toast } from "sonner";
+import LoadingScreen from "@/components/ui/LoadingScreen";
+import { Loader2 } from "lucide-react";
 
-const AnnouncementsDelete = () => {
-  function deleteAnnouncement() {
-    //Delete logic nigga
+const AnnouncementsDelete = ({ id, setRefreshData, setIsDeleting }) => {
+  async function deleteAnnouncement() {
+    setIsDeleting(true)
+    try {
+      await api.delete(`/announcements/delete/${id}`, { withCredentials: true })
+      toast.success("Announcement deleted successfully!")
+      setRefreshData(true)
+    } catch (e) {
+      console.error(e);
+      toast.error("Couldn't delete announcement!")
+    }
+    finally {
+      setIsDeleting(false)
+    }
   }
+
   return (
     <div>
       <AlertDialog>
@@ -36,11 +52,13 @@ const AnnouncementsDelete = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className={"cursor-pointer "}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={deleteAnnouncement}
               className={"cursor-pointer "}
+
             >
+
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

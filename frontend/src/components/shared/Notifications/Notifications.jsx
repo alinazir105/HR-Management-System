@@ -48,7 +48,7 @@ const Notifications = () => {
         <>
             <div className='relative'>
                 <NotificationButton setIsOpen={setIsOpen} notifications={notifications} />
-                {isOpen && <NotificationList notifications={notifications} setNotifications={setNotifications} />}
+                {isOpen && <NotificationList notifications={notifications} setNotifications={setNotifications} setIsOpen={setIsOpen} />}
             </div>
         </>
     )

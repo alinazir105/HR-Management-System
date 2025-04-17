@@ -39,11 +39,17 @@ const MyAttendanceTable = ({ allAttendance }) => {
                                 key={index}
                                 className={"text-[1rem] px-4 py-2 hover:bg-transparent"}
                             >
-                                {Object.values(row).map((value, i) => (
-                                    <TableCell key={i} className="px-4 py-2">
-                                        {value}
-                                    </TableCell>
-                                ))}
+                                <TableCell className="px-4 py-2">{new Date(row.date).toLocaleDateString()}</TableCell>
+                                <TableCell className="px-4 py-2">
+                                    {row.checkin ? new Date(row.checkin).toLocaleTimeString() : "-"}
+                                </TableCell>
+                                <TableCell className="px-4 py-2">
+                                    {row.checkout ? new Date(row.checkout).toLocaleTimeString() : "-"}
+                                </TableCell>
+                                <TableCell className="px-4 py-2">
+                                    {row.workhours !== null ? `${row.workhours} hr${row.workhours === 1 ? "" : "s"}` : "-"}
+                                </TableCell>
+                                <TableCell className="px-4 py-2">{row.status || "-"}</TableCell>
                             </TableRow>
                             // One button for employee to address incorrect attendance. just an idea
                         ))}

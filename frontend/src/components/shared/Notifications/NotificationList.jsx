@@ -4,14 +4,14 @@ import NotificationItem from "./NotificationItem";
 import api from "@/lib/api";
 import { toast } from "sonner";
 
-const NotificationList = ({ notifications, setNotifications }) => {
+const NotificationList = ({ notifications, setNotifications, setIsOpen }) => {
   async function handleClearAll() {
     const notificationIds = notifications.map((notif) => notif.id);
     if (notificationIds.length == 0) {
       toast.error("No notifications to clear!");
     }
     try {
-      await api.put("/notifications/clear-all", { notificationIds });
+      await api.put("/notifications/clear-all", { notificationIds }, { withCredentials: true });
 
       setNotifications([]);
     } catch {
@@ -46,6 +46,7 @@ const NotificationList = ({ notifications, setNotifications }) => {
                   key={index}
                   notification={notif}
                   setNotifications={setNotifications}
+                  setIsOpen={setIsOpen}
                 />
               );
             })}

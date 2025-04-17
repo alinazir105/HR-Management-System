@@ -5,11 +5,12 @@ import DashboardSidebar from "./Sidebar";
 import { useSession } from "@/contexts/Session/SessionContext";
 import LoadingIcon from "../../ui/LoadingIcon";
 import Notifications from "../Notifications/Notifications";
+import LoadingScreen from "@/components/ui/LoadingScreen";
 
 const DashboardLayout = ({ navItems }) => {
   const { isLoading } = useSession();
   if (isLoading) {
-    return <LoadingIcon />;
+    return <LoadingScreen />;
   }
   return (
     <>
