@@ -11,7 +11,9 @@ const publicRoutes = [
 
 export const SessionProvider = ({ children }) => {
   const [sessionData, setSessionData] = useState(null);
+
   const [isLoading, setIsLoading] = useState(true);
+
   const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,7 +50,6 @@ export const SessionProvider = ({ children }) => {
   useEffect(() => {
     if (sessionData && location.pathname === "/login") {
       console.log("User is already authenticated, redirecting...");
-
       setIsRedirecting(true);
       setTimeout(() => {
         if (sessionData.role === "hr") {

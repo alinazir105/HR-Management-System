@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -11,28 +11,38 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut } from "lucide-react";
+import { Loader2, LogOut } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import { useSession } from "@/contexts/Session/SessionContext";
+import { disconnectSocket } from "@/lib/socketService";
+import LoadingScreen from "@/components/ui/LoadingScreen";
+import LoadingIcon from "@/components/ui/LoadingIcon";
 
 const DashboardSidebar = ({ navItems }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { sessionData, setSessionData } = useSession();
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   async function handleLogout() {
+    setIsLoggingOut(true)
     try {
       await api.post("/auth/logout", {}, { withCredentials: true });
       toast.success("Logout successful!");
       setSessionData(null);
+      disconnectSocket()
       navigate("/login");
     } catch (error) {
       console.error("Logout failed", error);
       toast.error("Logout failed! Please try again.");
     }
+    finally {
+      setIsLoggingOut(false)
+    }
   }
+
 
   return (
     <>
@@ -52,8 +62,8 @@ const DashboardSidebar = ({ navItems }) => {
                 </div>
                 <div>
                   <p className="font-semibold text-lg">
-                    {sessionData?.username.charAt(0).toUpperCase() +
-                      sessionData?.username.slice(1) || "Guest"}
+                    {sessionData?.email.split("@")[0].charAt(0).toUpperCase() +
+                      sessionData?.email.split("@")[0].slice(1) || "Guest"}
                   </p>
                   <p>
                     {sessionData?.role
@@ -95,9 +105,11 @@ const DashboardSidebar = ({ navItems }) => {
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-3 px-5 py-5 cursor-pointer hover:px-6"
+                  disabled={isLoggingOut}
                 >
-                  <LogOut className="rotate-180" />
+                  {isLoggingOut ? <Loader2 className="animate-spin" /> : <LogOut className="rotate-180" />}
                   <span className="text-[1.1em] font-medium mb-0.5">
+
                     Logout
                   </span>
                 </button>

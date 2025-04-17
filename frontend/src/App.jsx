@@ -25,14 +25,22 @@ import {
   Clock,
 } from "lucide-react";
 import ManageEmployees from "./components/HR/ManageEmployees/ManageEmployees";
+import MyAttendance from "./components/Employee/Attendance/MyAttendance";
+import LeaveRequests from "./components/Employee/LeaveRequests/LeaveRequests";
+import Announcements from "./components/shared/Announcements/Announcements";
 import Attendance_Leave from "./components/HR/Attendance & Leave/Attendance_Leave";
 
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
   { title: "Employees", url: "/hr/dashboard/manage-employees", icon: Users },
   {
-    title: "Attendance & Leave",
-    url: "/hr/dashboard/attendance-leave",
+    title: "Announcements",
+    url: "/hr/dashboard/announcements",
+    icon: Megaphone,
+  },
+  {
+    title: "Leave Management",
+    url: "/hr/dashboard/leave",
     icon: Inbox,
   },
   { title: "Payroll Management", url: "/hr/dashboard/payroll", icon: Inbox },
@@ -101,6 +109,10 @@ const App = () => {
                 element={<ManageEmployees />}
               />
               <Route
+                path="/hr/dashboard/announcements"
+                element={<Announcements />}
+              />
+              <Route
                 path="/hr/dashboard/attendance-leave"
                 element={<Attendance_Leave />}
               />
@@ -114,7 +126,18 @@ const App = () => {
             >
               {/* Employee Routes will go here */}
               <Route index />
-              <Route path="" />
+              <Route
+                path="/employee/dashboard/attendance"
+                element={<MyAttendance />}
+              />
+              <Route
+                path="/employee/dashboard/leave"
+                element={<LeaveRequests />}
+              />
+              <Route
+                path="/employee/dashboard/announcements"
+                element={<Announcements />}
+              />
             </Route>
           </Route>
 

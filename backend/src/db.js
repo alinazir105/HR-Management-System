@@ -11,6 +11,7 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   password: String(process.env.DB_PASS),
   port: Number(process.env.DB_PORT),
+  ssl: true,
 });
 
 const testDBConnection = async () => {

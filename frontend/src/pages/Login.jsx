@@ -83,7 +83,7 @@ const Login = () => {
   }
 
   if (isLoading) {
-    return <LoadingIcon />;
+    return <LoadingScreen />;
   }
 
   return (
