@@ -12,6 +12,7 @@ import api from "@/lib/api";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { FilterByName } from "./FilterByName";
 import { FilterByDate } from "./FilterByDate";
+import { toast } from "sonner";
 
 const Attendance = () => {
   const [attendance, setAttendance] = useState([]);
@@ -25,15 +26,15 @@ const Attendance = () => {
       setIsLoading(true);
       let response;
       try {
-        response = await api.get("/employees/attendance", {
+        response = await api.get("/attendance/all-employees", {
           withCredentials: true,
         });
         setAttendance(response.data.attendance);
-      } catch {
+      } catch (e) {
         toast.error(
-          error.response?.data?.message || "Failed to fetch attendance"
+          "Failed to fetch attendance"
         );
-        console.error("Fetch error:", error);
+        console.error("Fetch error:", e);
       } finally {
         setIsLoading(false);
       }
@@ -47,8 +48,8 @@ const Attendance = () => {
       selectedEmployee === "all"
         ? attendance
         : attendance.filter(
-            (item) => item.userid?.toString() === selectedEmployee
-          );
+          (item) => item.userid?.toString() === selectedEmployee
+        );
     setFilteredAttendance(filtered);
   }, [selectedEmployee, attendance]);
 
@@ -107,7 +108,7 @@ const Attendance = () => {
           <div className="flex justify-between">
             <h1 className="font-bold text-2xl mb-4">Manage Attendance</h1>
             <div className="flex gap-2">
-              <FilterByName onChange={setSelectedEmployee} />
+              <FilterByName setSelectedEmployee={setSelectedEmployee} selectedEmployee={selectedEmployee} />
               <FilterByName />
               <FilterByDate />
             </div>

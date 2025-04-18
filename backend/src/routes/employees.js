@@ -132,23 +132,4 @@ router.post("/update", async (req, res) => {
   }
 });
 
-router.get("/attendance", async (req, res) => {
-  let result;
-  try {
-    result =
-      await pool.query(`SELECT e.name, a.date::TEXT, a.checkin::TIME, a.checkout::TIME,a.status, a.workhours
-      FROM attendance a JOIN employees e ON a.userid = e.userid;
-`);
-    if (result.rowCount === 0) {
-      res.json({ attendance: [], message: "No attendance found!" });
-    } else {
-      res.json({
-        attendance: result.rows,
-        message: "Attendance found successfully!",
-      });
-      console.log("Fetched attendance:", response.data);
-    }
-  } catch (error) {}
-});
-
 export default router;
