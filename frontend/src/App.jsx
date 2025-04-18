@@ -30,6 +30,7 @@ import MyAttendance from "./components/Employee/Attendance/MyAttendance";
 import LeaveRequests from "./components/Employee/LeaveRequests/LeaveRequests";
 import Announcements from "./components/shared/Announcements/Announcements";
 import Profile from "./components/Employee/Profile/Profile";
+import PerformanceReview from "./components/Employee/Performance/PerformanceReview";
 import Attendance from "./components/HR/Attendance/Attendance";
 
 const hrNavItems = [
@@ -145,7 +146,14 @@ const App = () => {
                 path="/employee/dashboard/announcements"
                 element={<Announcements />}
               />
-              <Route path="/employee/dashboard/profile" element={<Profile />} />
+              <Route
+                path="/employee/dashboard/profile"
+                element={<Profile />}
+              />
+              <Route
+                path="/employee/dashboard/performance"
+                element={<PerformanceReview />}
+              />
             </Route>
           </Route>
 
