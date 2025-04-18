@@ -29,9 +29,9 @@ import ManageEmployees from "./components/HR/ManageEmployees/ManageEmployees";
 import MyAttendance from "./components/Employee/Attendance/MyAttendance";
 import LeaveRequests from "./components/Employee/LeaveRequests/LeaveRequests";
 import Announcements from "./components/shared/Announcements/Announcements";
-import Attendance from "./components/HR/Attendance/Attendance";
 import Profile from "./components/Employee/Profile/Profile";
 import PerformanceReview from "./components/Employee/Performance/PerformanceReview";
+import Attendance from "./components/HR/Attendance/Attendance";
 
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },

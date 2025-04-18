@@ -16,7 +16,7 @@ const SummaryCard = ({ to, logo: Logo, number, text, bgColor }) => {
     <Link to={to}>
       <div
         className={`flex gap-6 shadow-md p-6 border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 
-          ${bgClass} ${hoverClass} transition-all duration-300`}
+          ${bgClass} ${hoverClass} transition-all duration-300 w-64`}
       >
         <div className="hidden md:block">
           <Logo height={60} width={60} />
