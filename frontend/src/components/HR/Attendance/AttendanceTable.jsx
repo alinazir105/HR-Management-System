@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 
 const headings = ["Name", "Date", "Checkin", "Checkout", "Status", "Workhours"];
 
-const AttendaceTable = ({ attendance }) => {
+const AttendanceTable = ({ attendance }) => {
   return (
     <div className="overflow-hidden rounded-lg border border-gray-300">
       <Table>
@@ -45,13 +45,13 @@ const AttendaceTable = ({ attendance }) => {
               >
                 {Object.values(row).map((value, i) => (
                   <>
-                    {value !== row.userid && <TableCell key={i} className="px-4 py-2">
-                      {value}
-                    </TableCell>}
+                    {value !== row.userid && (
+                      <TableCell key={i} className="px-4 py-2">
+                        {value}
+                      </TableCell>
+                    )}
                   </>
-
                 ))}
-
               </TableRow>
             ))
           )}
@@ -61,4 +61,4 @@ const AttendaceTable = ({ attendance }) => {
   );
 };
 
-export default AttendaceTable;
+export default AttendanceTable;
