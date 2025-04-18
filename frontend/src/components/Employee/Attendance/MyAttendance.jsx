@@ -27,6 +27,7 @@ const MyAttendance = () => {
 
     useEffect(() => {
         fetchAllAttendance()
+        setRefetch(false)
     }, [fetchAllAttendance, refetch])
 
     if (isFetching) {
