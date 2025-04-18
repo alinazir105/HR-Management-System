@@ -15,23 +15,24 @@ import { Button } from "@/components/ui/button";
 import api from "@/lib/api";
 import { toast } from "sonner";
 
-const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
+const EditEmployeeForm = ({ data, setIsLoading, setRefresh }) => {
+  const firstname = data.name.split(" ")[0];
+  const lastname = data.name.split(" ")[1];
+
   const [formData, setFormData] = useState({
-    hashedPassword: "",
-    firstname: "",
-    lastname: "",
-    email: "",
-    department: "",
-    jobtitle: "",
-    employmenttype: "Full-Time",
-    salary: "",
-    gender: "Male",
+    id: data.userid,
+    firstname: firstname,
+    lastname: lastname,
+    email: data.email,
+    department: data.department,
+    jobtitle: data.job_title,
+    employmenttype: data.employment_type,
+    salary: data.salary,
+    gender: data.gender,
   });
 
-  const [pswdError, setPswdError] = useState("");
   const [firstnameError, setFirstnameError] = useState("");
   const [lastnameError, setLastnameError] = useState("");
-  const [emailError, setEmailError] = useState("");
   const [departmentError, setDepartmentError] = useState("");
   const [jobtitleError, setJobtitleError] = useState("");
   const [employmentTypeError, setEmploymentTypeError] = useState("");
@@ -45,17 +46,11 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
     setFormData({ ...formData, [name]: value });
 
     // Clear the error for the specific field being edited
-    if (name === "hashedPassword") {
-      setPswdError("");
-    }
     if (name === "firstname") {
       setFirstnameError("");
     }
     if (name === "lastname") {
       setLastnameError("");
-    }
-    if (name === "email") {
-      setEmailError("");
     }
     if (name === "department") {
       setDepartmentError("");
@@ -80,15 +75,6 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
 
     let isValid = true;
 
-    // Password validation
-    if (formData.hashedPassword === "") {
-      setPswdError("Password is required!");
-      isValid = false;
-    } else if (formData.hashedPassword.length < 6) {
-      setPswdError("Password must be at least 6 characters");
-      isValid = false;
-    }
-
     // First name
     if (formData.firstname === "") {
       setFirstnameError("First name is required!");
@@ -104,15 +90,6 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
       isValid = false;
     } else if (!/^[a-zA-Z\s]+$/.test(formData.lastname)) {
       setLastnameError("Last name must contain only letters");
-      isValid = false;
-    }
-
-    // Email
-    if (formData.email === "") {
-      setEmailError("Email is required!");
-      isValid = false;
-    } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formData.email)) {
-      setEmailError("Invalid email format");
       isValid = false;
     }
 
@@ -162,49 +139,24 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
     let response;
     try {
       setIsLoading(true);
-      response = await api.post("/employees/add", formData, {
+      response = await api.post("/employees/update", formData, {
         withCredentials: true,
       });
       toast.success(response.data.message);
       setRefresh(true);
-      handleReset();
     } catch {
-      toast.error(response.data.message);
+      toast.error("Error updating employees!");
     } finally {
       setIsLoading(false);
     }
   };
 
-  function handleReset() {
-    setPswdError("");
-    setFirstnameError("");
-    setLastnameError("");
-    setEmailError("");
-    setDepartmentError("");
-    setJobtitleError("");
-    setEmploymentTypeError("");
-    setSalaryError("");
-    setGenderError("");
-
-    setFormData({
-      hashedPassword: "",
-      firstname: "",
-      lastname: "",
-      email: "",
-      department: "",
-      jobtitle: "",
-      employmenttype: "Full-Time",
-      salary: "",
-      gender: "Male",
-    });
-  }
-
   return (
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline" className={"cursor-pointer"}>
-            <Plus className="mr-2" /> Add Employee
+          <Button variant="outline" className={"mr-2 cursor-pointer"}>
+            Edit
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[35em] max-h-[38em] overflow-auto">
@@ -226,34 +178,11 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
                 id="email"
                 name="email"
                 type="text"
+                disabled
                 value={formData.email}
                 onChange={handleChange}
                 className="col-span-3"
               />
-              {emailError && (
-                <p className="text-red-500 font-bold text-sm col-span-4 mt-0">
-                  {emailError}
-                </p>
-              )}
-            </div>
-            {/* Password */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="hashedPassword" className="text-right">
-                Password
-              </Label>
-              <Input
-                id="hashedPassword"
-                name="hashedPassword"
-                type="password"
-                value={formData.hashedPassword}
-                onChange={handleChange}
-                className="col-span-3"
-              />
-              {pswdError && (
-                <p className="text-red-500 font-bold text-sm col-span-4 mt-0">
-                  {pswdError}
-                </p>
-              )}
             </div>
 
             {/* First Name */}
@@ -401,10 +330,7 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
             </div>
 
             <DialogFooter>
-              <Button onClick={handleReset} variant={"outline"}>
-                Reset
-              </Button>
-              <Button type="submit">Save Employee</Button>
+              <Button type="submit">Edit Employee</Button>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -413,4 +339,4 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
   );
 };
 
-export default AddEmployeeForm;
+export default EditEmployeeForm;

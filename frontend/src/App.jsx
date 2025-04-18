@@ -23,12 +23,13 @@ import {
   Star,
   UserPen,
   Clock,
+  UserRoundCheck,
 } from "lucide-react";
 import ManageEmployees from "./components/HR/ManageEmployees/ManageEmployees";
 import MyAttendance from "./components/Employee/Attendance/MyAttendance";
 import LeaveRequests from "./components/Employee/LeaveRequests/LeaveRequests";
 import Announcements from "./components/shared/Announcements/Announcements";
-import Attendance_Leave from "./components/HR/Attendance & Leave/Attendance_Leave";
+import Attendance from "./components/HR/Attendance/Attendance";
 
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
@@ -39,15 +40,24 @@ const hrNavItems = [
     icon: Megaphone,
   },
   {
+    title: "Manage Attendance",
+    url: "/hr/dashboard/attendance",
+    icon: UserRoundCheck,
+  },
+  {
     title: "Leave Management",
     url: "/hr/dashboard/leave",
-    icon: Inbox,
+    icon: Calendar,
   },
-  { title: "Payroll Management", url: "/hr/dashboard/payroll", icon: Inbox },
+  {
+    title: "Payroll Management",
+    url: "/hr/dashboard/payroll",
+    icon: CreditCard,
+  },
   {
     title: "Performance Evaluation",
     url: "/hr/dashboard/performance",
-    icon: Inbox,
+    icon: Star,
   },
   {
     title: "Recruitment Portal",
@@ -112,10 +122,7 @@ const App = () => {
                 path="/hr/dashboard/announcements"
                 element={<Announcements />}
               />
-              <Route
-                path="/hr/dashboard/attendance-leave"
-                element={<Attendance_Leave />}
-              />
+              <Route path="/hr/dashboard/attendance" element={<Attendance />} />
             </Route>
           </Route>
 

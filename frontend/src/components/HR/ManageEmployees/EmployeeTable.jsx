@@ -9,6 +9,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import DeleteEmployee from "./DeleteEmployee";
+import EditEmployeeForm from "./EditEmployeeForm";
 
 const headings = [
   "Name",
@@ -22,7 +24,7 @@ const headings = [
   "Actions",
 ];
 
-const EmployeeTable = ({ allEmployees }) => {
+const EmployeeTable = ({ allEmployees, setIsLoading, setRefresh }) => {
   return (
     <>
       <div className="overflow-hidden rounded-lg border border-gray-300 ">
@@ -47,7 +49,7 @@ const EmployeeTable = ({ allEmployees }) => {
               >
                 {Object.values(row).map((value, i) => (
                   <>
-                    {value !== row.id && (
+                    {value !== row.userid && (
                       <TableCell key={i} className="px-4 py-2">
                         {value}
                       </TableCell>
@@ -55,17 +57,17 @@ const EmployeeTable = ({ allEmployees }) => {
                   </>
                 ))}
 
-                <TableCell className="px-4 py-2">
-                  <Button variant="outline" className={"mr-2 cursor-pointer"}>
-                    {" "}
-                    Edit
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    className={"hover:bg-red-700 cursor-pointer"}
-                  >
-                    Delete
-                  </Button>
+                <TableCell className="px-4 py-2 flex">
+                  <EditEmployeeForm
+                    data={row}
+                    setIsLoading={setIsLoading}
+                    setRefresh={setRefresh}
+                  />
+                  <DeleteEmployee
+                    userID={row.userid}
+                    setIsLoading={setIsLoading}
+                    setRefresh={setRefresh}
+                  />
                 </TableCell>
               </TableRow>
             ))}
