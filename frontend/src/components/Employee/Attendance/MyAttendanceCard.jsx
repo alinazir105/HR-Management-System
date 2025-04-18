@@ -69,7 +69,7 @@ const MyAttendanceCard = ({ setRefetch, }) => {
 
     return (
         <div className="">
-            <div className="flex gap-5 justify-between mt-4 flex-wrap items-center">
+            <div className="flex gap-5 justify-between mt-4 flex-wrap items-start">
                 <h1 className="text-3xl font-bold">My Attendance</h1>
                 <div className="flex flex-col justify-center items-center gap-2">
                     <div>

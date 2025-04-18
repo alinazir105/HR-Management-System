@@ -16,6 +16,7 @@ import { initializeSocket } from "./util/notificationSocket.js";
 import employees from "./routes/employees.js";
 import leaves from "./routes/leaves.js";
 import announcements from "./routes/announcements.js";
+import profile from "./routes/profile.js";
 
 dotenv.config();
 
@@ -58,6 +59,7 @@ app.use("/api/attendance", attendance);
 app.use("/api/employees", employees);
 app.use("/api/leaves", leaves);
 app.use("/api/announcements", announcements);
+app.use("/api/profile", profile);
 
 const PORT = process.env.SERVER_PORT || 3000;
 server.listen(PORT, () => {
