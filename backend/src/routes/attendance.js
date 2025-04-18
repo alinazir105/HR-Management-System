@@ -126,4 +126,25 @@ router.get("/my-all", async (req, res) => {
   }
 });
 
+router.get("/all-employees", async (req, res) => {
+  let result;
+  try {
+    result =
+      await pool.query(`SELECT e.name, a.date::TEXT, a.checkin::TIME, a.checkout::TIME,a.status, a.workhours, e.userid
+      FROM attendance a JOIN employees e ON a.userid = e.userid;
+`);
+    if (result.rowCount === 0) {
+      res.json({ attendance: [], message: "No attendance found!" });
+    } else {
+      res.json({
+        attendance: result.rows,
+        message: "Attendance found successfully!",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error while fetching attendance" });
+  }
+});
+
 export default router;

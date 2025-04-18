@@ -31,6 +31,7 @@ import LeaveRequests from "./components/Employee/LeaveRequests/LeaveRequests";
 import Announcements from "./components/shared/Announcements/Announcements";
 import Profile from "./components/Employee/Profile/Profile";
 import Attendance from "./components/HR/Attendance/Attendance";
+import Profile from "./components/Employee/Profile/Profile";
 
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },

@@ -18,9 +18,8 @@ import {
 } from "@/components/ui/popover";
 import api from "@/lib/api"; // your Axios setup
 
-export function FilterByName() {
+export function FilterByName({ setSelectedEmployee, selectedEmployee }) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("all");
   const [employees, setEmployees] = useState([]);
 
   // Fetch employees
@@ -53,7 +52,7 @@ export function FilterByName() {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {options.find((opt) => opt.value === value)?.label ||
+          {options.find((opt) => opt.value === selectedEmployee)?.label ||
             "Select Employee..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
         </Button>
@@ -69,7 +68,7 @@ export function FilterByName() {
                   key={option.value}
                   value={option.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "all" : currentValue);
+                    setSelectedEmployee(currentValue);
                     setOpen(false);
                   }}
                 >
@@ -77,7 +76,7 @@ export function FilterByName() {
                   <Check
                     className={cn(
                       "ml-auto h-4 w-4",
-                      value === option.value ? "opacity-100" : "opacity-0"
+                      selectedEmployee === option.value ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>
