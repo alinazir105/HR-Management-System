@@ -7,19 +7,25 @@ import {
   UserRoundCheck,
   UserRoundX,
 } from "lucide-react";
-import AttendaceTable from "./AttendanceTable";
+
 import api from "@/lib/api";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { FilterByName } from "./FilterByName";
 import { FilterByDate } from "./FilterByDate";
 import { toast } from "sonner";
+import AttendanceTable from "./AttendanceTable";
+import { DateDropdown } from "./DateDropdown";
 
 const Attendance = () => {
   const [attendance, setAttendance] = useState([]);
+  console.log("🚀 ~ Attendance ~ attendance:", attendance);
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [filteredAttendance, setFilteredAttendance] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState("all");
+  const [selectedDateOption, setSelectedDateOption] = useState("all");
+  const [selectedDate, setSelectedDate] = useState("");
+  console.log("🚀 ~ Attendance ~ selectedDate:", selectedDate);
 
   useEffect(() => {
     async function fetchAttendance() {
@@ -31,9 +37,7 @@ const Attendance = () => {
         });
         setAttendance(response.data.attendance);
       } catch (e) {
-        toast.error(
-          "Failed to fetch attendance"
-        );
+        toast.error("Failed to fetch attendance");
         console.error("Fetch error:", e);
       } finally {
         setIsLoading(false);
@@ -44,14 +48,27 @@ const Attendance = () => {
   }, [refresh]);
 
   useEffect(() => {
-    const filtered =
-      selectedEmployee === "all"
-        ? attendance
-        : attendance.filter(
-          (item) => item.userid?.toString() === selectedEmployee
-        );
+    let filtered = [...attendance];
+
+    // Filter by selected employee
+    if (selectedEmployee !== "all") {
+      filtered = filtered.filter(
+        (item) => item.userid?.toString() === selectedEmployee
+      );
+    }
+
+    // Filter by selected date
+    if (selectedDateOption === "specific" && selectedDate) {
+      const selectedFormatted = new Date(selectedDate).toLocaleDateString(); // "YYYY-MM-DD"
+
+      filtered = filtered.filter((item) => {
+        const itemDate = new Date(item.date).toLocaleDateString();
+        return itemDate === selectedFormatted;
+      });
+    }
+
     setFilteredAttendance(filtered);
-  }, [selectedEmployee, attendance]);
+  }, [selectedEmployee, selectedDate, selectedDateOption, attendance]);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -60,60 +77,26 @@ const Attendance = () => {
   return (
     <>
       <div className="ml-10 mr-10 mt-3 flex flex-col gap-10">
-        <div className="flex flex-col gap-3 flex-wrap">
-          <h1 className="font-bold text-2xl mb-4">
-            Attendance & Leave Overview
-          </h1>
-          <div className="flex gap-3 flex-wrap">
-            <SummaryCard
-              to="#"
-              logo={UserRoundCheck}
-              number="50"
-              text="Present Today"
-              bgColor="yellow"
-            />
-
-            <SummaryCard
-              to="#"
-              logo={UserRoundX}
-              number="5"
-              text="Absent Today"
-              bgColor="blue"
-            />
-            <SummaryCard
-              to="#"
-              logo={CalendarClock}
-              number="5"
-              text="On Leave"
-              bgColor="green"
-            />
-            <SummaryCard
-              to="#"
-              logo={AlarmClock}
-              number="5"
-              text="Late Checkins"
-              bgColor="gray"
-            />
-            <SummaryCard
-              to="#"
-              logo={Hourglass}
-              number="5"
-              text="Pending Leaves"
-              bgColor="yellow"
-            />
-          </div>
-        </div>
-
         <div>
           <div className="flex justify-between">
             <h1 className="font-bold text-2xl mb-4">Manage Attendance</h1>
             <div className="flex gap-2">
-              <FilterByName setSelectedEmployee={setSelectedEmployee} selectedEmployee={selectedEmployee} />
-              <FilterByName />
-              <FilterByDate />
+              <FilterByName
+                setSelectedEmployee={setSelectedEmployee}
+                selectedEmployee={selectedEmployee}
+              />
+              <DateDropdown
+                setSelectedDateOption={setSelectedDateOption}
+                selectedDateOption={selectedDateOption}
+              />
+              <FilterByDate
+                selectedDateOption={selectedDateOption}
+                setSelectedDate={setSelectedDate}
+                selectedDate={selectedDate}
+              />
             </div>
           </div>
-          <AttendaceTable attendance={filteredAttendance} />
+          <AttendanceTable attendance={filteredAttendance} />
         </div>
       </div>
     </>

@@ -13,9 +13,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export function FilterByDate() {
-  const [date, setDate] = React.useState(null);
-
+export function FilterByDate({
+  selectedDateOption,
+  setSelectedDate,
+  selectedDate,
+}) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -23,18 +25,23 @@ export function FilterByDate() {
           variant={"outline"}
           className={cn(
             "w-[240px] justify-start text-left font-normal",
-            !date && "text-muted-foreground"
+            !selectedDate && "text-muted-foreground"
           )}
+          disabled={selectedDateOption === "specific" ? false : true}
         >
           <CalendarIcon />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {selectedDate ? (
+            format(selectedDate, "PPP")
+          ) : (
+            <span>Pick a date</span>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
-          selected={date}
-          onSelect={setDate}
+          selected={selectedDate}
+          onSelect={setSelectedDate}
           initialFocus
         />
       </PopoverContent>
