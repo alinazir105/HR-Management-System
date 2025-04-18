@@ -109,7 +109,7 @@ router.get("/my-all", async (req, res) => {
 
   try {
     const result = await pool.query(
-      "SELECT date,checkin,checkout,workhours,status FROM ATTENDANCE WHERE userid = $1",
+      "SELECT date,checkin,checkout,workhours,status FROM ATTENDANCE WHERE userid = $1 order by date desc",
       [id]
     );
 
