@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -13,26 +12,35 @@ import {
 import { Button } from '@/components/ui/button'
 import api from '@/lib/api';
 import { toast } from 'sonner';
-
+import { Loader2 } from 'lucide-react';
 
 const LeaveRequestCancel = ({ leaveID, setRefreshData }) => {
-    const [leaveRequestID,] = useState(leaveID);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
     async function handleRequestRemove() {
-        let response;
+        setIsLoading(true);
         try {
-            response = await api.delete(`/leaves/remove-leave/${leaveRequestID}`,)
-            toast.success(response.data.message)
-            setRefreshData(true)
-        }
-        catch {
-            toast.error("Error while cancelling request! Please try again later!")
+            const response = await api.delete(`/leaves/remove-leave/${leaveID}`);
+            toast.success(response.data.message);
+            setRefreshData(true);
+            setIsOpen(false); // close manually after success
+        } catch (e) {
+            toast.error(e?.response?.data?.message || "An error occurred");
+        } finally {
+            setIsLoading(false);
         }
     }
 
     return (
-        <AlertDialog>
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
             <AlertDialogTrigger asChild>
-                <Button className={"cursor-pointer font-semibold"}>Cancel Request</Button>
+                <Button
+                    className="cursor-pointer font-semibold"
+                    onClick={() => setIsOpen(true)}
+                >
+                    Cancel Request
+                </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
@@ -42,13 +50,22 @@ const LeaveRequestCancel = ({ leaveID, setRefreshData }) => {
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleRequestRemove}>Continue</AlertDialogAction>
+                    <AlertDialogCancel disabled={isLoading}>
+                        Cancel
+                    </AlertDialogCancel>
+                    <Button
+                        onClick={handleRequestRemove}
+                        disabled={isLoading}
+                    >
+                        {isLoading && (
+                            <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                        )}
+                        Continue
+                    </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
+    );
+};
 
-    )
-}
-
-export default LeaveRequestCancel
+export default LeaveRequestCancel;

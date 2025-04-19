@@ -59,7 +59,7 @@ const AnnouncementCard = ({ data, setRefreshData, setIsDeleting }) => {
   });
 
   return (
-    <div className="p-4 pb-5 shadow-sm rounded-lg border border-neutral-300 relative">
+    <div className="p-4 pb-5 shadow-sm rounded-lg border border-neutral-300 relative hover:scale-[1.01] transition-all hover:bg-gray-50 hover:shadow-md">
       <div className="flex gap-5 justify-between items-center">
         <Badge
           className={`text-white font-semibold ${data.type === "General"
