@@ -5,11 +5,11 @@ import { sendNotification } from "../util/notificationSocket.js";
 const router = express.Router();
 
 router.get("/my-all", async (req, res) => {
-  const { id } = req.session.data;
+  const { employeeid } = req.session.data;
   try {
     const results = await pool.query(
-      "Select id,leavetype,startdate::TEXT,enddate::TEXT,reason,status,hrremarks from leave_requests where userid = $1",
-      [id]
+      "Select id,leavetype,startdate::TEXT,enddate::TEXT,reason,status,hrremarks from leave_requests where employeeid = $1",
+      [employeeid]
     );
     if (results.rowCount == 0) {
       res.status(200).json({ leaves: [], message: "No leave records found" });
