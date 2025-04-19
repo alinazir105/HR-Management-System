@@ -30,7 +30,7 @@ const PerformanceDetails = ({ performanceReviews }) => {
 
             <CardContent>
                 <Accordion type="multiple">
-                    {performanceReviews.map((review, index) => (
+                    {performanceReviews[0].id == null ? "No reviews found!" : performanceReviews.map((review, index) => (
                         <AccordionItem
                             value={review.id}
                             key={review.id}
@@ -96,7 +96,7 @@ const PerformanceDetails = ({ performanceReviews }) => {
                                         Goals Set
                                     </p>
                                     <ul className="list-disc list-inside text-gray-700">
-                                        {review.goals_set.map((goal, idx) => (
+                                        {review.goals_set?.map((goal, idx) => (
                                             <li key={idx}>{goal}</li>
                                         ))}
                                     </ul>
@@ -107,7 +107,7 @@ const PerformanceDetails = ({ performanceReviews }) => {
                                         Goals Achieved
                                     </p>
                                     <ul className="list-disc list-inside text-gray-700">
-                                        {review.goals_achieved.map((goal, idx) => (
+                                        {review.goals_achieved?.map((goal, idx) => (
                                             <li key={idx}>{goal}</li>
                                         ))}
                                     </ul>
@@ -118,7 +118,7 @@ const PerformanceDetails = ({ performanceReviews }) => {
                                         Areas to Improve
                                     </p>
                                     <ul className="list-disc list-inside text-gray-700">
-                                        {review.areas_to_improve.map((area, idx) => (
+                                        {review.areas_to_improve?.map((area, idx) => (
                                             <li key={idx}>{area}</li>
                                         ))}
                                     </ul>

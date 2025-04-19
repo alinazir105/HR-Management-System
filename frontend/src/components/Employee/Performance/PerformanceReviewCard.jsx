@@ -53,19 +53,19 @@ const PerformanceReviewCard = ({ performanceReviews }) => {
                     </div>
 
                     <div className="text-lg font-semibold text-gray-600 mt-2">
-                        Total Reviews: {performanceReviews.length}
+                        Total Reviews: {performanceReviews[0].id !== null ? performanceReviews.length : 0}
                     </div>
                     <div className="text-sm text-gray-400 mt-1">
-                        Last Reviewed: {new Date(performanceReviews[0].reviewed_at).toLocaleDateString('en-US', {
+                        Last Reviewed: {performanceReviews[0].reviewed_at == null ? "N/A" : new Date(performanceReviews[0].reviewed_at).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'long',
                         })}
                     </div>
                     <div className="mt-4 text-gray-700 text-sm italic">
-                        "{performanceReviews[0].feedback}"
+                        "{performanceReviews[0].feedback == null ? "N/A" : performanceReviews[0].feedback}"
                     </div>
                     <div className="text-sm text-gray-400 mt-2">
-                        <span className='font-semibold'>Latest Achieved Goals: </span>{performanceReviews[0].goals_achieved}
+                        <span className='font-semibold'>Latest Achieved Goals: </span>{performanceReviews[0].goals_achieved == null ? "N/A" : performanceReviews[0].goals_achieved}
                     </div>
                 </div>
             </div>

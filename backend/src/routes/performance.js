@@ -7,7 +7,26 @@ router.get("/me", async (req, res) => {
   const { id } = req.session.data;
   try {
     const result = await pool.query(
-      "Select p.id,p.period,p.reviewer,p.rating,p.feedback,p.status,p.reviewed_at,p.goals_set,p.goals_achieved,p.areas_to_improve,e.name,e.department,e.job_title,e.start_date from performance_reviews p join employees e on e.employeeid=p.employeeid where e.userid=$1 order by p.created_at desc",
+      `SELECT 
+  p.id,
+  p.period,
+  p.reviewer,
+  p.rating,
+  p.feedback,
+  p.status,
+  p.reviewed_at,
+  p.goals_set,
+  p.goals_achieved,
+  p.areas_to_improve,
+  e.name,
+  e.department,
+  e.job_title,
+  e.start_date
+FROM employees e
+LEFT JOIN performance_reviews p ON e.employeeid = p.employeeid
+WHERE e.userid = $1
+ORDER BY p.created_at DESC;
+`,
       [id]
     );
     if (result.rowCount == 0) {
