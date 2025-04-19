@@ -10,9 +10,13 @@ const router = express.Router();
 router.post("/login", async (req, res) => {
   const { password, email } = req.body;
 
-  const results = await pool.query("Select * from users where email=$1", [
-    email,
-  ]);
+  const results = await pool.query(
+    `SELECT u.id, u.role, u.email, u.password, e.employeeid
+    FROM users u
+    JOIN employees e ON u.id = e.userid
+    WHERE u.email = $1`,
+    [email]
+  );
   if (results.rows.length == 0) {
     return res.status(400).json({ message: "Invalid Credentials" });
   }
@@ -28,6 +32,7 @@ router.post("/login", async (req, res) => {
     role: userData.role,
     username: userData.username,
     email: userData.email,
+    employeeid: userData.employeeid,
   };
   req.session.save((err) => {
     if (err) {
