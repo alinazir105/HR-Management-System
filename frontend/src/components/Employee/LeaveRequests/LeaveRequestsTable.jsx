@@ -16,41 +16,56 @@ const headings = [
 
 const LeaveRequestsTable = ({ allLeaves, setRefreshData }) => {
     return (
-        <div className='mt-8 mb-6'>
+        <div className='mt-6 mb-6'>
             <div className="overflow-auto max-h-[70vh] rounded-lg border border-gray-300 ">
                 <Table>
                     <TableHeader>
-                        <TableRow className={"hover:bg-tranparent"}>
+                        <TableRow className="bg-gray-50 text-left">
                             {headings.map((heading, index) => (
                                 <TableHead
                                     key={index}
-                                    className={"text-lg font-semibold px-4 py-2 bg-gray-300"}
+                                    className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 "
                                 >
                                     {heading}
                                 </TableHead>
                             ))}
                         </TableRow>
                     </TableHeader>
+
+
                     <TableBody>
-                        {allLeaves.length === 0 &&
-                            <TableCell colSpan={7} className="px-4 py-4 text-center font-semibold text-red-700 text-lg">
-                                No leave records found!
-                            </TableCell>
+                        {allLeaves[0].id == null &&
+                            <TableRow>
+
+                                <TableCell colSpan={7} className="px-4 py-4 text-center font-semibold text-red-700 text-lg">
+                                    No leave records found!
+                                </TableCell>
+                            </TableRow>
                         }
-                        {allLeaves.length > 0 && allLeaves.map((row, index) => (
+                        {allLeaves[0].id !== null && allLeaves.map((row, index) => (
                             <TableRow
                                 key={index}
                                 className={"text-[1rem] px-4 py-2 hover:bg-transparent"}
                             >
-                                {Object.values(row).map((value, i) => (
-                                    <>
-                                        {value !== row.id && <TableCell key={i} className="px-4 py-2">
-                                            {value || "N/A"}
-                                        </TableCell>}
-                                    </>
-
-                                ))}
-                                {row.status == 'Pending' &&
+                                <TableCell className="px-5 py-2">
+                                    {row.leavetype}
+                                </TableCell>
+                                <TableCell className="px-5 py-2">
+                                    {row.startdate}
+                                </TableCell>
+                                <TableCell className="px-5 py-2">
+                                    {row.enddate}
+                                </TableCell>
+                                <TableCell className="px-5 py-2">
+                                    {row.reason}
+                                </TableCell>
+                                <TableCell className="px-5 py-2">
+                                    {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
+                                </TableCell>
+                                <TableCell className="px-6 py-2">
+                                    {row.hrremarks || "N/A"}
+                                </TableCell>
+                                {row.status == 'pending' &&
                                     <TableCell className={"px-4 py-2"}>
                                         <LeaveRequestCancel leaveID={row.id} setRefreshData={setRefreshData} />
                                     </TableCell>

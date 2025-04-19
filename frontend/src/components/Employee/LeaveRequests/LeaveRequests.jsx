@@ -4,10 +4,12 @@ import LeaveRequestsTable from './LeaveRequestsTable'
 import api from '@/lib/api'
 import { toast } from 'sonner'
 import LoadingScreen from '@/components/ui/LoadingScreen'
+import LeaveBalanceCard from './LeaveBalanceCard'
 
 
 const LeaveRequests = () => {
   const [allLeaves, setAllLeaves] = useState([])
+  console.log("🚀 ~ LeaveRequests ~ allLeaves:", allLeaves)
   const [refreshData, setRefreshData] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -38,6 +40,7 @@ const LeaveRequests = () => {
   return (
     <div className='ml-10 mt-2 mr-8'>
       <LeaveRequestsHeader setRefreshData={setRefreshData} />
+      <LeaveBalanceCard allLeaves={allLeaves[0]} />
       <LeaveRequestsTable allLeaves={allLeaves} setRefreshData={setRefreshData} />
     </div>
   )

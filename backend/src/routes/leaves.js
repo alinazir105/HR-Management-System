@@ -8,7 +8,7 @@ router.get("/my-all", async (req, res) => {
   const { employeeid } = req.session.data;
   try {
     const results = await pool.query(
-      "Select id,leavetype,startdate::TEXT,enddate::TEXT,reason,status,hrremarks from leave_requests where employeeid = $1",
+      "Select r.id,r.leavetype,r.startdate::TEXT,r.enddate::TEXT,r.reason,r.status,r.hrremarks,b.sick_leave_total,b.sick_leave_used,b.annual_leave_total,b.annual_leave_used,b.casual_leave_total,b.casual_leave_used,b.parental_leave_total,b.parental_leave_used from leave_balances b LEFT JOIN leave_requests r on b.employeeid=r.employeeid where b.employeeid = $1",
       [employeeid]
     );
     if (results.rowCount == 0) {
@@ -23,14 +23,43 @@ router.get("/my-all", async (req, res) => {
 
 router.post("/submit-leave", async (req, res) => {
   const { leaveType, startDate, endDate, reason } = req.body;
-  const { id } = req.session.data;
+  const { employeeid } = req.session.data;
   try {
-    let leaveRequestResponse = await pool.query(
-      "Insert into leave_requests (userid, leavetype, startdate, enddate, reason) values ($1,$2,$3,$4,$5) RETURNING *",
-      [id, leaveType, startDate, endDate, reason]
+    const balanceRes = await pool.query(
+      "SELECT * FROM leave_balances WHERE employeeid = $1",
+      [employeeid]
     );
 
-    let title = `New ${leaveType} Request, ID:${leaveRequestResponse.rows[0].id} from Employee ${id}!`;
+    if (balanceRes.rowCount === 0) {
+      return res.status(400).json({ message: "Leave balance not found!" });
+    }
+
+    const balance = balanceRes.rows[0];
+
+    const days = Math.ceil(
+      (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24) + 1
+    );
+
+    let totalKey = `${leaveType.split(" ")[0].toLowerCase()}_leave_total`;
+    let usedKey = `${leaveType.split(" ")[0].toLowerCase()}_leave_used`;
+
+    if (balance[totalKey] === undefined || balance[usedKey] === undefined) {
+      return res.status(400).json({ message: "Invalid leave type!" });
+    }
+
+    const remaining = balance[totalKey] - balance[usedKey];
+    if (days > remaining) {
+      return res.status(400).json({
+        message: `Not enough ${leaveType} days left. You have ${remaining} remaining.`,
+      });
+    }
+
+    const leaveRequestResponse = await pool.query(
+      "INSERT INTO leave_requests (employeeid, leavetype, startdate, enddate, reason) VALUES ($1,$2,$3,$4,$5) RETURNING *",
+      [employeeid, leaveType, startDate, endDate, reason]
+    );
+
+    let title = `New ${leaveType} Request, ID:${leaveRequestResponse.rows[0].id} from Employee ${employeeid}!`;
     let notificationResponse = await pool.query(
       "Insert into notifications (user_id,title,type) values ('hr',$1,'leave') RETURNING *",
       [title]
