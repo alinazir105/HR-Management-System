@@ -31,9 +31,9 @@ const DashboardSidebar = ({ navItems }) => {
     try {
       await api.post("/auth/logout", {}, { withCredentials: true });
       toast.success("Logout successful!");
-      setSessionData(null);
       disconnectSocket()
       navigate("/login");
+      setSessionData(null)
     } catch (error) {
       console.error("Logout failed", error);
       toast.error("Logout failed! Please try again.");

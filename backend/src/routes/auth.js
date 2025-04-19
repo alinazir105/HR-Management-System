@@ -13,7 +13,7 @@ router.post("/login", async (req, res) => {
   const results = await pool.query(
     `SELECT u.id, u.role, u.email, u.password, e.employeeid
     FROM users u
-    JOIN employees e ON u.id = e.userid
+    LEFT JOIN employees e ON u.id = e.userid
     WHERE u.email = $1`,
     [email]
   );
