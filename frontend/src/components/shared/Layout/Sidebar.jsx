@@ -46,7 +46,7 @@ const DashboardSidebar = ({ navItems }) => {
 
   return (
     <>
-      <Sidebar>
+      <Sidebar className={"z-50"}>
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel className="text-2xl font-semibold mt-2">
