@@ -10,19 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-const reviews = [
-  {
-    id: 1,
-    employeeid: "EMP123",
-    name: "Sara Khan",
-    period: "Q1 2025",
-    reviewer: "HR Manager",
-    rating: 4.2,
-    status: "Completed",
-    reviewed_at: "2025-04-01",
-  },
-];
-
 const headings = [
   "Employee ID",
   "Employee Name",
@@ -34,7 +21,7 @@ const headings = [
   "Actions",
 ];
 
-const PerformanceEvaluationTable = () => {
+const PerformanceEvaluationTable = ({ allPerformanceReviews }) => {
   return (
     <div className="rounded-xl border shadow-sm mt-3">
       <Table>
@@ -51,45 +38,48 @@ const PerformanceEvaluationTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {reviews.map((review) => (
-            <TableRow key={review.id}>
-              <TableCell className={"px-5"}>{review.employeeid}</TableCell>
-              <TableCell className={"px-5"}>{review.name}</TableCell>
-              <TableCell className={"px-5"}>{review.period}</TableCell>
-              <TableCell className={"px-5"}>{review.reviewer}</TableCell>
-              <TableCell className={"px-5"}>{review.rating}</TableCell>
-              <TableCell className={"px-5"}>
-                {review.reviewed_at || "—"}
-              </TableCell>
-              <TableCell className={"px-5"}>
-                <Badge>{review.status}</Badge>
-              </TableCell>
-              <TableCell className="flex gap-2 px-5">
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="hover:bg-muted"
-                  onClick={() => console.log("View", review.id)}
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="hover:bg-muted"
-                  onClick={() => console.log("Edit", review.id)}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="destructive"
-                  onClick={() => console.log("Delete", review.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </TableCell>
-            </TableRow>
+          {allPerformanceReviews.map((review) => (
+            <>
+              {review.id && <TableRow key={review.id}>
+                <TableCell className={"px-5"}>{review.employeeid}</TableCell>
+                <TableCell className={"px-5"}>{review.name}</TableCell>
+                <TableCell className={"px-5"}>{review.period}</TableCell>
+                <TableCell className={"px-5"}>{review.reviewer}</TableCell>
+                <TableCell className={"px-5"}>{review.rating || "-"}</TableCell>
+                <TableCell className={"px-5"}>
+                  {new Date(review.reviewed_at).toLocaleDateString() || "—"}
+                </TableCell>
+                <TableCell className={"px-5"}>
+                  <Badge>{review.status}</Badge>
+                </TableCell>
+                <TableCell className="flex gap-2 px-5">
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="hover:bg-muted"
+                    onClick={() => console.log("View", review.id)}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="hover:bg-muted"
+                    onClick={() => console.log("Edit", review.id)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="destructive"
+                    onClick={() => console.log("Delete", review.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>}
+            </>
+
           ))}
         </TableBody>
       </Table>

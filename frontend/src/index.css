@@ -123,4 +123,44 @@
   .content {
     @apply ml-10 mt-2 mr-8 mb-5;
   }
+  /* WebKit Scrollbar (Chrome, Edge, Safari) */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: color-mix(
+      in oklch,
+      var(--muted) 85%,
+      white
+    ); /* lightened track */
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: color-mix(
+      in oklch,
+      var(--primary) 80%,
+      white
+    ); /* slightly lightened thumb */
+    border-radius: 999px;
+    border: 2px solid color-mix(in oklch, var(--muted) 85%, white);
+    transition: background-color 0.3s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(
+      in oklch,
+      var(--accent) 80%,
+      white
+    ); /* lighter on hover */
+  }
+
+  /* Firefox Scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--primary) 80%, white)
+      color-mix(in oklch, var(--muted) 85%, white);
+  }
 }
