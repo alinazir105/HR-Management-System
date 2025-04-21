@@ -13,7 +13,7 @@ const headings = ["Name", "Date", "Checkin", "Checkout", "Status", "Workhours"];
 
 const AttendanceTable = ({ attendance }) => {
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-300">
+    <div className="overflow-hidden rounded-lg border border-gray-300 mt-5">
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">

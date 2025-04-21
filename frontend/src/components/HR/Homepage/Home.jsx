@@ -15,7 +15,7 @@ import {
 const Home = () => {
   return (
     <>
-      <div className="ml-10 mt-3">
+      <div className="content">
         <div className="flex flex-col gap-3 flex-wrap">
           <h1 className="font-bold text-2xl mb-4">
             Attendance & Leave Overview

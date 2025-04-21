@@ -70,7 +70,7 @@ const DashboardSidebar = ({ navItems }) => {
                       ? sessionData.role === "hr"
                         ? "HR"
                         : sessionData.role.charAt(0).toUpperCase() +
-                          sessionData.role.slice(1)
+                        sessionData.role.slice(1)
                       : "Guest"}
                   </p>
                 </div>
@@ -81,9 +81,8 @@ const DashboardSidebar = ({ navItems }) => {
                   return (
                     <SidebarMenuItem
                       key={item.title}
-                      className={`mt-1 hover:bg-gray-100 rounded-md ${
-                        isActive ? "bg-gray-100" : ""
-                      }`}
+                      className={`mt-1 hover:bg-gray-100 rounded-md ${isActive ? "bg-gray-100" : ""
+                        }`}
                     >
                       <SidebarMenuButton asChild>
                         <Link
