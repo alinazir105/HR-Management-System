@@ -1,13 +1,4 @@
 import React, { useEffect, useState } from "react";
-import SummaryCard from "../Homepage/SummaryCard";
-import {
-  AlarmClock,
-  CalendarClock,
-  Hourglass,
-  UserRoundCheck,
-  UserRoundX,
-} from "lucide-react";
-
 import api from "@/lib/api";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { FilterByName } from "./FilterByName";
@@ -18,7 +9,6 @@ import { DateDropdown } from "./DateDropdown";
 
 const Attendance = () => {
   const [attendance, setAttendance] = useState([]);
-  console.log("🚀 ~ Attendance ~ attendance:", attendance);
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [filteredAttendance, setFilteredAttendance] = useState([]);
