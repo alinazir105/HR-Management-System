@@ -63,7 +63,7 @@ FROM employees e
 LEFT JOIN performance_reviews p ON e.employeeid = p.employeeid
 ORDER BY 
   e.name ASC,
-  p.created_at DESC; 
+  p.reviewed_at DESC; 
 `
     );
     if (result.rowCount == 0) {
@@ -81,6 +81,11 @@ ORDER BY
 });
 
 router.post("/add", async (req, res) => {
+  const formatArrayForPostgres = (arr) => {
+    return `{${arr.filter((g) => g.trim() !== "").join(",")}}`;
+  };
+
+  console.log(req.body);
   const {
     employeeid,
     period,
@@ -89,10 +94,14 @@ router.post("/add", async (req, res) => {
     feedback,
     status,
     reviewed_at,
-    goals_set,
-    goals_achieved,
-    areas_to_improve,
   } = req.body;
+
+  let goals_set = formatArrayForPostgres(req.body.goals_set);
+  let goals_achieved = formatArrayForPostgres(req.body.goals_achieved);
+  let areas_to_improve = formatArrayForPostgres(
+    req.body.areas_to_improve.split(",")
+  );
+
   try {
     await pool.query(
       `Insert into performance_reviews (employeeid,period,reviewer,rating,feedback,status,reviewed_at,goals_set,goals_achieved,areas_to_improve) Values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);`,

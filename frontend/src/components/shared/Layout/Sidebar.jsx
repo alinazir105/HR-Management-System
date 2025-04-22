@@ -35,7 +35,7 @@ const DashboardSidebar = ({ navItems }) => {
       navigate("/login");
       setTimeout(() => {
         setSessionData(null);
-      }, 50);
+      }, 10);
     } catch (error) {
       console.error("Logout failed", error);
       toast.error("Logout failed! Please try again.");
