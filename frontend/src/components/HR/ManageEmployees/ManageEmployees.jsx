@@ -32,7 +32,7 @@ const ManageEmployees = () => {
   }
   return (
     <>
-      <div className="ml-10 mr-10 mt-3">
+      <div className="content">
         <div className="flex justify-between items-center">
           <h1 className="font-bold text-2xl text-center mb-4">
             Manage Employees

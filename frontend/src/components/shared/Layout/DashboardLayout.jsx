@@ -15,15 +15,20 @@ const DashboardLayout = ({ navItems }) => {
   return (
     <>
       <SidebarProvider>
-        <DashboardSidebar navItems={navItems} />
-        <main className="w-full">
-          <div className="flex justify-between items-center sticky top-0 z-10 bg-white">
-            <SidebarTrigger className="w-12 h-12 p-3 rounded-full hover:bg-gray-300 cursor-pointer transition-all"></SidebarTrigger>
-            <Notifications />
-          </div>
+        <div className="flex min-h-screen overflow-hidden w-full">
+          <DashboardSidebar navItems={navItems} />
 
-          <Outlet />
-        </main>
+          <main className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex justify-between items-center sticky top-0 z-10 bg-white">
+              <SidebarTrigger className="w-12 h-12 p-3 rounded-full hover:bg-gray-300 cursor-pointer transition-all" />
+              <Notifications />
+            </div>
+
+            <div className="flex-1 overflow-y-auto">
+              <Outlet />
+            </div>
+          </main>
+        </div>
       </SidebarProvider>
     </>
   );

@@ -66,11 +66,11 @@ const Attendance = () => {
 
   return (
     <>
-      <div className="ml-10 mr-10 mt-3 flex flex-col gap-10">
+      <div className="content flex flex-col gap-10">
         <div>
-          <div className="flex justify-between">
-            <h1 className="font-bold text-2xl mb-4">Manage Attendance</h1>
-            <div className="flex gap-2">
+          <div className="flex justify-between flex-wrap gap-2">
+            <h1 className="font-bold text-2xl">Manage Attendance</h1>
+            <div className="flex gap-2 flex-wrap">
               <FilterByName
                 setSelectedEmployee={setSelectedEmployee}
                 selectedEmployee={selectedEmployee}

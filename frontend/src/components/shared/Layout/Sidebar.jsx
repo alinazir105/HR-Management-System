@@ -24,29 +24,29 @@ const DashboardSidebar = ({ navItems }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { sessionData, setSessionData } = useSession();
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   async function handleLogout() {
-    setIsLoggingOut(true)
+    setIsLoggingOut(true);
     try {
       await api.post("/auth/logout", {}, { withCredentials: true });
       toast.success("Logout successful!");
-      disconnectSocket()
+      disconnectSocket();
       navigate("/login");
-      setSessionData(null)
+      setTimeout(() => {
+        setSessionData(null);
+      }, 10);
     } catch (error) {
       console.error("Logout failed", error);
       toast.error("Logout failed! Please try again.");
-    }
-    finally {
-      setIsLoggingOut(false)
+    } finally {
+      setIsLoggingOut(false);
     }
   }
 
-
   return (
     <>
-      <Sidebar>
+      <Sidebar className={"z-50"}>
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel className="text-2xl font-semibold mt-2">
@@ -77,9 +77,13 @@ const DashboardSidebar = ({ navItems }) => {
               </div>
               <SidebarMenu className={"mt-6"}>
                 {navItems.map((item) => {
-                  const isActive = location.pathname === item.url; return (
-
-                    <SidebarMenuItem key={item.title} className={`mt-1 hover:bg-gray-100 rounded-md ${isActive ? "bg-gray-100" : ""}`}>
+                  const isActive = location.pathname === item.url;
+                  return (
+                    <SidebarMenuItem
+                      key={item.title}
+                      className={`mt-1 hover:bg-gray-100 rounded-md ${isActive ? "bg-gray-100" : ""
+                        }`}
+                    >
                       <SidebarMenuButton asChild>
                         <Link
                           to={item.url}
@@ -92,7 +96,7 @@ const DashboardSidebar = ({ navItems }) => {
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  )
+                  );
                 })}
               </SidebarMenu>
             </SidebarGroupContent>
@@ -107,9 +111,12 @@ const DashboardSidebar = ({ navItems }) => {
                   className="flex items-center gap-3 px-5 py-5 cursor-pointer hover:px-6"
                   disabled={isLoggingOut}
                 >
-                  {isLoggingOut ? <Loader2 className="animate-spin" /> : <LogOut className="rotate-180" />}
+                  {isLoggingOut ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <LogOut className="rotate-180" />
+                  )}
                   <span className="text-[1.1em] font-medium mb-0.5">
-
                     Logout
                   </span>
                 </button>
