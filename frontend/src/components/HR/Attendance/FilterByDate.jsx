@@ -1,5 +1,4 @@
 import * as React from "react";
-import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -29,7 +28,7 @@ export function FilterByDate({
         >
           <CalendarIcon />
           {selectedDate ? (
-            format(selectedDate, "PPP")
+            new Date(selectedDate).toLocaleDateString()
           ) : (
             <span>Pick a date</span>
           )}
