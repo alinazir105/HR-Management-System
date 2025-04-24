@@ -79,11 +79,11 @@ const Attendance = () => {
                 setSelectedDateOption={setSelectedDateOption}
                 selectedDateOption={selectedDateOption}
               />
-              <FilterByDate
+              {/* <FilterByDate
                 selectedDateOption={selectedDateOption}
                 setSelectedDate={setSelectedDate}
                 selectedDate={selectedDate}
-              />
+              /> */}
             </div>
           </div>
           <AttendanceTable attendance={filteredAttendance} />

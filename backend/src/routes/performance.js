@@ -85,7 +85,6 @@ router.post("/add", async (req, res) => {
     return `{${arr.filter((g) => g.trim() !== "").join(",")}}`;
   };
 
-  console.log(req.body);
   const {
     employeeid,
     period,
@@ -122,6 +121,17 @@ router.post("/add", async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: "Error while adding review" });
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    await pool.query("Delete from performance_reviews where id=$1", [id]);
+    res.json({ message: "Review deleted successfully!" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Error while deleting review" });
   }
 });
 
