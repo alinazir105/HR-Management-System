@@ -11,6 +11,7 @@ import { Eye, Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import PerformanceReviewDelete from "./PerformanceReviewDelete";
 import PerformanceReviewDetailed from "./PerformanceReviewDetailed";
+import PerformanceReviewEdit from "./PerformanceReviewEdit";
 
 const headings = [
   "Employee ID",
@@ -61,14 +62,7 @@ const PerformanceEvaluationTable = ({ allPerformanceReviews, setRefreshData }) =
                 </TableCell>
                 <TableCell className="flex gap-2 px-5">
                   <PerformanceReviewDetailed review={review} />
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="hover:bg-muted"
-                    onClick={() => console.log("Edit", review.id)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
+                  <PerformanceReviewEdit review={review} setRefreshData={setRefreshData} />
                   <PerformanceReviewDelete id={review.id} setRefreshData={setRefreshData} />
                 </TableCell>
               </TableRow>}

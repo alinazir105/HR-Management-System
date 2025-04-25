@@ -18,6 +18,7 @@ import leaves from "./routes/leaves.js";
 import announcements from "./routes/announcements.js";
 import profile from "./routes/profile.js";
 import performance from "./routes/performance.js";
+import recruitment from "./routes/recruitment.js";
 
 dotenv.config();
 
@@ -62,6 +63,7 @@ app.use("/api/leaves", leaves);
 app.use("/api/announcements", announcements);
 app.use("/api/profile", profile);
 app.use("/api/performance", performance);
+app.use("/api/recruitment", recruitment);
 
 const PORT = process.env.SERVER_PORT || 3000;
 server.listen(PORT, () => {
