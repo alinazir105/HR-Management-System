@@ -43,4 +43,34 @@ router.post("/add-job", async (req, res) => {
   }
 });
 
+router.get("/all-jobs", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        j.*, 
+        COUNT(ja.id) AS application_count
+      FROM 
+        jobs j
+      LEFT JOIN 
+        job_applications ja ON j.id = ja.job_id
+      GROUP BY 
+        j.id
+      ORDER BY 
+        j.created_at DESC
+    `);
+
+    if (result.rowCount === 0) {
+      res.json({ allJobs: [], message: "No Jobs found!" });
+    } else {
+      res.json({
+        allJobs: result.rows,
+        message: "Jobs found successfully!",
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching jobs with application counts:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 export default router;
