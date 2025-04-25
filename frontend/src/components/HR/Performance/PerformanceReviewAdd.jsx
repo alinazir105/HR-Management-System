@@ -39,7 +39,7 @@ const PerformanceReviewAdd = ({ allPerformanceReviews, setRefreshData }) => {
     const [reviewedAt, setReviewedAt] = useState(null);
     const [goalsSet, setGoalsSet] = useState([""]);
     const [goalsAchieved, setGoalsAchieved] = useState([]);
-    const [areasToImprove, setAreasToImprove] = useState([]);
+    const [areasToImprove, setAreasToImprove] = useState("");
 
     const [errors, setErrors] = useState({});
 
@@ -53,7 +53,7 @@ const PerformanceReviewAdd = ({ allPerformanceReviews, setRefreshData }) => {
         if (!reviewer) newErrors.reviewer = "Reviewer is required";
         if (!status) newErrors.status = "Status is required";
 
-        if (status === "completed") {
+        if (status === "reviewed") {
             if (!rating) newErrors.rating = "Rating is required";
             if (!feedback) newErrors.feedback = "Feedback is required";
             if (!reviewedAt) newErrors.reviewedAt = "Reviewed date is required";

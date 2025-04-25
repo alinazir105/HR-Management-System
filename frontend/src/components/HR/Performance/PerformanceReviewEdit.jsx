@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Minus, Plus } from "lucide-react";
+import { Loader2, Minus, Pencil, Plus } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -23,34 +23,63 @@ import {
 import { toast } from "sonner";
 import api from "@/lib/api";
 
-const PerformanceEvaluationEdit = ({
-  allPerformanceReviews,
+const PerformanceReviewEdit = ({
+  review,
   setRefreshData,
 }) => {
-  const [employeeId, setEmployeeId] = useState("");
-  const [period, setPeriod] = useState("");
-  const [reviewer, setReviewer] = useState("");
-  const [rating, setRating] = useState(null);
-  const [feedback, setFeedback] = useState("");
-  const [status, setStatus] = useState("");
-  const [reviewedAt, setReviewedAt] = useState(null);
-  const [goalsSet, setGoalsSet] = useState([""]);
-  const [goalsAchieved, setGoalsAchieved] = useState([]);
-  const [areasToImprove, setAreasToImprove] = useState([]);
+  const [employeeId, setEmployeeId] = useState(review.employeeid || "");
+  const [period, setPeriod] = useState(review.period || "");
+  const [reviewer, setReviewer] = useState(review.reviewer || "");
+  const [rating, setRating] = useState(Number(review.rating?.split(".")[0]) || null);
+  const [feedback, setFeedback] = useState(review.feedback || "");
+  const [status, setStatus] = useState(review.status || "");
+  const [reviewedAt, setReviewedAt] = useState(() => {
+    const date = new Date(review.reviewed_at);
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return review.reviewed_at ? `${yyyy}-${mm}-${dd}` : null;
+  });
+  const [goalsSet, setGoalsSet] = useState(review.goals_set || [""]);
+  const [goalsAchieved, setGoalsAchieved] = useState(review.goals_achieved || []);
+  const [areasToImprove, setAreasToImprove] = useState(
+    (review.areas_to_improve || []).join(", ")
+  );
 
   const [errors, setErrors] = useState({});
 
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  useEffect(() => {
+    if (isOpen) {
+      setEmployeeId(review.employeeid || "");
+      setPeriod(review.period || "");
+      setReviewer(review.reviewer || "");
+      setRating(Number(review.rating?.split(".")[0]) || null);
+      setFeedback(review.feedback || "");
+      setStatus(review.status || "");
+      setReviewedAt(() => {
+        const date = new Date(review.reviewed_at);
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        return review.reviewed_at ? `${yyyy}-${mm}-${dd}` : null;
+      });
+      setGoalsSet(review.goals_set || [""]);
+      setGoalsAchieved(review.goals_achieved || []);
+      setAreasToImprove((review.areas_to_improve || []).join(", "));
+      setErrors({});
+    }
+  }, [isOpen, review]);
+
   const validateForm = () => {
     const newErrors = {};
-    if (!employeeId) newErrors.employeeId = "Employee ID is required";
     if (!period) newErrors.period = "Period is required";
     if (!reviewer) newErrors.reviewer = "Reviewer is required";
     if (!status) newErrors.status = "Status is required";
 
-    if (status === "completed") {
+    if (status === "reviewed") {
       if (!rating) newErrors.rating = "Rating is required";
       if (!feedback) newErrors.feedback = "Feedback is required";
       if (!reviewedAt) newErrors.reviewedAt = "Reviewed date is required";
@@ -68,6 +97,7 @@ const PerformanceEvaluationEdit = ({
     if (!validateForm()) return;
 
     const reviewData = {
+      id: review.id,
       employeeid: employeeId,
       period,
       reviewer,
@@ -82,7 +112,7 @@ const PerformanceEvaluationEdit = ({
 
     try {
       setIsLoading(true);
-      const response = await api.post("/performance/add", reviewData, {
+      const response = await api.post("/performance/edit", reviewData, {
         withCredentials: true,
       });
       toast.success(response.data.message);
@@ -123,16 +153,19 @@ const PerformanceEvaluationEdit = ({
     <div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline" className="cursor-pointer">
-            <Plus className="mr-2" />
-            Add Review
+          <Button
+            size="icon"
+            variant="outline"
+            className="hover:bg-muted"
+          >
+            <Pencil className="h-4 w-4" />
           </Button>
         </DialogTrigger>
         <DialogContent className="max-h-[80%] overflow-auto sm:w-full">
           <DialogHeader>
-            <DialogTitle>Start Performance Review</DialogTitle>
+            <DialogTitle>Edit Performance Review</DialogTitle>
             <DialogDescription>
-              Fill out the review form and submit.
+              Edit out the review details and submit.
             </DialogDescription>
           </DialogHeader>
 
@@ -140,7 +173,7 @@ const PerformanceEvaluationEdit = ({
             {/* Employee ID */}
             <div className="grid grid-cols-4 items-start gap-4">
               <Label htmlFor="employeeId" className={"mt-2"}>
-                Employee ID
+                Employee
               </Label>
               <div className="col-span-3">
                 <Select
@@ -149,12 +182,13 @@ const PerformanceEvaluationEdit = ({
                     setErrors({ ...errors, employeeId: "" });
                   }}
                   value={employeeId}
+                  disabled
                 >
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Select employee" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={""} disabled></SelectItem>
+                    <SelectItem value={review.employeeid} disabled>{review.name}</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.employeeId && (
@@ -376,11 +410,10 @@ const PerformanceEvaluationEdit = ({
                           key={index}
                           onClick={() => toggleAchieved(goal)}
                           className={`px-4 py-2 rounded-full text-sm transition-all duration-200 border font-semibold cursor-pointer
-                ${
-                  goalsAchieved.includes(goal)
-                    ? "bg-emerald-600 border-emerald-700 text-white hover:bg-emerald-700 hover:border-emerald-800"
-                    : "bg-transparent text-foreground hover:bg-neutral-100 hover:border-neutral-400"
-                }`}
+                ${goalsAchieved.includes(goal)
+                              ? "bg-emerald-600 border-emerald-700 text-white hover:bg-emerald-700 hover:border-emerald-800"
+                              : "bg-transparent text-foreground hover:bg-neutral-100 hover:border-neutral-400"
+                            }`}
                         >
                           {goal}
                         </Button>
@@ -423,7 +456,7 @@ const PerformanceEvaluationEdit = ({
               className={"cursor-pointer font-semibold"}
             >
               {isLoading && <Loader2 className="animate-spin" />}
-              Submit Review
+              Edit Review
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -432,4 +465,4 @@ const PerformanceEvaluationEdit = ({
   );
 };
 
-export default PerformanceEvaluationEdit;
+export default PerformanceReviewEdit;
