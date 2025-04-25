@@ -34,6 +34,7 @@ import PerformanceReview from "./components/Employee/Performance/PerformanceRevi
 import Attendance from "./components/HR/Attendance/Attendance";
 import Leave from "./components/HR/Leave/Leave";
 import PerformanceEvaluation from "./components/HR/Performance/PerformanceEvaluation";
+import Jobs from "./pages/Jobs";
 
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
@@ -102,6 +103,7 @@ const App = () => {
         <Toaster position="top-center" />
         <Routes>
           <Route index path="/login" element={<Login />} />
+          <Route path="/jobs" element={<Jobs />} />
 
           <Route path="/reset-password/request" element={<RequestReset />} />
           <Route path="/reset-password/verify" element={<VerifyReset />} />
@@ -127,7 +129,10 @@ const App = () => {
               />
               <Route path="/hr/dashboard/leave" element={<Leave />} />
               <Route path="/hr/dashboard/attendance" element={<Attendance />} />
-              <Route path="/hr/dashboard/performance" element={<PerformanceEvaluation />} />
+              <Route
+                path="/hr/dashboard/performance"
+                element={<PerformanceEvaluation />}
+              />
             </Route>
           </Route>
 
