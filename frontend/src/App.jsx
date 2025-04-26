@@ -34,9 +34,9 @@ import PerformanceReview from "./components/Employee/Performance/PerformanceRevi
 import Attendance from "./components/HR/Attendance/Attendance";
 import Leave from "./components/HR/Leave/Leave";
 import PerformanceEvaluation from "./components/HR/Performance/PerformanceEvaluation";
+import PayrollPage from "./components/HR/PayRollManagement/PayRollPage";
 import Recruitment from "./components/HR/Recruitment/Recruitment";
 import Jobs from "./pages/Jobs";
-
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
   { title: "Employees", url: "/hr/dashboard/manage-employees", icon: Users },
@@ -130,6 +130,8 @@ const App = () => {
               />
               <Route path="/hr/dashboard/leave" element={<Leave />} />
               <Route path="/hr/dashboard/attendance" element={<Attendance />} />
+              <Route path="/hr/dashboard/performance" element={<PerformanceEvaluation />} />
+              <Route path="/hr/dashboard/payroll" element={<PayrollPage />} />
               <Route
                 path="/hr/dashboard/performance"
                 element={<PerformanceEvaluation />}
