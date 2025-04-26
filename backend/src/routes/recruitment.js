@@ -147,4 +147,41 @@ router.get("/job-view/:id", async (req, res) => {
   }
 });
 
+router.post("/hire-candidate", async (req, res) => {
+  const { id } = req.body;
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    const result = await client.query(
+      "UPDATE job_applications SET status = 'Hired' WHERE id = $1 RETURNING job_id",
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      await client.query("ROLLBACK");
+      res.status(404).json({ message: "Error while hiring candidate!" });
+      return;
+    }
+
+    const job_id = result.rows[0].job_id;
+
+    await client.query(
+      `UPDATE jobs 
+      SET openings = CASE WHEN openings > 0 THEN openings - 1 ELSE 0 END
+      WHERE id = $1`,
+      [job_id]
+    );
+
+    await client.query("COMMIT");
+    res.json({ message: "Candidate Hired Successfully!" });
+  } catch (e) {
+    await client.query("ROLLBACK");
+    console.error(e);
+    res.status(500).json({ message: "Error while hiring candidate!" });
+  } finally {
+    client.release();
+  }
+});
+
 export default router;

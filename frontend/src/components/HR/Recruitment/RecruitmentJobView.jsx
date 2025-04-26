@@ -11,7 +11,7 @@ import { Wrench, Briefcase, Clock, MapPin, CalendarDays, Users } from 'lucide-re
 import CandidateCard from './CandidateCard'
 import JobViewCard from './JobViewCard'
 
-const RecruitmentJobView = ({ job }) => {
+const RecruitmentJobView = ({ job, setRefresh, refresh }) => {
     const [open, setOpen] = useState(false)
     const [candidates, setCandidates] = useState([])
     const [isLoading, setIsLoading] = useState(true)
@@ -30,7 +30,7 @@ const RecruitmentJobView = ({ job }) => {
             }
         }
         fetchJobAndCandidates()
-    }, [open, job])
+    }, [open, job, refresh])
 
     return (
         <Dialog open={open} onOpenChange={setOpen} >
@@ -55,7 +55,7 @@ const RecruitmentJobView = ({ job }) => {
                             {candidates.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
                                     {candidates.map(candidate => (
-                                        <CandidateCard candidate={candidate} key={candidate.id} />
+                                        <CandidateCard candidate={candidate} job={job} key={candidate.id} setRefresh={setRefresh} />
                                     ))}
                                 </div>
                             ) : (

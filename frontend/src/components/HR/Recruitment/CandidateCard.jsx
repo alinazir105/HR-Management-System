@@ -2,15 +2,33 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { Calendar, CheckCircle, Mail, User } from 'lucide-react'
+import api from '@/lib/api'
+import { Calendar, CheckCircle, Loader2, Mail, User } from 'lucide-react'
 import React, { useState } from 'react'
+import { toast } from 'sonner'
 
-const CandidateCard = ({ candidate }) => {
+const CandidateCard = ({ candidate, job, setRefresh }) => {
     const [showResume, setShowResume] = useState(false);
+    const [loading, setLoading] = useState(false)
 
     const toggleResume = () => {
         setShowResume(!showResume);
     };
+
+    async function hireCandidate() {
+        try {
+            setLoading(true)
+            await api.post(`/recruitment/hire-candidate`, { id: candidate.id }, { withCredentials: true })
+            toast.success("Candidate Hired Successfully")
+            setRefresh(true)
+        } catch (e) {
+            console.error(e);
+            toast.error(e?.response.data.message)
+        }
+        finally {
+            setLoading(false)
+        }
+    }
 
     const progressColor =
         candidate.match_score_percentage <= 33
@@ -33,7 +51,13 @@ const CandidateCard = ({ candidate }) => {
                                 </div>
                             )}
                         </div>
-                        <Badge variant="outline" className="text-xs">{candidate.status}</Badge>
+                        <Badge
+                            variant="outline"
+                            className={`text-xs font-semibold ${candidate.status === "Hired" ? "border-green-600 text-green-700" : ""
+                                }`}
+                        >
+                            {candidate.status}
+                        </Badge>
                     </div>
                 </CardHeader>
                 <CardContent className="space-y-2">
@@ -78,8 +102,8 @@ const CandidateCard = ({ candidate }) => {
                             </div>
                         )}
                     </div>
-
-                    <Button className="w-full mt-1 cursor-pointer  text-white hover:text-white border-none font-semibold transition-all">Hire</Button>
+                    {job.openings > 0 && candidate.status !== "Hired" && <Button disabled={loading} onClick={hireCandidate} className="w-full mt-1 cursor-pointer  text-white hover:text-white border-none font-semibold transition-all">{loading && <Loader2 className='animate-spin' />}Hire</Button>
+                    }
                 </CardContent>
             </Card>
         </div>

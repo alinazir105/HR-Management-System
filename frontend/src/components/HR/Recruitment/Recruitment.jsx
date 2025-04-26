@@ -11,6 +11,8 @@ const Recruitment = () => {
     const [refresh, setRefresh] = useState(false)
     const [searchedJob, setSearchedJob] = useState("")
     const [filteredJobs, setFilteredJobs] = useState([])
+    const [statusFilter, setStatusFilter] = useState("all");
+
 
     useEffect(() => {
         const fetchAllJobs = async () => {
@@ -32,15 +34,22 @@ const Recruitment = () => {
     }, [refresh])
 
     useEffect(() => {
-        if (!searchedJob) {
-            setFilteredJobs(allJobs)
-        } else {
-            const filtered = allJobs.filter((job) =>
+        let filtered = allJobs;
+
+        if (searchedJob) {
+            filtered = filtered.filter((job) =>
                 job.title.toLowerCase().includes(searchedJob.toLowerCase())
-            )
-            setFilteredJobs(filtered)
+            );
         }
-    }, [searchedJob, allJobs])
+
+        if (statusFilter === "active") {
+            filtered = filtered.filter((job) => job.openings > 0);
+        } else if (statusFilter === "closed") {
+            filtered = filtered.filter((job) => job.openings == 0);
+        }
+
+        setFilteredJobs(filtered);
+    }, [searchedJob, allJobs, statusFilter]);
 
     if (isLoading || refresh) {
         return <LoadingScreen />
@@ -49,8 +58,8 @@ const Recruitment = () => {
 
     return (
         <div className='content'>
-            <RecruitmentHeader setRefresh={setRefresh} searchedJob={searchedJob} setSearchedJob={setSearchedJob} />
-            <RecruitmentTable allJobs={filteredJobs} setRefresh={setRefresh} />
+            <RecruitmentHeader setRefresh={setRefresh} searchedJob={searchedJob} setSearchedJob={setSearchedJob} statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
+            <RecruitmentTable allJobs={filteredJobs} setRefresh={setRefresh} refresh={refresh} />
         </div>
     )
 }
