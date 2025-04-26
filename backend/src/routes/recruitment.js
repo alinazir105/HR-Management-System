@@ -126,4 +126,25 @@ router.delete("/delete-job/:id", async (req, res) => {
   }
 });
 
+router.get("/job-view/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const results = await pool.query(
+      "select ja.*,c.name,c.email from job_applications ja join candidates c on c.id=ja.candidate_id where ja.job_id=$1 order by ja.match_score_percentage desc",
+      [id]
+    );
+    if (results.rowCount == 0) {
+      res.json({ jobView: [], message: "No Candidates Found!" });
+    } else {
+      res.json({
+        jobView: results.rows,
+        message: "Candidates Found Successfully",
+      });
+    }
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Error while fetching applicants!" });
+  }
+});
+
 export default router;
