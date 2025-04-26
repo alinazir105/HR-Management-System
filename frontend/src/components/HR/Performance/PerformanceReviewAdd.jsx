@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import { Loader2, Minus, Plus } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import {
     Select,
@@ -23,7 +23,7 @@ import {
 import { toast } from "sonner";
 import api from "@/lib/api";
 
-const PerformanceReviewAdd = ({ allPerformanceReviews }) => {
+const PerformanceReviewAdd = ({ allPerformanceReviews, setRefreshData }) => {
     const uniqueEmployees = Array.from(
         new Map(
             allPerformanceReviews.map((review) => [review.employeeid, { id: review.employeeid, name: review.name }])
@@ -33,15 +33,18 @@ const PerformanceReviewAdd = ({ allPerformanceReviews }) => {
     const [employeeId, setEmployeeId] = useState("");
     const [period, setPeriod] = useState("");
     const [reviewer, setReviewer] = useState("");
-    const [rating, setRating] = useState("");
+    const [rating, setRating] = useState(null);
     const [feedback, setFeedback] = useState("");
     const [status, setStatus] = useState("");
-    const [reviewedAt, setReviewedAt] = useState("");
-    const [goalsSet, setGoalsSet] = useState("");
-    const [goalsAchieved, setGoalsAchieved] = useState("");
+    const [reviewedAt, setReviewedAt] = useState(null);
+    const [goalsSet, setGoalsSet] = useState([""]);
+    const [goalsAchieved, setGoalsAchieved] = useState([]);
     const [areasToImprove, setAreasToImprove] = useState("");
 
     const [errors, setErrors] = useState({});
+
+    const [isLoading, setIsLoading] = useState(false)
+    const [isOpen, setIsOpen] = useState(false);
 
     const validateForm = () => {
         const newErrors = {};
@@ -50,7 +53,7 @@ const PerformanceReviewAdd = ({ allPerformanceReviews }) => {
         if (!reviewer) newErrors.reviewer = "Reviewer is required";
         if (!status) newErrors.status = "Status is required";
 
-        if (status === "completed") {
+        if (status === "reviewed") {
             if (!rating) newErrors.rating = "Rating is required";
             if (!feedback) newErrors.feedback = "Feedback is required";
             if (!reviewedAt) newErrors.reviewedAt = "Reviewed date is required";
@@ -62,6 +65,20 @@ const PerformanceReviewAdd = ({ allPerformanceReviews }) => {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+
+    const handleReset = () => {
+        setErrors({})
+        setEmployeeId("")
+        setPeriod("")
+        setReviewer("")
+        setRating("")
+        setFeedback("")
+        setStatus("")
+        setReviewedAt("")
+        setGoalsSet([""])
+        setGoalsAchieved([])
+        setAreasToImprove("")
+    }
 
     const handleSubmit = async () => {
         if (!validateForm()) return;
@@ -80,17 +97,47 @@ const PerformanceReviewAdd = ({ allPerformanceReviews }) => {
         };
 
         try {
+            setIsLoading(true)
             const response = await api.post("/performance/add", reviewData, { withCredentials: true })
             toast.success(response.data.message);
+            handleReset()
+            setRefreshData(true)
+            setIsOpen(false)
         } catch (e) {
             console.error(e);
             toast.error(e?.response.data.message)
         }
+        finally {
+            setIsLoading(false)
+        }
+    };
+
+    const handleGoalChange = (index, value) => {
+        const updatedGoals = [...goalsSet];
+        updatedGoals[index] = value;
+        setGoalsSet(updatedGoals);
+    };
+
+    const addGoal = () => {
+        setGoalsSet([...goalsSet, ""]);
+    };
+
+    const removeGoal = (index) => {
+        if (goalsSet.length > 1) {
+            const updatedGoals = goalsSet.filter((_, i) => i !== index);
+            setGoalsSet(updatedGoals);
+        }
+    };
+
+    const toggleAchieved = (goal) => {
+        setGoalsAchieved((prev) =>
+            prev.includes(goal) ? prev.filter((g) => g !== goal) : [...prev, goal]
+        );
     };
 
     return (
         <div>
-            <Dialog>
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
                     <Button variant="outline" className="cursor-pointer">
                         <Plus className="mr-2" />
@@ -151,7 +198,7 @@ const PerformanceReviewAdd = ({ allPerformanceReviews }) => {
                                         setPeriod(e.target.value);
                                         setErrors({ ...errors, period: "" })
                                     }}
-                                    placeholder="e.g., Q1 2025"
+                                    placeholder="e.g., Jan-Mar 2025"
                                     className="col-span-3"
                                 />
                                 {errors.period && (
@@ -203,7 +250,7 @@ const PerformanceReviewAdd = ({ allPerformanceReviews }) => {
                                     </SelectTrigger>
                                     <SelectContent>
                                         {[1, 2, 3, 4, 5].map((num) => (
-                                            <SelectItem key={num} value={String(num)}>
+                                            <SelectItem key={num} value={num}>
                                                 {num}
                                             </SelectItem>
                                         ))}
@@ -257,7 +304,7 @@ const PerformanceReviewAdd = ({ allPerformanceReviews }) => {
                                         <SelectValue placeholder="Select status" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="completed">Completed</SelectItem>
+                                        <SelectItem value="reviewed">Reviewed</SelectItem>
                                         <SelectItem value="pending">Pending</SelectItem>
                                         <SelectItem value="in_progress">In Progress</SelectItem>
                                     </SelectContent>
@@ -296,49 +343,71 @@ const PerformanceReviewAdd = ({ allPerformanceReviews }) => {
 
                         {/* Goals Set */}
                         <div className="grid grid-cols-4 items-start gap-4">
-                            <Label htmlFor="goalsSet" className=" mt-2">
+                            <Label htmlFor="goalsSet" className="mt-2">
                                 Goals Set
                             </Label>
                             <div className="col-span-3">
-                                <Textarea
-                                    id="goalsSet"
-                                    value={goalsSet}
-                                    onChange={(e) => {
-                                        setGoalsSet(e.target.value);
-                                        setErrors({ ...errors, goalsSet: "" })
-                                    }}
-                                    className="col-span-3"
-                                />
-                                {errors.goalsSet && (
-                                    <p className="text-red-500 col-span-4 text-sm font-semibold mt-0.5">
-                                        {errors.goalsSet}
-                                    </p>
-                                )}
+                                {goalsSet.map((goal, index) => (
+                                    <div key={index} className="flex items-center mb-2">
+                                        <Input
+                                            type="text"
+                                            placeholder={`Goal ${index + 1}`}
+                                            value={goal}
+                                            onChange={(e) => handleGoalChange(index, e.target.value)}
+                                            className="p-2 border rounded w-full"
+                                        />
+                                        {goalsSet.length > 1 && (
+                                            <Button
+                                                onClick={() => removeGoal(index)}
+                                                variant={"outline"}
+                                                className="ml-2 rounded-md cursor-pointer"
+                                            >
+                                                -
+                                            </Button>
+                                        )}
+                                    </div>
+                                ))}
+                                <Button
+                                    onClick={addGoal}
+                                    variant={"outline"}
+                                    className="font-semibold text-sm  rounded-md cursor-pointer"
+                                >
+                                    <Plus />Add Goal
+                                </Button>
                             </div>
                         </div>
 
                         {/* Goals Achieved */}
-                        <div className="grid grid-cols-4 items-start gap-4">
-                            <Label htmlFor="goalsAchieved" className=" mt-2">
+                        <div className="mt-2 grid grid-cols-4 items-start gap-4">
+                            <Label htmlFor="goalsAchieved" className="mt-2">
                                 Goals Achieved
                             </Label>
-                            <div className="col-span-3">
-                                <Textarea
-                                    id="goalsAchieved"
-                                    value={goalsAchieved}
-                                    onChange={(e) => {
-                                        setGoalsAchieved(e.target.value)
-                                        setErrors({ ...errors, goalsAchieved: "" })
-                                    }}
-                                    className="col-span-3"
-                                />
-                                {errors.goalsAchieved && (
-                                    <p className="text-red-500 col-span-4 text-sm font-semibold mt-0.5">
-                                        {errors.goalsAchieved}
-                                    </p>
+                            <div className="flex flex-wrap gap-2 col-span-3">
+                                {goalsSet.every((goal) => goal.trim() === "") ? (
+                                    <span className="px-4 py-2 rounded-full text-sm bg-transparent text-neutral-600 font-medium cursor-default border border-neutral-300">
+                                        No goals set
+                                    </span>
+                                ) : (
+                                    goalsSet.map(
+                                        (goal, index) =>
+                                            goal.trim() !== "" && (
+                                                <Button
+                                                    key={index}
+                                                    onClick={() => toggleAchieved(goal)}
+                                                    className={`px-4 py-2 rounded-full text-sm transition-all duration-200 border font-semibold cursor-pointer
+                ${goalsAchieved.includes(goal)
+                                                            ? "bg-emerald-600 border-emerald-700 text-white hover:bg-emerald-700 hover:border-emerald-800"
+                                                            : "bg-transparent text-foreground hover:bg-neutral-100 hover:border-neutral-400"
+                                                        }`}
+                                                >
+                                                    {goal}
+                                                </Button>
+                                            )
+                                    )
                                 )}
                             </div>
                         </div>
+
 
                         {/* Areas to Improve */}
                         <div className="grid grid-cols-4 items-start gap-4">
@@ -349,6 +418,7 @@ const PerformanceReviewAdd = ({ allPerformanceReviews }) => {
                                 <Textarea
                                     id="areasToImprove"
                                     value={areasToImprove}
+                                    placeholder={"Comma Separated"}
                                     onChange={(e) => {
                                         setAreasToImprove(e.target.value);
                                         setErrors({ ...errors, areasToImprove: "" })
@@ -365,12 +435,15 @@ const PerformanceReviewAdd = ({ allPerformanceReviews }) => {
                     </div>
 
                     <DialogFooter>
+                        <Button disabled={isLoading} onClick={handleReset} variant={"outline"} className={"cursor-pointer font-semibold"}>Reset Form</Button>
                         <Button
                             type="button"
+                            disabled={isLoading}
                             onClick={handleSubmit}
-                            className={"cursor-pointer"}
+                            className={"cursor-pointer font-semibold"}
                         >
-                            Save Review
+                            {isLoading && <Loader2 className='animate-spin' />}
+                            Submit Review
                         </Button>
                     </DialogFooter>
                 </DialogContent>

@@ -63,7 +63,7 @@ FROM employees e
 LEFT JOIN performance_reviews p ON e.employeeid = p.employeeid
 ORDER BY 
   e.name ASC,
-  p.created_at DESC; 
+  p.reviewed_at DESC; 
 `
     );
     if (result.rowCount == 0) {
@@ -80,6 +80,10 @@ ORDER BY
   }
 });
 
+const formatArrayForPostgres = (arr) => {
+  return `{${arr.filter((g) => g.trim() !== "").join(",")}}`;
+};
+
 router.post("/add", async (req, res) => {
   const {
     employeeid,
@@ -89,10 +93,14 @@ router.post("/add", async (req, res) => {
     feedback,
     status,
     reviewed_at,
-    goals_set,
-    goals_achieved,
-    areas_to_improve,
   } = req.body;
+
+  let goals_set = formatArrayForPostgres(req.body.goals_set);
+  let goals_achieved = formatArrayForPostgres(req.body.goals_achieved);
+  let areas_to_improve = formatArrayForPostgres(
+    req.body.areas_to_improve.split(",")
+  );
+
   try {
     await pool.query(
       `Insert into performance_reviews (employeeid,period,reviewer,rating,feedback,status,reviewed_at,goals_set,goals_achieved,areas_to_improve) Values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);`,
@@ -113,6 +121,58 @@ router.post("/add", async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: "Error while adding review" });
+  }
+});
+
+router.post("/edit", async (req, res) => {
+  const {
+    id,
+    employeeid,
+    period,
+    reviewer,
+    rating,
+    feedback,
+    status,
+    reviewed_at,
+  } = req.body;
+
+  let goals_set = formatArrayForPostgres(req.body.goals_set);
+  let goals_achieved = formatArrayForPostgres(req.body.goals_achieved);
+  let areas_to_improve = formatArrayForPostgres(
+    req.body.areas_to_improve.split(",")
+  );
+
+  try {
+    await pool.query(
+      `Update performance_reviews set period=$1,reviewer=$2,rating=$3,feedback=$4,status=$5,reviewed_at=$6,goals_set=$7,goals_achieved=$8,areas_to_improve=$9 where id=$10;`,
+      [
+        period,
+        reviewer,
+        rating,
+        feedback,
+        status,
+        reviewed_at,
+        goals_set,
+        goals_achieved,
+        areas_to_improve,
+        id,
+      ]
+    );
+    res.json({ message: "Review updated successfully!" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Error while updating review" });
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    await pool.query("Delete from performance_reviews where id=$1", [id]);
+    res.json({ message: "Review deleted successfully!" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Error while deleting review" });
   }
 });
 

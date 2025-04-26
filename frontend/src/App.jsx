@@ -32,8 +32,11 @@ import Announcements from "./components/shared/Announcements/Announcements";
 import Profile from "./components/Employee/Profile/Profile";
 import PerformanceReview from "./components/Employee/Performance/PerformanceReview";
 import Attendance from "./components/HR/Attendance/Attendance";
+import Leave from "./components/HR/Leave/Leave";
 import PerformanceEvaluation from "./components/HR/Performance/PerformanceEvaluation";
 import PayrollPage from "./components/HR/PayRollManagement/PayRollPage";
+import Recruitment from "./components/HR/Recruitment/Recruitment";
+import Jobs from "./pages/Jobs";
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
   { title: "Employees", url: "/hr/dashboard/manage-employees", icon: Users },
@@ -101,6 +104,7 @@ const App = () => {
         <Toaster position="top-center" />
         <Routes>
           <Route index path="/login" element={<Login />} />
+          <Route path="/jobs" element={<Jobs />} />
 
           <Route path="/reset-password/request" element={<RequestReset />} />
           <Route path="/reset-password/verify" element={<VerifyReset />} />
@@ -124,9 +128,22 @@ const App = () => {
                 path="/hr/dashboard/announcements"
                 element={<Announcements />}
               />
+              <Route path="/hr/dashboard/leave" element={<Leave />} />
               <Route path="/hr/dashboard/attendance" element={<Attendance />} />
               <Route path="/hr/dashboard/performance" element={<PerformanceEvaluation />} />
               <Route path="/hr/dashboard/payroll" element={<PayrollPage />} />
+              <Route
+                path="/hr/dashboard/performance"
+                element={<PerformanceEvaluation />}
+              />
+              <Route
+                path="/hr/dashboard/recruitment"
+                element={<Recruitment />}
+              />
+              <Route
+                path="/hr/dashboard/performance"
+                element={<PerformanceEvaluation />}
+              />
             </Route>
           </Route>
 
@@ -149,10 +166,7 @@ const App = () => {
                 path="/employee/dashboard/announcements"
                 element={<Announcements />}
               />
-              <Route
-                path="/employee/dashboard/profile"
-                element={<Profile />}
-              />
+              <Route path="/employee/dashboard/profile" element={<Profile />} />
               <Route
                 path="/employee/dashboard/performance"
                 element={<PerformanceReview />}

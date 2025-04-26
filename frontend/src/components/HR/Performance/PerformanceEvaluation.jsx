@@ -8,8 +8,9 @@ import LoadingScreen from "@/components/ui/LoadingScreen";
 import api from "@/lib/api";
 
 const PerformanceEvaluation = () => {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [allPerformanceReviews, setAllPerformanceReviews] = useState([])
+  const [refreshData, setRefreshData] = useState(false)
 
   useEffect(() => {
     async function fetchAllPerformanceReviews() {
@@ -27,7 +28,8 @@ const PerformanceEvaluation = () => {
     }
 
     fetchAllPerformanceReviews();
-  }, [])
+    setRefreshData(false)
+  }, [refreshData])
 
   if (isLoading) {
     return <LoadingScreen />
@@ -36,15 +38,15 @@ const PerformanceEvaluation = () => {
   return (
     <div className="content">
       <PerformanceEvaluationHeader />
-      <PerformanceSummaryCard />
+      <PerformanceSummaryCard allPerformanceReviews={allPerformanceReviews} />
       <div className=" border border-neutral-200 mt-6 pt-4 shadow-md rounded-xl">
         <div className="flex gap-4 justify-between items-center flex-wrap px-5">
           <h2 className="text-xl font-semibold">All Performance Reviews</h2>
           <div>
-            <PerformanceReviewAdd allPerformanceReviews={allPerformanceReviews} />
+            <PerformanceReviewAdd allPerformanceReviews={allPerformanceReviews} setRefreshData={setRefreshData} />
           </div>
         </div>
-        <PerformanceEvaluationTable allPerformanceReviews={allPerformanceReviews} />
+        <PerformanceEvaluationTable allPerformanceReviews={allPerformanceReviews} setRefreshData={setRefreshData} />
       </div>
     </div>
   );

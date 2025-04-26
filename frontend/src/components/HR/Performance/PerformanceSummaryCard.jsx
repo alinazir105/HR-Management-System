@@ -29,7 +29,87 @@ const StatBox = ({ title, value, color, icon: Icon }) => (
     </div>
 );
 
-const PerformanceSummaryCard = () => {
+const PerformanceSummaryCard = ({ allPerformanceReviews }) => {
+    const filterPeriod = allPerformanceReviews[0]?.period.trim();
+
+    const filteredReviews = allPerformanceReviews.filter((review) => (review.period == filterPeriod));
+
+    const ratings = filteredReviews
+        .map((review) => parseFloat(review.rating))
+        .filter((rating) => !isNaN(rating));
+
+    const total = ratings.reduce((sum, rating) => sum + rating, 0);
+    const averageRating = ratings.length > 0 ? total / ratings.length : 0;
+
+    const reviewedCount = filteredReviews.filter(
+        (review) =>
+            review.status?.toLowerCase() === "completed" ||
+            review.status?.toLowerCase() === "reviewed"
+    ).length;
+
+    const pendingCount = filteredReviews.filter(
+        (review) =>
+            review.status?.toLowerCase() === "pending"
+    ).length;
+
+    const ratedReviews = filteredReviews.filter(
+        (review) => !isNaN(parseFloat(review.rating))
+    );
+
+    const sortedByRating = [...ratedReviews].sort(
+        (a, b) => parseFloat(b.rating) - parseFloat(a.rating)
+    );
+
+    const highestRatedEmployee = sortedByRating[0];
+    const lowestRatedEmployee = sortedByRating[sortedByRating.length - 1];
+
+    const areaCounts = {};
+
+    filteredReviews.forEach((review) => {
+        if (Array.isArray(review.areas_to_improve)) {
+            review.areas_to_improve.forEach((area) => {
+                const cleanedArea = area.trim().toLowerCase();
+                if (cleanedArea) {
+                    areaCounts[cleanedArea] = (areaCounts[cleanedArea] || 0) + 1;
+                }
+            });
+        }
+    });
+
+    let mostCommonArea = "None";
+    let highestCount = 0;
+
+    for (const [area, count] of Object.entries(areaCounts)) {
+        if (count > highestCount) {
+            highestCount = count;
+            mostCommonArea = area;
+        }
+    }
+
+    mostCommonArea = mostCommonArea.split(" ").map((value) => (value.charAt(0).toUpperCase() + value.slice(1))).join(" ")
+
+    let totalGoalsSet = 0;
+    let totalGoalsAchieved = 0;
+
+    filteredReviews.forEach((review) => {
+        if (Array.isArray(review.goals_set) && Array.isArray(review.goals_achieved)) {
+            const goalsSet = review.goals_set.map((g) => g.trim().toLowerCase());
+            const goalsAchieved = review.goals_achieved.map((g) => g.trim().toLowerCase());
+
+            totalGoalsSet += goalsSet.length;
+
+            goalsSet.forEach((goal) => {
+                if (goalsAchieved.includes(goal)) {
+                    totalGoalsAchieved++;
+                }
+            });
+        }
+    });
+
+    const percentageGoalsAchieved =
+        totalGoalsSet > 0 ? (totalGoalsAchieved / totalGoalsSet) * 100 : 0;
+
+
     const [isOpen, setIsOpen] = useState(true);
 
     return (
@@ -54,10 +134,10 @@ const PerformanceSummaryCard = () => {
                 >
                     <CardContent className="flex flex-col gap-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                            <StatBox icon={Star} title="Avg Rating" value="4.2" color="yellow" />
-                            <StatBox icon={Users2} title="Reviewed" value="24 Employees" color="blue" />
-                            <StatBox icon={AlertCircle} title="Pending" value="6 Reviews" color="red" />
-                            <StatBox icon={BarChart3} title="Review Period" value="Q1 2025" color="purple" />
+                            <StatBox icon={Star} title="Avg Rating" value={averageRating || "0"} color="yellow" />
+                            <StatBox icon={Users2} title="Reviewed" value={(reviewedCount || "0") + " Employee(s)"} color="blue" />
+                            <StatBox icon={AlertCircle} title="Pending" value={(pendingCount || "0") + " Reviews"} color="red" />
+                            <StatBox icon={BarChart3} title="Review Period" value={filterPeriod || "N/A"} color="purple" />
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -66,8 +146,8 @@ const PerformanceSummaryCard = () => {
                                 title="Top Rated Employee"
                                 value={
                                     <>
-                                        <p className="font-medium">Alice Smith</p>
-                                        <p className="text-sm text-muted-foreground">Rating: 4.9</p>
+                                        <p className="font-medium">{highestRatedEmployee?.name || "N/A"}</p>
+                                        <p className="text-sm text-muted-foreground">Rating: {highestRatedEmployee?.rating || "0"}</p>
                                     </>
                                 }
                                 color="green"
@@ -77,8 +157,8 @@ const PerformanceSummaryCard = () => {
                                 title="Lowest Rated Employee"
                                 value={
                                     <>
-                                        <p className="font-medium">John Doe</p>
-                                        <p className="text-sm text-muted-foreground">Rating: 2.7</p>
+                                        <p className="font-medium">{lowestRatedEmployee?.name || "N/A"}</p>
+                                        <p className="text-sm text-muted-foreground">Rating: {lowestRatedEmployee?.rating || "0"}</p>
                                     </>
                                 }
                                 color="red"
@@ -89,7 +169,7 @@ const PerformanceSummaryCard = () => {
                             <StatBox
                                 icon={Target}
                                 title="Common Improvement Area"
-                                value="Time Management"
+                                value={mostCommonArea || "None"}
                                 color="orange"
                             />
                         </div>
@@ -100,9 +180,9 @@ const PerformanceSummaryCard = () => {
                                     <CircleCheck className="text-green-500" size={18} />
                                     Goals Achieved
                                 </div>
-                                <span className="text-sm text-muted-foreground">78%</span>
+                                <span className="text-sm text-muted-foreground">{percentageGoalsAchieved.toFixed(0) || "0"}%</span>
                             </div>
-                            <Progress value={78} className="h-2" />
+                            <Progress value={percentageGoalsAchieved || 0} className="h-2" />
                         </Card>
                     </CardContent>
                 </div>

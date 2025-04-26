@@ -9,6 +9,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import PerformanceReviewDelete from "./PerformanceReviewDelete";
+import PerformanceReviewDetailed from "./PerformanceReviewDetailed";
+import PerformanceReviewEdit from "./PerformanceReviewEdit";
 
 const headings = [
   "Employee ID",
@@ -21,7 +24,7 @@ const headings = [
   "Actions",
 ];
 
-const PerformanceEvaluationTable = ({ allPerformanceReviews }) => {
+const PerformanceEvaluationTable = ({ allPerformanceReviews, setRefreshData }) => {
   return (
     <div className="rounded-xl border shadow-sm mt-3">
       <Table>
@@ -38,7 +41,7 @@ const PerformanceEvaluationTable = ({ allPerformanceReviews }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {allPerformanceReviews.map((review) => (
+          {allPerformanceReviews.length == 0 || allPerformanceReviews.every((rev) => !rev.id) ? <TableRow><TableCell colSpan={8} className="px-4 py-4 text-center font-semibold text-red-700 text-lg">No Reviews Found</TableCell></TableRow> : allPerformanceReviews.map((review) => (
             <>
               {review.id && <TableRow key={review.id}>
                 <TableCell className={"px-5"}>{review.employeeid}</TableCell>
@@ -47,35 +50,20 @@ const PerformanceEvaluationTable = ({ allPerformanceReviews }) => {
                 <TableCell className={"px-5"}>{review.reviewer}</TableCell>
                 <TableCell className={"px-5"}>{review.rating || "-"}</TableCell>
                 <TableCell className={"px-5"}>
-                  {new Date(review.reviewed_at).toLocaleDateString() || "—"}
+                  {review.reviewed_at ? new Date(review.reviewed_at).toLocaleDateString() : "-"}
                 </TableCell>
                 <TableCell className={"px-5"}>
-                  <Badge>{review.status}</Badge>
+                  <Badge className="capitalize">
+                    {review?.status
+                      ?.split("_")
+                      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                      .join(" ")}
+                  </Badge>
                 </TableCell>
                 <TableCell className="flex gap-2 px-5">
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="hover:bg-muted"
-                    onClick={() => console.log("View", review.id)}
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="hover:bg-muted"
-                    onClick={() => console.log("Edit", review.id)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="destructive"
-                    onClick={() => console.log("Delete", review.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <PerformanceReviewDetailed review={review} />
+                  <PerformanceReviewEdit review={review} setRefreshData={setRefreshData} />
+                  <PerformanceReviewDelete id={review.id} setRefreshData={setRefreshData} />
                 </TableCell>
               </TableRow>}
             </>
