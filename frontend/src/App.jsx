@@ -33,7 +33,7 @@ import Profile from "./components/Employee/Profile/Profile";
 import PerformanceReview from "./components/Employee/Performance/PerformanceReview";
 import Attendance from "./components/HR/Attendance/Attendance";
 import PerformanceEvaluation from "./components/HR/Performance/PerformanceEvaluation";
-
+import PayrollPage from "./components/HR/PayRollManagement/PayRollPage";
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
   { title: "Employees", url: "/hr/dashboard/manage-employees", icon: Users },
@@ -126,6 +126,7 @@ const App = () => {
               />
               <Route path="/hr/dashboard/attendance" element={<Attendance />} />
               <Route path="/hr/dashboard/performance" element={<PerformanceEvaluation />} />
+              <Route path="/hr/dashboard/payroll" element={<PayrollPage />} />
             </Route>
           </Route>
 
