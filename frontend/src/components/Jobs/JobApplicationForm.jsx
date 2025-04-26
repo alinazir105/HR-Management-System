@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import AvailableJobsCards from "./AvailableJobsCards";
 
 import { useState } from "react";
+import { toast } from "sonner";
 
 export function JobApplicationForm({ job, setIsLoading, setRefresh }) {
   const [formData, setFormData] = useState({
@@ -85,6 +86,7 @@ export function JobApplicationForm({ job, setIsLoading, setRefresh }) {
       const reader = new FileReader();
       reader.onload = async () => {
         const base64Resume = reader.result;
+        console.log("🚀 ~ reader.onload= ~ base64Resume:", base64Resume);
 
         try {
           setIsLoading(true);
@@ -197,7 +199,9 @@ export function JobApplicationForm({ job, setIsLoading, setRefresh }) {
           </div>
 
           <DialogFooter className="mt-4">
-            <Button type="submit">Submit Application</Button>
+            <Button type="submit" className={"cursor-pointer"}>
+              Submit Application
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

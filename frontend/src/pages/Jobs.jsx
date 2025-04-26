@@ -42,14 +42,23 @@ const Jobs = () => {
         </div>
         <div className="ml-6 mr-6 flex flex-col justify-center gap-4">
           <h1 className="text-2xl font-bold ml-1">Available Jobs</h1>
-          <div className="flex gap-6 ">
-            {allJobs.map((job) => (
-              <JobApplicationForm
-                job={job}
-                setIsLoading={setIsLoading}
-                setRefresh={setRefresh}
-              />
-            ))}
+          <div className="flex gap-6">
+            {allJobs.filter((job) => job.openings > 0).length > 0 ? (
+              allJobs
+                .filter((job) => job.openings > 0)
+                .map((job) => (
+                  <JobApplicationForm
+                    key={job._id}
+                    job={job}
+                    setIsLoading={setIsLoading}
+                    setRefresh={setRefresh}
+                  />
+                ))
+            ) : (
+              <h2 className="text-xl text-red-500 text-center w-full font-semibold ml-1">
+                No Jobs!
+              </h2>
+            )}
           </div>
         </div>
       </div>
