@@ -73,4 +73,57 @@ router.get("/all-jobs", async (req, res) => {
   }
 });
 
+router.post("/edit-job", async (req, res) => {
+  const {
+    id,
+    title,
+    description,
+    location,
+    skillsRequired,
+    experienceRequired,
+    openings,
+    jobType,
+    deadline,
+  } = req.body;
+
+  try {
+    await pool.query(
+      `Update jobs set title=$1,
+    description=$2,
+    location=$3,
+    skills_required=$4,
+    experience_required=$5,
+    openings=$6,
+    job_type=$7,
+    deadline=$8 where id=$9;`,
+      [
+        title,
+        description,
+        location,
+        skillsRequired,
+        experienceRequired,
+        openings,
+        jobType,
+        deadline,
+        id,
+      ]
+    );
+    res.json({ message: "Job updated successfully!" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Error while updating job post!" });
+  }
+});
+
+router.delete("/delete-job/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    await pool.query("Delete from jobs where id=$1", [id]);
+    res.json({ message: "Job deleted successfully!" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Error while deleting job!" });
+  }
+});
+
 export default router;
