@@ -14,7 +14,7 @@ const headings = [
     "Actions",
 ]
 
-const RecruitmentTable = ({ allJobs, setRefresh }) => {
+const RecruitmentTable = ({ allJobs, setRefresh, refresh }) => {
     return (
         <div className="rounded-xl border shadow-sm mt-5">
             <Table>
@@ -42,7 +42,7 @@ const RecruitmentTable = ({ allJobs, setRefresh }) => {
                                 {new Date(job.deadline).toLocaleDateString()}
                             </TableCell>
                             <TableCell className="flex gap-2 px-6">
-                                <RecruitmentJobView job={job} />
+                                <RecruitmentJobView job={job} setRefresh={setRefresh} refresh={refresh} />
                                 <RecruitmentJobEdit job={job} setRefresh={setRefresh} />
                                 <RecruitmentJobDelete id={job.id} setRefresh={setRefresh} />
                             </TableCell>
