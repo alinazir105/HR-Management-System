@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, Plus } from 'lucide-react'
+import { Loader2, Pencil, Plus } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import api from '@/lib/api'
@@ -23,7 +23,7 @@ import {
     SelectItem,
 } from "@/components/ui/select"
 
-const RecruitmentJobAdd = ({ setRefresh }) => {
+const RecruitmentJobEdit = ({ job, setRefresh }) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [location, setLocation] = useState("");
@@ -47,6 +47,27 @@ const RecruitmentJobAdd = ({ setRefresh }) => {
         deadline: ""
     });
 
+    useEffect(() => {
+        if (isOpen) {
+            setTitle(job.title)
+            setDescription(job.description)
+            setLocation(job.location)
+            setSkillsRequired(job.skills_required)
+            setExperienceRequired(job.experience_required)
+            setOpenings(job.openings)
+            setJobType(job.job_type)
+            setDeadline(() => {
+                const date = new Date(job.deadline);
+                const yyyy = date.getFullYear();
+                const mm = String(date.getMonth() + 1).padStart(2, '0');
+                const dd = String(date.getDate()).padStart(2, '0');
+                return job.deadline ? `${yyyy}-${mm}-${dd}` : "";
+            })
+            setErrors({})
+        }
+    }, [isOpen, job])
+
+
     const validateForm = () => {
         let valid = true;
         const newErrors = { ...errors };
@@ -69,11 +90,12 @@ const RecruitmentJobAdd = ({ setRefresh }) => {
         return valid;
     };
 
-    const handleAddJob = async () => {
+    const handleEditJob = async () => {
         if (validateForm()) {
             setIsLoading(true)
             try {
-                const response = await api.post("/recruitment/add-job", {
+                const response = await api.post("/recruitment/edit-job", {
+                    id: job.id,
                     title,
                     description,
                     location,
@@ -84,9 +106,9 @@ const RecruitmentJobAdd = ({ setRefresh }) => {
                     deadline
                 }, { withCredentials: true })
                 toast.success(response.data.message)
-                handleReset();
                 setIsOpen(false);
                 setRefresh(true)
+
             } catch (e) {
                 console.log(e);
                 toast.error(e?.response?.data?.message || "Something went wrong")
@@ -97,42 +119,21 @@ const RecruitmentJobAdd = ({ setRefresh }) => {
         }
     };
 
-    const handleReset = () => {
-        setTitle("");
-        setDescription("");
-        setLocation("");
-        setSkillsRequired("");
-        setExperienceRequired(0);
-        setOpenings(0);
-        setJobType("");
-        setDeadline("");
-        setErrors({
-            title: "",
-            description: "",
-            location: "",
-            skillsRequired: "",
-            experienceRequired: "",
-            openings: "",
-            jobType: "",
-            deadline: ""
-        });
-    }
-
     return (
         <div>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
 
                 <DialogTrigger asChild>
                     <Button variant={"outline"} className={"cursor-pointer"}>
-                        <Plus />
-                        Add New Job
+                        <Pencil />
+
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>Add New Job</DialogTitle>
                         <DialogDescription>
-                            Fill in the details of the new job and click save to add it.
+                            Make changes for the job and click save to edit it.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
@@ -164,7 +165,7 @@ const RecruitmentJobAdd = ({ setRefresh }) => {
                         <div className="grid grid-cols-4 items-start gap-4">
                             <Label htmlFor="jobType" className="text-left mt-2">Job Type</Label>
                             <div className="col-span-3">
-                                <Select onValueChange={(value) => { setJobType(value); setErrors({ ...errors, jobType: "" }) }}>
+                                <Select value={jobType} onValueChange={(value) => { setJobType(value); setErrors({ ...errors, jobType: "" }) }}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select job type" />
                                     </SelectTrigger>
@@ -181,7 +182,7 @@ const RecruitmentJobAdd = ({ setRefresh }) => {
                         <div className="grid grid-cols-4 items-start gap-4">
                             <Label htmlFor="location" className="text-left mt-2">Location</Label>
                             <div className='col-span-3'>
-                                <Select onValueChange={(value) => { setLocation(value); setErrors({ ...errors, location: "" }) }}>
+                                <Select value={location} onValueChange={(value) => { setLocation(value); setErrors({ ...errors, location: "" }) }}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select location" />
                                     </SelectTrigger>
@@ -251,8 +252,7 @@ const RecruitmentJobAdd = ({ setRefresh }) => {
                         </div>
 
                         <DialogFooter>
-                            <Button disabled={isLoading} variant={"outline"} onClick={handleReset} className={"cursor-pointer"}>Reset</Button>
-                            <Button disabled={isLoading} onClick={handleAddJob} className={"cursor-pointer"}>{isLoading && <Loader2 className='animate-spin' />} Post Job</Button>
+                            <Button disabled={isLoading} onClick={handleEditJob} className={"cursor-pointer"}>{isLoading && <Loader2 className='animate-spin' />} Edit Job</Button>
                         </DialogFooter>
                     </div>
                 </DialogContent>
@@ -261,4 +261,5 @@ const RecruitmentJobAdd = ({ setRefresh }) => {
     );
 }
 
-export default RecruitmentJobAdd;
+export default RecruitmentJobEdit;
+

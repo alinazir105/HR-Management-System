@@ -73,6 +73,117 @@ router.get("/all-jobs", async (req, res) => {
   }
 });
 
+router.post("/edit-job", async (req, res) => {
+  const {
+    id,
+    title,
+    description,
+    location,
+    skillsRequired,
+    experienceRequired,
+    openings,
+    jobType,
+    deadline,
+  } = req.body;
+
+  try {
+    await pool.query(
+      `Update jobs set title=$1,
+    description=$2,
+    location=$3,
+    skills_required=$4,
+    experience_required=$5,
+    openings=$6,
+    job_type=$7,
+    deadline=$8 where id=$9;`,
+      [
+        title,
+        description,
+        location,
+        skillsRequired,
+        experienceRequired,
+        openings,
+        jobType,
+        deadline,
+        id,
+      ]
+    );
+    res.json({ message: "Job updated successfully!" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Error while updating job post!" });
+  }
+});
+
+router.delete("/delete-job/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    await pool.query("Delete from jobs where id=$1", [id]);
+    res.json({ message: "Job deleted successfully!" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Error while deleting job!" });
+  }
+});
+
+router.get("/job-view/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const results = await pool.query(
+      "select ja.*,c.name,c.email from job_applications ja join candidates c on c.id=ja.candidate_id where ja.job_id=$1 order by ja.match_score_percentage desc",
+      [id]
+    );
+    if (results.rowCount == 0) {
+      res.json({ jobView: [], message: "No Candidates Found!" });
+    } else {
+      res.json({
+        jobView: results.rows,
+        message: "Candidates Found Successfully",
+      });
+    }
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Error while fetching applicants!" });
+  }
+});
+
+router.post("/hire-candidate", async (req, res) => {
+  const { id } = req.body;
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    const result = await client.query(
+      "UPDATE job_applications SET status = 'Hired' WHERE id = $1 RETURNING job_id",
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      await client.query("ROLLBACK");
+      res.status(404).json({ message: "Error while hiring candidate!" });
+      return;
+    }
+
+    const job_id = result.rows[0].job_id;
+
+    await client.query(
+      `UPDATE jobs 
+      SET openings = CASE WHEN openings > 0 THEN openings - 1 ELSE 0 END
+      WHERE id = $1`,
+      [job_id]
+    );
+
+    await client.query("COMMIT");
+    res.json({ message: "Candidate Hired Successfully!" });
+  } catch (e) {
+    await client.query("ROLLBACK");
+    console.error(e);
+    res.status(500).json({ message: "Error while hiring candidate!" });
+  } finally {
+    client.release();
+  }
+});
+
 router.post("/add", async (req, res) => {
   const { name, email, phone, job, resume_text } = req.body;
   const client = await pool.connect();
