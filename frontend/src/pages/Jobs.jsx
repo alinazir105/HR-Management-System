@@ -44,7 +44,11 @@ const Jobs = () => {
           <h1 className="text-2xl font-bold ml-1">Available Jobs</h1>
           <div className="flex gap-6 ">
             {allJobs.map((job) => (
-              <JobApplicationForm job={job} />
+              <JobApplicationForm
+                job={job}
+                setIsLoading={setIsLoading}
+                setRefresh={setRefresh}
+              />
             ))}
           </div>
         </div>

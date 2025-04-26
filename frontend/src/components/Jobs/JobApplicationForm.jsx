@@ -14,7 +14,7 @@ import AvailableJobsCards from "./AvailableJobsCards";
 
 import { useState } from "react";
 
-export function JobApplicationForm({ job }) {
+export function JobApplicationForm({ job, setIsLoading, setRefresh }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -34,6 +34,10 @@ export function JobApplicationForm({ job }) {
     setFormData((prev) => ({
       ...prev,
       [id]: type === "file" ? (files ? files[0] : null) : value,
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      [id]: "",
     }));
   };
 
@@ -60,7 +64,7 @@ export function JobApplicationForm({ job }) {
     if (!formData.phone.trim()) {
       formErrors.phone = "Phone number is required";
       isValid = false;
-    } else if (!/^\d{3}-\d{7}$/.test(formData.phone)) {
+    } else if (!/^03\d{2}-\d{7}$/.test(formData.phone)) {
       formErrors.phone = "Phone number must be in the format 03XX-XXXXXXX";
       isValid = false;
     }
@@ -75,10 +79,36 @@ export function JobApplicationForm({ job }) {
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Form submitted successfully");
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64Resume = reader.result;
+
+        try {
+          setIsLoading(true);
+          const response = await api.post(
+            "/recruitment/add",
+            {
+              name: formData.name,
+              email: formData.email,
+              phone: formData.phone,
+              job,
+              resume_text: base64Resume,
+            },
+            { withCredentials: true }
+          );
+          toast.success(response.data.message);
+          setRefresh(true);
+        } catch (error) {
+          toast.error("Failed to submit application");
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      reader.readAsDataURL(formData.cv); // Or use `readAsText` for plain text resume
     }
   };
 
@@ -86,30 +116,32 @@ export function JobApplicationForm({ job }) {
     <Dialog>
       <DialogTrigger asChild>
         <div className="w-full">
-          <AvailableJobsCards />
+          <AvailableJobsCards job={job} />
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Apply for {job.title}</DialogTitle>
           <DialogDescription className="text-gray-600">
-            Design and develop high-quality, scalable frontend interfaces.
+            {job.description}
           </DialogDescription>
         </DialogHeader>
 
         {/* Job Details */}
         <div className="text-sm text-gray-700 space-y-1 mb-4">
           <p>
-            📍 <strong>Location:</strong> Remote
+            📍 <strong>Location: </strong>
+            {job.location}
           </p>
           <p>
-            💼 <strong>Type:</strong> Full-time
+            💼 <strong>Type:</strong> {job.job_type}
           </p>
           <p>
-            🛠️ <strong>Skills:</strong> React, Tailwind CSS, TypeScript
+            🛠️ <strong>Skills: </strong>
+            {job.skills_required}
           </p>
           <p>
-            🧠 <strong>Experience:</strong> 2+ years
+            🧠 <strong>Experience:</strong> {job.experience_required}+ years
           </p>
         </div>
 
@@ -131,7 +163,7 @@ export function JobApplicationForm({ job }) {
             <Label htmlFor="email">Email Address</Label>
             <Input
               id="email"
-              type="email"
+              type="text"
               placeholder="you@example.com"
               value={formData.email}
               onChange={handleChange}

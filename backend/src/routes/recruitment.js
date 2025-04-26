@@ -73,4 +73,49 @@ router.get("/all-jobs", async (req, res) => {
   }
 });
 
+router.post("/add", async (req, res) => {
+  const { name, email, phone, job, resume_text } = req.body;
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    // Step 1: Check if candidate already exists
+    const candidateResult = await client.query(
+      "SELECT id FROM candidates WHERE email = $1",
+      [email]
+    );
+
+    let candidateId;
+
+    if (candidateResult.rows.length > 0) {
+      candidateId = candidateResult.rows[0].id;
+    } else {
+      // Step 2: Insert candidate if not exists
+      const insertCandidate = await client.query(
+        `INSERT INTO candidates (name, email, phone) 
+         VALUES ($1, $2, $3) RETURNING id`,
+        [name, email, phone]
+      );
+      candidateId = insertCandidate.rows[0].id;
+    }
+
+    // Step 3: Insert into job_applications
+    await client.query(
+      `INSERT INTO job_applications (job_id, candidate_id, resume_text) 
+       VALUES ($1, $2, $3)`,
+      [job.id, candidateId, resume_text]
+    );
+
+    await client.query("COMMIT");
+    res.status(200).json({ message: "Application submitted successfully!" });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("Error while submitting application:", error);
+    res.status(500).json({ message: "Something went wrong." });
+  } finally {
+    client.release();
+  }
+});
+
 export default router;
