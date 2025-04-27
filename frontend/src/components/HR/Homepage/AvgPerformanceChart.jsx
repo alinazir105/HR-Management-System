@@ -1,56 +1,95 @@
-"use client";
-
-import { LineChart, Line, CartesianGrid, XAxis } from "recharts";
+import React, { useEffect, useState } from "react";
+import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
 import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { ChartLegend, ChartLegendContent } from "@/components/ui/chart";
-
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-];
+import api from "@/lib/api";
+import LoadingScreen from "@/components/ui/LoadingScreen";
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  average_rating: {
+    label: "Avg Rating",
     color: "#2563eb",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "#60a5fa",
   },
 };
 
 export function AvgPerformanceChart() {
+  const [chartData, setChartData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Helper function to calculate average of an array
+  const calculateAverage = (ratings) => {
+    const sum = ratings.reduce((acc, rating) => acc + rating, 0);
+    return parseFloat((sum / ratings.length).toFixed(2));
+  };
+
+  // Fetch chart data
+  const fetchChartData = async () => {
+    try {
+      const response = await api.get("/hrDashboard/performance-chart", {
+        withCredentials: true,
+      });
+
+      const rawData = response.data.filter(
+        (item) => item.average_rating != null
+      );
+
+      // Grouping by quarter
+      const quarterGroups = rawData.reduce((groups, item) => {
+        if (item.average_rating) {
+          groups[item.quarter] = groups[item.quarter] || [];
+          groups[item.quarter].push(parseFloat(item.average_rating));
+        }
+        return groups;
+      }, {});
+
+      // Calculating averages per quarter
+      const formattedData = Object.entries(quarterGroups).map(
+        ([quarter, ratings]) => ({
+          quarter,
+          average_rating: calculateAverage(ratings),
+        })
+      );
+
+      setChartData(formattedData);
+    } catch (error) {
+      console.error("Failed to fetch performance chart data", error);
+      setError("Failed to load data, please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchChartData();
+  }, []);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
+
   return (
     <ChartContainer config={chartConfig} className="h-64 w-full">
       <LineChart data={chartData}>
         <CartesianGrid vertical={false} />
         <XAxis
-          dataKey="month"
+          dataKey="quarter"
           tickLine={false}
           tickMargin={10}
           axisLine={false}
-          tickFormatter={(value) => value.slice(0, 3)}
         />
+        <YAxis domain={[0, 5]} tickCount={6} />
         <ChartTooltip content={<ChartTooltipContent />} />
         <ChartLegend content={<ChartLegendContent />} />
         <Line
           type="monotone"
-          dataKey="desktop"
-          stroke="var(--color-desktop)"
-          strokeWidth={2}
-          dot={{ r: 4 }}
-          activeDot={{ r: 6 }}
-        />
-        <Line
-          type="monotone"
-          dataKey="mobile"
-          stroke="var(--color-mobile)"
+          dataKey="average_rating"
+          stroke="var(--color-average_rating)"
           strokeWidth={2}
           dot={{ r: 4 }}
           activeDot={{ r: 6 }}
