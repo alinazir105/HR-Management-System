@@ -147,4 +147,36 @@ router.get("/all-employees", async (req, res) => {
   }
 });
 
+router.get("/attendance-today", async (req, res) => {
+  const now = new Date();
+  const today = now.toISOString().split("T")[0];
+
+  try {
+    // Get total employees
+    const totalEmployeesResult = await pool.query(
+      `SELECT COUNT(*) FROM employees`
+    );
+    const totalEmployees = parseInt(totalEmployeesResult.rows[0].count, 10);
+
+    // Get employees who have checked in today
+    const checkedInResult = await pool.query(
+      `SELECT DISTINCT userid FROM attendance WHERE date = $1 AND checkin IS NOT NULL`,
+      [today]
+    );
+    const checkedInCount = checkedInResult.rowCount;
+
+    // No check-in employees
+    const noCheckinCount = totalEmployees - checkedInCount;
+
+    res.json({
+      checkins: checkedInCount,
+      noCheckins: noCheckinCount,
+      totalEmployees,
+    });
+  } catch (error) {
+    console.error("Error fetching today's attendance summary:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;
