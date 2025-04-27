@@ -1,7 +1,14 @@
 import express from "express";
 import pool from "./../db.js";
+import multer from "multer";
 
 const router = express.Router();
+
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+});
 
 router.post("/add-job", async (req, res) => {
   const {
@@ -184,14 +191,19 @@ router.post("/hire-candidate", async (req, res) => {
   }
 });
 
-router.post("/add", async (req, res) => {
-  const { name, email, phone, job, resume_text } = req.body;
+router.post("/apply-for-job", upload.single("resume"), async (req, res) => {
+  const { name, email, phone } = req.body;
+  const job = JSON.parse(req.body.job);
+
+  if (!req.file) {
+    return res.status(400).json({ message: "Resume file is required" });
+  }
+
   const client = await pool.connect();
 
   try {
     await client.query("BEGIN");
 
-    // Step 1: Check if candidate already exists
     const candidateResult = await client.query(
       "SELECT id FROM candidates WHERE email = $1",
       [email]
@@ -202,7 +214,6 @@ router.post("/add", async (req, res) => {
     if (candidateResult.rows.length > 0) {
       candidateId = candidateResult.rows[0].id;
     } else {
-      // Step 2: Insert candidate if not exists
       const insertCandidate = await client.query(
         `INSERT INTO candidates (name, email, phone) 
          VALUES ($1, $2, $3) RETURNING id`,
@@ -211,11 +222,25 @@ router.post("/add", async (req, res) => {
       candidateId = insertCandidate.rows[0].id;
     }
 
-    // Step 3: Insert into job_applications
+    const existingApplication = await client.query(
+      `SELECT id FROM job_applications WHERE candidate_id = $1 AND job_id = $2`,
+      [candidateId, job.id]
+    );
+
+    if (existingApplication.rows.length > 0) {
+      await client.query("ROLLBACK");
+      return res
+        .status(400)
+        .json({ message: "You have already applied for this job." });
+    }
+
+    //AI ML Part Starts here
+    let finalParsedString = "";
+
     await client.query(
-      `INSERT INTO job_applications (job_id, candidate_id, resume_text) 
-       VALUES ($1, $2, $3)`,
-      [job.id, candidateId, resume_text]
+      `INSERT INTO job_applications (job_id, candidate_id, resume_text,match_score_percentage)
+           VALUES ($1, $2, $3,90)`,
+      [job.id, candidateId, finalParsedString]
     );
 
     await client.query("COMMIT");

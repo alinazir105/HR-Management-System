@@ -14,6 +14,7 @@ import AvailableJobsCards from "./AvailableJobsCards";
 
 import { useState } from "react";
 import { toast } from "sonner";
+import api from "@/lib/api";
 
 export function JobApplicationForm({ job, setIsLoading, setRefresh }) {
   const [formData, setFormData] = useState({
@@ -52,7 +53,6 @@ export function JobApplicationForm({ job, setIsLoading, setRefresh }) {
       isValid = false;
     }
 
-    // Email validation
     if (!formData.email.trim()) {
       formErrors.email = "Email is required";
       isValid = false;
@@ -70,10 +70,21 @@ export function JobApplicationForm({ job, setIsLoading, setRefresh }) {
       isValid = false;
     }
 
-    // CV validation
     if (!formData.cv) {
       formErrors.cv = "CV upload is required";
       isValid = false;
+    } else {
+      const fileExtension = formData.cv.name.split('.').pop().toLowerCase();
+      const allowedExtensions = ['pdf', 'docx', 'doc'];
+      if (!allowedExtensions.includes(fileExtension)) {
+        formErrors.cv = "Invalid file type. Only PDF or DOCX files are allowed.";
+        isValid = false;
+      }
+
+      if (formData.cv.size > 10 * 1024 * 1024) {
+        formErrors.cv = "File size exceeds 10MB limit.";
+        isValid = false;
+      }
     }
 
     setErrors(formErrors);
@@ -83,34 +94,28 @@ export function JobApplicationForm({ job, setIsLoading, setRefresh }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64Resume = reader.result;
-        console.log("🚀 ~ reader.onload= ~ base64Resume:", base64Resume);
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("phone", formData.phone);
+      formDataToSend.append("job", JSON.stringify(job));
+      formDataToSend.append("resume", formData.cv);
+      try {
+        setIsLoading(true);
+        const response = await api.post(
+          "/recruitment/apply-for-job",
+          formDataToSend,
+          { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true }
+        );
+        toast.success(response.data.message);
+        setRefresh(true);
+      } catch (error) {
+        console.log(error)
+        toast.error("Failed to submit application");
+      } finally {
+        setIsLoading(false);
+      }
 
-        try {
-          setIsLoading(true);
-          const response = await api.post(
-            "/recruitment/add",
-            {
-              name: formData.name,
-              email: formData.email,
-              phone: formData.phone,
-              job,
-              resume_text: base64Resume,
-            },
-            { withCredentials: true }
-          );
-          toast.success(response.data.message);
-          setRefresh(true);
-        } catch (error) {
-          toast.error("Failed to submit application");
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      reader.readAsDataURL(formData.cv); // Or use `readAsText` for plain text resume
     }
   };
 

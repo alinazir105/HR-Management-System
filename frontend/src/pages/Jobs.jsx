@@ -8,8 +8,7 @@ import { toast } from "sonner";
 
 const Jobs = () => {
   const [allJobs, setAllJobs] = useState([]);
-  console.log("🚀 ~ Jobs ~ allJobs:", allJobs);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
