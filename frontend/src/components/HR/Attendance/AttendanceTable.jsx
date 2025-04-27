@@ -8,19 +8,34 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
-const headings = ["Name", "Date", "Checkin", "Checkout", "Status", "Workhours"];
+const headings = ["Name", "Date", "Checkin", "Checkout", "Workhours", "Status"];
+
+const formatTime = (timeString) => {
+  const [hours, minutes, _] = timeString.split(':');
+
+  let hour = parseInt(hours, 10);
+  const minute = parseInt(minutes, 10);
+
+  const period = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12;
+  hour = hour ? hour : 12;
+
+
+  return `${hour}:${String(minute).padStart(2, '0')} ${period}`;
+};
 
 const AttendanceTable = ({ attendance }) => {
   return (
     <div className="overflow-hidden rounded-lg border border-gray-300 mt-5">
       <Table>
         <TableHeader>
-          <TableRow className="hover:bg-transparent">
+          <TableRow className="bg-gray-50 text-left">
             {headings.map((heading, index) => (
               <TableHead
                 key={index}
-                className="text-lg font-semibold px-4 py-2 bg-gray-300"
+                className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 "
               >
                 {heading}
               </TableHead>
@@ -46,9 +61,25 @@ const AttendanceTable = ({ attendance }) => {
                 {Object.values(row).map((value, i) => (
                   <>
                     {value !== row.userid && (
-                      <TableCell key={i} className="px-4 py-2">
-                        {value}
-                      </TableCell>
+                      <>
+                        {value == row.checkin || value == row.checkout ? <TableCell key={i} className="px-4 py-2">
+                          {formatTime(value)}
+                        </TableCell> : value == row.status ? <TableCell key={i} className="px-4 py-2">
+                          <Badge
+                            className={`font-medium px-3 py-1 rounded-full text-sm
+    ${row.status === "Absent"
+                                ? "bg-red-100 text-red-800 border border-red-800"
+                                : "bg-green-100 text-green-800 border border-green-800"
+                              }
+  `}
+                          >
+                            {value}
+                          </Badge>
+                        </TableCell> : <TableCell key={i} className="px-4 py-2">
+                          {value}
+                        </TableCell>}
+
+                      </>
                     )}
                   </>
                 ))}

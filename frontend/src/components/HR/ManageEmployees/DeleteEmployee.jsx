@@ -37,7 +37,7 @@ const DeleteEmployee = ({ userID, setIsLoading, setRefresh }) => {
         <AlertDialogTrigger asChild>
           <Button
             variant="destructive"
-            className={"cursor-pointer hover:bg-red-700"}
+            className={"cursor-pointer hover:bg-red-700 font-semibold"}
           >
             Delete
           </Button>
