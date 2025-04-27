@@ -1,7 +1,6 @@
 import PayrollFilterPanel from "./PayrollFilterPanel";
 import PayrollSummary from "./PayrollSummary";
 import PayrollTable from "./PayrollTable";
-import PayrollModals from "./PayrollModals";
 import NotificationToast from "./NotificationToast";
 
 const PayrollPage = () => {
@@ -11,7 +10,6 @@ const PayrollPage = () => {
       <PayrollSummary />
       <PayrollFilterPanel />
       <PayrollTable />
-      <PayrollModals />
       <NotificationToast />
     </div>
   );
