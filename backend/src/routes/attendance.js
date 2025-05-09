@@ -130,8 +130,8 @@ router.get("/all-employees", async (req, res) => {
   let result;
   try {
     result =
-      await pool.query(`SELECT e.name, a.date::TEXT, a.checkin::TIME, a.checkout::TIME,a.status, a.workhours, e.userid
-      FROM attendance a JOIN employees e ON a.userid = e.userid;
+      await pool.query(`SELECT e.name, a.date::TEXT, a.checkin::TIME, a.checkout::TIME,a.workhours,a.status, e.userid
+      FROM attendance a JOIN employees e ON a.userid = e.userid order by a.date desc;
 `);
     if (result.rowCount === 0) {
       res.json({ attendance: [], message: "No attendance found!" });

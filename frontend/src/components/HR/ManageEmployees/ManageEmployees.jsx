@@ -33,8 +33,8 @@ const ManageEmployees = () => {
   return (
     <>
       <div className="content">
-        <div className="flex justify-between items-center">
-          <h1 className="font-bold text-2xl text-center mb-4">
+        <div className="flex justify-between items-end flex-wrap">
+          <h1 className="font-bold text-2xl text-center">
             Manage Employees
           </h1>
           <AddEmployeeForm

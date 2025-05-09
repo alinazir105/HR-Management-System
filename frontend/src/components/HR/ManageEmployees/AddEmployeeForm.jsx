@@ -207,7 +207,7 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
             <Plus className="mr-2" /> Add Employee
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[35em] max-h-[38em] overflow-auto">
+        <DialogContent className="sm:max-w-[35em] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className={"text-xl font-semibold"}>
               Add Employee

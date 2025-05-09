@@ -52,11 +52,11 @@ export function LeaveRequestAction({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={status === "Approve" ? "outline" : "destructive"}>
+        <Button variant={status === "Approve" ? "outline" : "destructive"} className={`cursor-pointer ${status !== "Approve" ? "hover:bg-red-800 font-semibold" : ""}`}>
           {status}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{status} Leave</DialogTitle>
           <DialogDescription>Leave remarks for your action</DialogDescription>

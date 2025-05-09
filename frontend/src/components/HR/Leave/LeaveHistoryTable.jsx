@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { LeaveRequestAction } from "./LeaveRequestAction";
+import { Badge } from "@/components/ui/badge";
 
 const headings = [
   "Name",
@@ -25,11 +26,11 @@ const LeaveHistoryTable = ({ leaveRequests, setIsLoading, setRefresh }) => {
     <div className="overflow-hidden rounded-lg border border-gray-300">
       <Table>
         <TableHeader>
-          <TableRow className="hover:bg-transparent">
+          <TableRow className="bg-gray-50 text-left">
             {headings.map((heading, index) => (
               <TableHead
                 key={index}
-                className="text-lg font-semibold px-4 py-2 bg-gray-300"
+                className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 "
               >
                 {heading}
               </TableHead>
@@ -65,17 +66,21 @@ const LeaveHistoryTable = ({ leaveRequests, setIsLoading, setRefresh }) => {
                     <TableCell className="px-4 py-2">{row.startdate}</TableCell>
                     <TableCell className="px-4 py-2">{row.enddate}</TableCell>
                     <TableCell className="px-4 py-2">{totalDays}</TableCell>
-                    <TableCell className="px-4 py-2">{row.reason}</TableCell>
-                    <TableCell
-                      className={`px-4 py-2  font-semibold ${
-                        row.status === "rejected"
-                          ? "text-red-500"
-                          : "text-green-500"
-                      }`}
-                    >
-                      {row.status}
+                    <TableCell className="px-4 py-2 capitalize">{row.reason}</TableCell>
+                    <TableCell className="px-4 py-2">
+
+                      <Badge
+                        className={`font-medium px-3 py-1 capitalize rounded-full text-sm
+    ${row.status === "rejected"
+                            ? "bg-red-100 text-red-800 border border-red-800"
+                            : "bg-green-100 text-green-800 border border-green-800"
+                          }
+  `}
+                      >
+                        {row.status}
+                      </Badge>
                     </TableCell>
-                    <TableCell className="px-4 py-2">{row.hrremarks}</TableCell>
+                    <TableCell className="px-4 py-2 capitalize">{row.hrremarks}</TableCell>
                   </TableRow>
                 );
               })

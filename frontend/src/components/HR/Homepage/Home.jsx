@@ -54,8 +54,8 @@ const Home = () => {
       <div className="content flex flex-col gap-5">
         <div className="flex flex-col gap-3 flex-wrap">
           <h1 className="font-bold text-2xl mb-4">Overview</h1>
-          <div className="flex flex-col xl:flex-row justify-center items-center gap-12">
-            <div className="flex flex-col w-full xl:w-auto justify-center items-center gap-1">
+          <div className="flex flex-col justify-center items-center gap-6">
+            <div className="flex flex-col w-full justify-center items-center gap-1">
               <div className="flex items-center justify-between w-full">
                 <h3 className="font-bold text-md">Average Perfomance Chart</h3>
 
@@ -68,7 +68,7 @@ const Home = () => {
               </div>
               <AvgPerformanceChart />
             </div>
-            <div className="grid grid-cols-4 xl:grid-cols-2 2xl:grid-cols-3 overflow-hidden gap-5">
+            <div className="w-full grid grid-cols-2 sm:grid-cols-3 overflow-hidden gap-5 h-full">
               <SummaryCard
                 to="#"
                 logo={UserRoundCheck}
@@ -109,15 +109,15 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="mr-10">
+        <div className="mr-10 mt-5">
           <h1 className="font-bold text-2xl mb-4">Quick Actions</h1>
           <div className="flex gap-4 flex-wrap">
-            <AddEmployeeForm setIsLoading={() => {}} setRefresh={() => {}} />
+            <AddEmployeeForm setIsLoading={() => { }} setRefresh={() => { }} />
             <AnnouncementsDialog
-              setRefreshData={() => {}}
-              setIsAdding={() => {}}
+              setRefreshData={() => { }}
+              setIsAdding={() => { }}
             />
-            <RecruitmentJobAdd setRefresh={() => {}} />
+            <RecruitmentJobAdd setRefresh={() => { }} />
           </div>
         </div>
       </div>
