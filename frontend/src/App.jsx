@@ -38,6 +38,7 @@ import PayrollPage from "./components/HR/PayRollManagement/PayRollPage";
 import Recruitment from "./components/HR/Recruitment/Recruitment";
 import Jobs from "./pages/Jobs";
 import EmployeePayrollPage from "./components/Employee/PayRoll/EmployeePayRollPage";
+import EmployeeHome from "./components/Employee/Homepage/EmployeeHome";
 const hrNavItems = [
   { title: "Home", url: "/hr/dashboard", icon: Home },
   { title: "Employees", url: "/hr/dashboard/manage-employees", icon: Users },
@@ -131,7 +132,10 @@ const App = () => {
               />
               <Route path="/hr/dashboard/leave" element={<Leave />} />
               <Route path="/hr/dashboard/attendance" element={<Attendance />} />
-              <Route path="/hr/dashboard/performance" element={<PerformanceEvaluation />} />
+              <Route
+                path="/hr/dashboard/performance"
+                element={<PerformanceEvaluation />}
+              />
               <Route path="/hr/dashboard/payroll" element={<PayrollPage />} />
               <Route
                 path="/hr/dashboard/performance"
@@ -154,7 +158,7 @@ const App = () => {
               element={<DashboardLayout navItems={employeeNavItems} />}
             >
               {/* Employee Routes will go here */}
-              <Route index />
+              <Route index element={<EmployeeHome />} />
               <Route
                 path="/employee/dashboard/attendance"
                 element={<MyAttendance />}
@@ -173,7 +177,10 @@ const App = () => {
                 element={<PerformanceReview />}
               />
 
-              <Route path="/employee/dashboard/payroll" element={<EmployeePayrollPage/>}/>
+              <Route
+                path="/employee/dashboard/payroll"
+                element={<EmployeePayrollPage />}
+              />
             </Route>
           </Route>
 

@@ -12,7 +12,6 @@ import {
   UserRoundX,
 } from "lucide-react";
 import { AvgPerformanceChart } from "./AvgPerformanceChart";
-import { QuickActionButton } from "./QuickActionButton";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import LoadingScreen from "@/components/ui/LoadingScreen";
