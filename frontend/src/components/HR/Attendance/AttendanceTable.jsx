@@ -63,7 +63,7 @@ const AttendanceTable = ({ attendance }) => {
                     {value !== row.userid && (
                       <>
                         {value == row.checkin || value == row.checkout ? <TableCell key={i} className="px-4 py-2">
-                          {formatTime(value)}
+                          {value ? formatTime(value) : "-"}
                         </TableCell> : value == row.status ? <TableCell key={i} className="px-4 py-2">
                           <Badge
                             className={`font-medium px-3 py-1 rounded-full text-sm

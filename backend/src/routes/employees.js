@@ -32,10 +32,10 @@ router.post("/add", async (req, res) => {
     const userID = userResult.rows[0].id;
     const fullname = `${firstname} ${lastname}`;
 
-    await client.query(
+    const employeeData = await client.query(
       `INSERT INTO employees 
       (userid, name, email, department, job_title, employment_type, salary, gender) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
       [
         userID,
         fullname,
@@ -47,6 +47,10 @@ router.post("/add", async (req, res) => {
         gender,
       ]
     );
+
+    await client.query("Insert into leave_balances (employeeid) Values ($1)", [
+      employeeData.rows[0].employeeid,
+    ]);
 
     await client.query("COMMIT");
 

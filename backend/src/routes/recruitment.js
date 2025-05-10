@@ -1,6 +1,8 @@
 import express from "express";
 import pool from "./../db.js";
 import multer from "multer";
+import axios from "axios";
+import FormData from "form-data";
 
 const router = express.Router();
 
@@ -194,6 +196,14 @@ router.post("/hire-candidate", async (req, res) => {
 router.post("/apply-for-job", upload.single("resume"), async (req, res) => {
   const { name, email, phone } = req.body;
   const job = JSON.parse(req.body.job);
+  const job_description =
+    job.title +
+    " " +
+    job.job_type +
+    " " +
+    job.description +
+    " Skills Required: " +
+    job.skills_required;
 
   if (!req.file) {
     return res.status(400).json({ message: "Resume file is required" });
@@ -235,12 +245,24 @@ router.post("/apply-for-job", upload.single("resume"), async (req, res) => {
     }
 
     //AI ML Part Starts here
-    let finalParsedString = "";
+    const form = new FormData();
+    form.append("file", req.file.buffer, {
+      filename: req.file.originalname,
+      contentType: req.file.mimetype,
+    });
+    form.append("job", job_description);
+    const mlResponse = await axios.post("http://127.0.0.1:5000/upload", form, {
+      headers: form.getHeaders(),
+    });
+
+    const { match_score, resume } = mlResponse.data;
+
+    const match_score_percentage = match_score * 100;
 
     await client.query(
       `INSERT INTO job_applications (job_id, candidate_id, resume_text,match_score_percentage)
-           VALUES ($1, $2, $3,90)`,
-      [job.id, candidateId, finalParsedString]
+           VALUES ($1, $2, $3,$4)`,
+      [job.id, candidateId, resume, match_score_percentage]
     );
 
     await client.query("COMMIT");

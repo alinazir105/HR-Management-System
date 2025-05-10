@@ -7,6 +7,7 @@ const publicRoutes = [
   "/reset-password/request",
   "/reset-password/verify",
   "/reset-password/new-password",
+  "/jobs",
 ];
 
 export const SessionProvider = ({ children }) => {
