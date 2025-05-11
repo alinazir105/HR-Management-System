@@ -39,11 +39,11 @@ def upload_file():
         os.remove(filepath)
 
         # Encode the resume and job description
-        resume_embedding = model.encode([resume_text])
-        jd_embedding = model.encode([job_description])
+        resume_embedding = model.encode([resume_text], normalize_embeddings=True)
+        jd_embedding = model.encode([job_description], normalize_embeddings=True)
 
         # Combine the embeddings and predict the match score
-        X = np.concatenate([resume_embedding, jd_embedding], axis=1)
+        X = np.abs(resume_embedding - jd_embedding)
         match_score = regressor.predict(X)[0]
 
         match_score = float(match_score)

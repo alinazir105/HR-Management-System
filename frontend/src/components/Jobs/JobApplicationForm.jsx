@@ -74,10 +74,11 @@ export function JobApplicationForm({ job, setIsLoading, setRefresh }) {
       formErrors.cv = "CV upload is required";
       isValid = false;
     } else {
-      const fileExtension = formData.cv.name.split('.').pop().toLowerCase();
-      const allowedExtensions = ['pdf', 'docx', 'doc'];
+      const fileExtension = formData.cv.name.split(".").pop().toLowerCase();
+      const allowedExtensions = ["pdf", "docx", "doc"];
       if (!allowedExtensions.includes(fileExtension)) {
-        formErrors.cv = "Invalid file type. Only PDF or DOCX files are allowed.";
+        formErrors.cv =
+          "Invalid file type. Only PDF or DOCX files are allowed.";
         isValid = false;
       }
 
@@ -105,17 +106,19 @@ export function JobApplicationForm({ job, setIsLoading, setRefresh }) {
         const response = await api.post(
           "/recruitment/apply-for-job",
           formDataToSend,
-          { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true }
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+            withCredentials: true,
+          }
         );
         toast.success(response.data.message);
         setRefresh(true);
       } catch (error) {
-        console.log(error)
-        toast.error("Failed to submit application");
+        console.log(error);
+        toast.error(error.response.data.message);
       } finally {
         setIsLoading(false);
       }
-
     }
   };
 

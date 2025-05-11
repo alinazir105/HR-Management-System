@@ -195,6 +195,7 @@ router.post("/hire-candidate", async (req, res) => {
 
 router.post("/apply-for-job", upload.single("resume"), async (req, res) => {
   const { name, email, phone } = req.body;
+
   const job = JSON.parse(req.body.job);
   const job_description =
     job.title +
@@ -251,6 +252,7 @@ router.post("/apply-for-job", upload.single("resume"), async (req, res) => {
       contentType: req.file.mimetype,
     });
     form.append("job", job_description);
+
     const mlResponse = await axios.post("http://127.0.0.1:5000/upload", form, {
       headers: form.getHeaders(),
     });
