@@ -10,10 +10,15 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import ProfileChangePassword from "./ProfileChangePassword"
+import { toast } from "sonner"
+import api from "@/lib/api"
+import LoadingScreen from "@/components/ui/LoadingScreen"
+import { Loader2 } from "lucide-react"
 
 const ProfileEditableForm = ({ data }) => {
-    const first = data.name?.split(" ")[0] || "";
-    const second = data.name?.split(" ")[1] || "";
+    const parts = data.name?.split(" ") || [];
+    const first = parts[0] || "";
+    const second = parts.slice(1).join(" ") || "";
     const [firstName, setFirstName] = useState(first)
     const [firstNameError, setFirstNameError] = useState("")
 
@@ -23,6 +28,8 @@ const ProfileEditableForm = ({ data }) => {
 
     const [gender, setGender] = useState(data.gender || "")
     const [genderError, setGenderError] = useState("")
+
+    const [isLoading, setIsLoading] = useState(false)
 
     const validate = () => {
         let valid = true
@@ -52,10 +59,21 @@ const ProfileEditableForm = ({ data }) => {
         return valid
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         if (validate()) {
             console.log({ firstName, lastName, gender })
+        }
+        setIsLoading(true)
+        try {
+            await api.post("/profile/update-information", { firstName, lastName, gender }, { withCredentials: true })
+            toast.success("Profile updated successfully!")
+        } catch (e) {
+            console.error(e);
+            toast.error("Error while updating profile!")
+        }
+        finally {
+            setIsLoading(false)
         }
     }
 
@@ -111,7 +129,7 @@ const ProfileEditableForm = ({ data }) => {
                 </div>
 
 
-                <Button type="submit" disabled={!firstName || !lastName || !gender} className="mt-2 w-full cursor-pointer hover:bg-blue-700 bg-blue-600 font-semibold">{(!firstName || !lastName || !gender) ? "Cannot Make Changes" : "Save Changes"}</Button>
+                <Button type="submit" disabled={!firstName || !lastName || !gender || isLoading} className="mt-2 w-full cursor-pointer hover:bg-blue-700 bg-blue-600 font-semibold">{(!firstName || !lastName || !gender) ? "Cannot Make Changes" : "Save Changes"}</Button>
             </form>
             <div className="mt-6 border border-red-300 rounded-lg p-4 bg-red-50">
                 <h3 className="text-lg font-semibold mb-1 text-red-800">Security Zone</h3>

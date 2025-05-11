@@ -98,8 +98,8 @@ const PerformanceReviewAdd = ({ allPerformanceReviews, setRefreshData }) => {
 
         try {
             setIsLoading(true)
-            const response = await api.post("/performance/add", reviewData, { withCredentials: true })
-            toast.success(response.data.message);
+            await api.post("/performance/add", reviewData, { withCredentials: true })
+            toast.success("Performance Review Added Successfully!");
             handleReset()
             setRefreshData(true)
             setIsOpen(false)

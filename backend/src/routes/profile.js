@@ -54,4 +54,20 @@ router.post("/update-password", async (req, res) => {
   }
 });
 
+router.post("/update-information", async (req, res) => {
+  const { firstName, lastName, gender } = req.body;
+  const name = firstName + " " + lastName;
+  const { employeeid } = req.session.data;
+  try {
+    let result = await pool.query(
+      "update employees set name=$1,gender=$2 where employeeid=$3",
+      [name, gender, employeeid]
+    );
+    res.json({ message: "Profile updated successfully!" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Error while updating profile!" });
+  }
+});
+
 export default router;

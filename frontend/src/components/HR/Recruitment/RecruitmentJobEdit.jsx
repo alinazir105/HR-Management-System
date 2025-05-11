@@ -246,6 +246,7 @@ const RecruitmentJobEdit = ({ job, setRefresh }) => {
                                     type="date"
                                     value={deadline}
                                     onChange={(e) => { setDeadline(e.target.value); setErrors({ ...errors, deadline: "" }) }}
+                                    min={new Date().toISOString().split("T")[0]}
                                 />
                                 {errors.deadline && <p className="text-red-500 text-sm font-semibold">{errors.deadline}</p>}
                             </div>

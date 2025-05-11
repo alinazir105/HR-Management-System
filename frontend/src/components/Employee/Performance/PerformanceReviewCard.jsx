@@ -62,10 +62,10 @@ const PerformanceReviewCard = ({ performanceReviews }) => {
                         })}
                     </div>
                     <div className="mt-4 text-gray-700 text-sm italic">
-                        "{performanceReviews[0].feedback == null ? "N/A" : performanceReviews[0].feedback}"
+                        "{!performanceReviews[0].feedback ? "N/A" : performanceReviews[0].feedback}"
                     </div>
                     <div className="text-sm text-gray-400 mt-2">
-                        <span className='font-semibold'>Latest Achieved Goals: </span>{performanceReviews[0].goals_achieved == null ? "N/A" : performanceReviews[0].goals_achieved}
+                        <span className='font-semibold'>Latest Achieved Goals: </span>{performanceReviews[0].goals_achieved.length == 0 ? "N/A" : performanceReviews[0].goals_achieved}
                     </div>
                 </div>
             </div>

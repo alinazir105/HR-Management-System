@@ -62,18 +62,18 @@ const PerformanceDetails = ({ performanceReviews }) => {
                                                 <Star className="w-4 h-4" />
                                                 Rating:
                                             </span>{' '}
-                                            {review.rating} / 5
+                                            {review.rating || "0"} / 5
                                         </p>
                                         <p className="text-base text-gray-600 line-clamp-1">
                                             <span className="inline-flex items-center gap-1 font-semibold">
                                                 <MessageSquareText className="w-4 h-4" />
                                                 Feedback:
                                             </span>{' '}
-                                            {review.feedback}
+                                            {review.feedback || "N/A"}
                                         </p>
                                     </div>
                                     <div className="mt-2 sm:mt-0">
-                                        <Badge variant="outline" className="text-base inline-flex items-center gap-1">
+                                        <Badge variant="outline" className="text-base inline-flex items-center gap-1 capitalize">
                                             <RefreshCw className="w-4 h-4" />
                                             {review.status}
                                         </Badge>
@@ -88,7 +88,7 @@ const PerformanceDetails = ({ performanceReviews }) => {
                                         <MessageSquareText className="w-4 h-4" />
                                         Full Feedback
                                     </p>
-                                    <p className="text-gray-700">{review.feedback}</p>
+                                    <p className="text-gray-700">{review.feedback || "-"}</p>
                                 </div>
                                 <div className="mt-2">
                                     <p className="font-semibold mb-1 inline-flex items-center gap-1">
@@ -96,6 +96,7 @@ const PerformanceDetails = ({ performanceReviews }) => {
                                         Goals Set
                                     </p>
                                     <ul className="list-disc list-inside text-gray-700">
+                                        {review.goals_set.length == 0 && "-"}
                                         {review.goals_set?.map((goal, idx) => (
                                             <li key={idx}>{goal}</li>
                                         ))}
@@ -107,6 +108,7 @@ const PerformanceDetails = ({ performanceReviews }) => {
                                         Goals Achieved
                                     </p>
                                     <ul className="list-disc list-inside text-gray-700">
+                                        {review.goals_achieved.length == 0 && "-"}
                                         {review.goals_achieved?.map((goal, idx) => (
                                             <li key={idx}>{goal}</li>
                                         ))}
@@ -118,6 +120,7 @@ const PerformanceDetails = ({ performanceReviews }) => {
                                         Areas to Improve
                                     </p>
                                     <ul className="list-disc list-inside text-gray-700">
+                                        {review.areas_to_improve.length == 0 && "-"}
                                         {review.areas_to_improve?.map((area, idx) => (
                                             <li key={idx}>{area}</li>
                                         ))}
