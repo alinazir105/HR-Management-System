@@ -13,8 +13,10 @@ import { Label } from "@/components/ui/label";
 import AvailableJobsCards from "./AvailableJobsCards";
 
 import { useState } from "react";
+import { toast } from "sonner";
+import api from "@/lib/api";
 
-export function JobApplicationForm({ job }) {
+export function JobApplicationForm({ job, setIsLoading, setRefresh }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -35,6 +37,10 @@ export function JobApplicationForm({ job }) {
       ...prev,
       [id]: type === "file" ? (files ? files[0] : null) : value,
     }));
+    setErrors((prev) => ({
+      ...prev,
+      [id]: "",
+    }));
   };
 
   const validateForm = () => {
@@ -47,7 +53,6 @@ export function JobApplicationForm({ job }) {
       isValid = false;
     }
 
-    // Email validation
     if (!formData.email.trim()) {
       formErrors.email = "Email is required";
       isValid = false;
@@ -60,25 +65,57 @@ export function JobApplicationForm({ job }) {
     if (!formData.phone.trim()) {
       formErrors.phone = "Phone number is required";
       isValid = false;
-    } else if (!/^\d{3}-\d{7}$/.test(formData.phone)) {
+    } else if (!/^03\d{2}-\d{7}$/.test(formData.phone)) {
       formErrors.phone = "Phone number must be in the format 03XX-XXXXXXX";
       isValid = false;
     }
 
-    // CV validation
     if (!formData.cv) {
       formErrors.cv = "CV upload is required";
       isValid = false;
+    } else {
+      const fileExtension = formData.cv.name.split('.').pop().toLowerCase();
+      const allowedExtensions = ['pdf', 'docx', 'doc'];
+      if (!allowedExtensions.includes(fileExtension)) {
+        formErrors.cv = "Invalid file type. Only PDF or DOCX files are allowed.";
+        isValid = false;
+      }
+
+      if (formData.cv.size > 10 * 1024 * 1024) {
+        formErrors.cv = "File size exceeds 10MB limit.";
+        isValid = false;
+      }
     }
 
     setErrors(formErrors);
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Form submitted successfully");
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("phone", formData.phone);
+      formDataToSend.append("job", JSON.stringify(job));
+      formDataToSend.append("resume", formData.cv);
+      try {
+        setIsLoading(true);
+        const response = await api.post(
+          "/recruitment/apply-for-job",
+          formDataToSend,
+          { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true }
+        );
+        toast.success(response.data.message);
+        setRefresh(true);
+      } catch (error) {
+        console.log(error)
+        toast.error("Failed to submit application");
+      } finally {
+        setIsLoading(false);
+      }
+
     }
   };
 
@@ -86,30 +123,32 @@ export function JobApplicationForm({ job }) {
     <Dialog>
       <DialogTrigger asChild>
         <div className="w-full">
-          <AvailableJobsCards />
+          <AvailableJobsCards job={job} />
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Apply for {job.title}</DialogTitle>
           <DialogDescription className="text-gray-600">
-            Design and develop high-quality, scalable frontend interfaces.
+            {job.description}
           </DialogDescription>
         </DialogHeader>
 
         {/* Job Details */}
         <div className="text-sm text-gray-700 space-y-1 mb-4">
           <p>
-            📍 <strong>Location:</strong> Remote
+            📍 <strong>Location: </strong>
+            {job.location}
           </p>
           <p>
-            💼 <strong>Type:</strong> Full-time
+            💼 <strong>Type:</strong> {job.job_type}
           </p>
           <p>
-            🛠️ <strong>Skills:</strong> React, Tailwind CSS, TypeScript
+            🛠️ <strong>Skills: </strong>
+            {job.skills_required}
           </p>
           <p>
-            🧠 <strong>Experience:</strong> 2+ years
+            🧠 <strong>Experience:</strong> {job.experience_required}+ years
           </p>
         </div>
 
@@ -131,7 +170,7 @@ export function JobApplicationForm({ job }) {
             <Label htmlFor="email">Email Address</Label>
             <Input
               id="email"
-              type="email"
+              type="text"
               placeholder="you@example.com"
               value={formData.email}
               onChange={handleChange}
@@ -165,7 +204,9 @@ export function JobApplicationForm({ job }) {
           </div>
 
           <DialogFooter className="mt-4">
-            <Button type="submit">Submit Application</Button>
+            <Button type="submit" className={"cursor-pointer"}>
+              Submit Application
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -80,7 +80,7 @@ const AnnouncementsDialog = ({ setRefreshData, setIsAdding }) => {
             <DialogTrigger asChild>
                 <Button variant="outline" className="cursor-pointer">Make Announcement</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>New Announcement</DialogTitle>
                     <DialogDescription>

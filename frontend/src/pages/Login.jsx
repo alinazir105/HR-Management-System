@@ -16,10 +16,8 @@ const Login = () => {
 
   const [Email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberCheckbox, setRememberCheckbox] = useState(false);
   const [emailError, setemailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [CheckboxError, setCheckboxError] = useState("");
   const [buttonClicked, setButtonClicked] = useState(false);
 
   function handleEmailChange(event) {
@@ -29,11 +27,6 @@ const Login = () => {
   function handlePasswordChange(event) {
     setPassword(event.target.value);
     setPasswordError("");
-  }
-
-  function handleRememberCheckboxChange(checked) {
-    setRememberCheckbox(checked);
-    setCheckboxError("");
   }
 
   async function handleLogin(event) {
@@ -54,12 +47,6 @@ const Login = () => {
     // Password validation
     if (!password) {
       setPasswordError("Password is required!");
-      valid = false;
-    }
-
-    // Checkbox validation
-    if (!rememberCheckbox) {
-      setCheckboxError("You must accept terms and conditions!");
       valid = false;
     }
 
@@ -164,28 +151,6 @@ const Login = () => {
                       </p>
                     )}
                   </div>
-                </div>
-                <div className="mt-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      className={"cursor-pointer"}
-                      id="terms"
-                      checked={rememberCheckbox}
-                      onCheckedChange={handleRememberCheckboxChange}
-                      disabled={buttonClicked}
-                    />
-                    <label
-                      htmlFor="terms"
-                      className="text-sm text-neutral-500 "
-                    >
-                      Accept terms and conditions
-                    </label>
-                  </div>
-                  {CheckboxError && (
-                    <p className="text-red-500 font-semibold text-sm mt-1">
-                      {CheckboxError}
-                    </p>
-                  )}
                 </div>
               </div>
               <div>

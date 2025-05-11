@@ -22,11 +22,11 @@ const LeaveBalancesTable = ({ leaveBalances, setIsLoading, setRefresh }) => {
     <div className="overflow-hidden rounded-lg border border-gray-300">
       <Table>
         <TableHeader>
-          <TableRow className="hover:bg-transparent">
+          <TableRow className="bg-gray-50 text-left">
             {headings.map((heading, index) => (
               <TableHead
                 key={index}
-                className="text-lg font-semibold px-4 py-2 bg-gray-300"
+                className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 "
               >
                 {heading}
               </TableHead>

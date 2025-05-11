@@ -130,8 +130,8 @@ router.get("/all-employees", async (req, res) => {
   let result;
   try {
     result =
-      await pool.query(`SELECT e.name, a.date::TEXT, a.checkin::TIME, a.checkout::TIME,a.status, a.workhours, e.userid
-      FROM attendance a JOIN employees e ON a.userid = e.userid;
+      await pool.query(`SELECT e.name, a.date::TEXT, a.checkin::TIME, a.checkout::TIME,a.workhours,a.status, e.userid
+      FROM attendance a JOIN employees e ON a.userid = e.userid order by a.date desc;
 `);
     if (result.rowCount === 0) {
       res.json({ attendance: [], message: "No attendance found!" });
@@ -144,6 +144,38 @@ router.get("/all-employees", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error while fetching attendance" });
+  }
+});
+
+router.get("/attendance-today", async (req, res) => {
+  const now = new Date();
+  const today = now.toISOString().split("T")[0];
+
+  try {
+    // Get total employees
+    const totalEmployeesResult = await pool.query(
+      `SELECT COUNT(*) FROM employees`
+    );
+    const totalEmployees = parseInt(totalEmployeesResult.rows[0].count, 10);
+
+    // Get employees who have checked in today
+    const checkedInResult = await pool.query(
+      `SELECT DISTINCT userid FROM attendance WHERE date = $1 AND checkin IS NOT NULL`,
+      [today]
+    );
+    const checkedInCount = checkedInResult.rowCount;
+
+    // No check-in employees
+    const noCheckinCount = totalEmployees - checkedInCount;
+
+    res.json({
+      checkins: checkedInCount,
+      noCheckins: noCheckinCount,
+      totalEmployees,
+    });
+  } catch (error) {
+    console.error("Error fetching today's attendance summary:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

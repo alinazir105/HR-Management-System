@@ -14,6 +14,7 @@ import api from "@/lib/api";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import LeaveBalancesTable from "./LeaveBalancesTable";
 import LeaveHistoryTable from "./LeaveHistoryTable";
+import { toast } from "sonner";
 
 export function LeaveOptionsTab() {
   const [leaveRequests, setLeaveRequests] = useState([]);
@@ -63,19 +64,19 @@ export function LeaveOptionsTab() {
 
   return (
     <Tabs defaultValue="pending" className="">
-      <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger className="cursor-pointer" value="pending">
+      <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 h-full gap-1">
+        <TabsTrigger className="cursor-pointer transition-all hover:shadow-sm" value="pending">
           Pending Requests
         </TabsTrigger>
-        <TabsTrigger className="cursor-pointer" value="balance">
+        <TabsTrigger className="cursor-pointer transition-all  hover:shadow-sm" value="balance">
           Leave Balances
         </TabsTrigger>
-        <TabsTrigger className="cursor-pointer" value="history">
+        <TabsTrigger className="cursor-pointer transition-all  hover:shadow-sm" value="history">
           Leave History
         </TabsTrigger>
       </TabsList>
       <TabsContent value="pending">
-        <Card>
+        <Card >
           <CardHeader>
             <CardTitle>Pending Requests</CardTitle>
             <CardDescription>Approve or Reject Leave Requests</CardDescription>

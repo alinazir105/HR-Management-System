@@ -23,7 +23,7 @@ import {
     SelectItem,
 } from "@/components/ui/select"
 
-const RecruitmentJobAdd = () => {
+const RecruitmentJobAdd = ({ setRefresh }) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [location, setLocation] = useState("");
@@ -86,7 +86,7 @@ const RecruitmentJobAdd = () => {
                 toast.success(response.data.message)
                 handleReset();
                 setIsOpen(false);
-
+                setRefresh(true)
             } catch (e) {
                 console.log(e);
                 toast.error(e?.response?.data?.message || "Something went wrong")

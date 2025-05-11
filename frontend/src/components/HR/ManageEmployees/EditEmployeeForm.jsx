@@ -159,13 +159,13 @@ const EditEmployeeForm = ({ data, setIsLoading, setRefresh }) => {
             Edit
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[35em] max-h-[38em] overflow-auto">
+        <DialogContent className="sm:max-w-[35em] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className={"text-xl font-semibold"}>
-              Add Employee
+              Edit Employee
             </DialogTitle>
             <DialogDescription>
-              Fill in the details to add a new employee.
+              Fill in the details to modify the employee.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="grid gap-4 py-4">
