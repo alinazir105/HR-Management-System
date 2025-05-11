@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import api from "@/lib/api";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { FilterByName } from "./FilterByName";
-import { FilterByDate } from "./FilterByDate";
 import { toast } from "sonner";
 import AttendanceTable from "./AttendanceTable";
 import { DateDropdown } from "./DateDropdown";
+import { Input } from "@/components/ui/input";
 
 const Attendance = () => {
   const [attendance, setAttendance] = useState([]);
@@ -49,10 +49,10 @@ const Attendance = () => {
 
     // Filter by selected date
     if (selectedDateOption === "specific" && selectedDate) {
-      const selectedFormatted = new Date(selectedDate).toLocaleDateString(); // "YYYY-MM-DD"
+      const selectedFormatted = new Date(selectedDate).toLocaleDateString(); // "MM/DD/YYYY"
 
       filtered = filtered.filter((item) => {
-        const itemDate = new Date(item.date).toLocaleDateString();
+        const itemDate = new Date(item.date).toLocaleDateString(); // "MM/DD/YYYY"
         return itemDate === selectedFormatted;
       });
     }
@@ -79,11 +79,16 @@ const Attendance = () => {
                 setSelectedDateOption={setSelectedDateOption}
                 selectedDateOption={selectedDateOption}
               />
-              {/* <FilterByDate
-                selectedDateOption={selectedDateOption}
-                setSelectedDate={setSelectedDate}
-                selectedDate={selectedDate}
-              /> */}
+
+              {selectedDateOption === "specific" && (
+                <div>
+                  <Input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
           </div>
           <AttendanceTable attendance={filteredAttendance} />
