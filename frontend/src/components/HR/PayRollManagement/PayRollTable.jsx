@@ -87,7 +87,6 @@ export default function PayrollTable() {
             await axios.post("http://localhost:3000/api/payroll/generate", {
               month: monthFilter,
             }, { withCredentials: true });
-
             setPayrollGenerated(true); // <- enable table rendering
             fetchPayroll(); // Load table data after generation
           } catch (err) {
@@ -100,21 +99,21 @@ export default function PayrollTable() {
 
 
       {payrollGenerated &&
-        <Table>
-          <TableCaption>Employee Payroll for {monthFilter}</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Employee Name</TableHead>
-              <TableHead>Employee ID</TableHead>
-              <TableHead>Department</TableHead>
-              <TableHead>Base Salary</TableHead>
-              <TableHead>Bonus</TableHead>
-              <TableHead>Deductions</TableHead>
-              <TableHead>Net Pay</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
+     <Table>
+        <TableCaption>Employee Payroll for {monthFilter}</TableCaption>
+        <TableHeader>
+          <TableRow className="bg-gray-50 text-left">
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Employee Name</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Employee ID</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Department</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Base Salary</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Bonus</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Deductions</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Net Pay</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Status</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
 
           <TableBody>
             {payrollData.map((emp) => {

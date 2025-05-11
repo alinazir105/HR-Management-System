@@ -149,9 +149,12 @@ router.get("/home/me", async (req, res) => {
     ] = await Promise.all([
       pool.query(
         `SELECT 
-      COUNT(*) FILTER (WHERE status = 'Present')::FLOAT / COUNT(*) * 100 AS attendance_percentage
-      FROM attendance
-      WHERE userid = $1`,
+          CASE 
+            WHEN COUNT(*) = 0 THEN 0
+            ELSE COUNT(*) FILTER (WHERE status = 'Present')::FLOAT / COUNT(*) * 100 
+          END AS attendance_percentage
+        FROM attendance
+        WHERE userid = $1`,
         [id]
       ),
       pool.query(

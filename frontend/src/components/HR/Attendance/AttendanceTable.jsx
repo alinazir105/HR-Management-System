@@ -12,16 +12,22 @@ import { Badge } from "@/components/ui/badge";
 
 const headings = ["Name", "Date", "Checkin", "Checkout", "Workhours", "Status"];
 
-const formatTime = (timeString) => {
-  const [hours, minutes, _] = timeString.split(':');
+const formatTimeUTCPlus5 = (timeString) => {
+  const [hours, minutes, seconds] = timeString.split(':').map(Number);
 
-  let hour = parseInt(hours, 10);
-  const minute = parseInt(minutes, 10);
+  // Create a UTC date object from the given time
+  const date = new Date(Date.UTC(1970, 0, 1, hours, minutes, seconds || 0));
+
+  // Add 5 hours for UTC+5
+  date.setUTCHours(date.getUTCHours() + 5);
+
+  // Extract local time after adding offset
+  let hour = date.getUTCHours();
+  const minute = date.getUTCMinutes();
 
   const period = hour >= 12 ? 'PM' : 'AM';
   hour = hour % 12;
   hour = hour ? hour : 12;
-
 
   return `${hour}:${String(minute).padStart(2, '0')} ${period}`;
 };
@@ -63,7 +69,7 @@ const AttendanceTable = ({ attendance }) => {
                     {value !== row.userid && (
                       <>
                         {value == row.checkin || value == row.checkout ? <TableCell key={i} className="px-4 py-2">
-                          {value ? formatTime(value) : "-"}
+                          {value ? formatTimeUTCPlus5(value) : "-"}
                         </TableCell> : value == row.status ? <TableCell key={i} className="px-4 py-2">
                           <Badge
                             className={`font-medium px-3 py-1 rounded-full text-sm

@@ -51,7 +51,7 @@ const EmployeeHome = () => {
             <HomeSummaryCards
               type="performance"
               title="Overall Rating"
-              text={dashboardData.overallRating + " " + (dashboardData.overallRating > 4 ? "★★★★★" : dashboardData.overallRating > 3 ? "★★★★" : dashboardData.overallRating > 2 ? "★★★" : dashboardData.overallRating > 1 ? "★★" : "★")}
+              text={dashboardData.overallRating + " " + (dashboardData.overallRating > 4 ? "★★★★★" : dashboardData.overallRating > 3 ? "★★★★" : dashboardData.overallRating > 2 ? "★★★" : dashboardData.overallRating > 1 ? "★★" : dashboardData.overallRating > 0 ? "★" : "")}
               tooltip="Average of recent performance reviews"
             />
             <HomeSummaryCards

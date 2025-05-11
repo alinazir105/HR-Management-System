@@ -8,7 +8,6 @@ const PayrollPage = () => {
       <h1 className="text-2xl font-bold">Payroll Management</h1>
       <PayrollSummary />
       <PayrollTable />
-      <NotificationToast />
     </div>
   );
 };

@@ -18,7 +18,7 @@ const PayrollFilterPanel = ({
   onFilter,
 }) => {
   return (
-    <div className="flex flex-wrap gap-4 justify-around mb-6">
+    <div className="flex flex-wrap gap-4 justify-end mb-6">
       <Input
         type="text"
         placeholder="Search by Employee Name"

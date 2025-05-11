@@ -229,6 +229,7 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
                 value={formData.email}
                 onChange={handleChange}
                 className="col-span-3"
+                maxLength={50}
               />
               {emailError && (
                 <p className="text-red-500 font-bold text-sm col-span-4 mt-0">
@@ -267,6 +268,7 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
                 value={formData.firstname}
                 onChange={handleChange}
                 className="col-span-3"
+                maxLength={20}
               />
               {firstnameError && (
                 <p className="text-red-500 font-bold text-sm col-span-4 mt-0">
@@ -286,6 +288,7 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
                 value={formData.lastname}
                 onChange={handleChange}
                 className="col-span-3"
+                maxLength={40}
               />
               {lastnameError && (
                 <p className="text-red-500 font-bold text-sm col-span-4 mt-0">
@@ -305,6 +308,7 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
                 value={formData.department}
                 onChange={handleChange}
                 className="col-span-3"
+                maxLength={50}
               />
               {departmentError && (
                 <p className="text-red-500 font-bold text-sm col-span-4 mt-0">
@@ -324,6 +328,7 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
                 value={formData.jobtitle}
                 onChange={handleChange}
                 className="col-span-3"
+                maxLength={50}
               />
               {jobtitleError && (
                 <p className="text-red-500 font-bold text-sm col-span-4 mt-0">
@@ -369,6 +374,7 @@ const AddEmployeeForm = ({ setIsLoading, setRefresh }) => {
                 value={formData.salary}
                 onChange={handleChange}
                 className="col-span-3"
+                min={0}
               />
               {salaryError && (
                 <p className="text-red-500 font-bold text-sm col-span-4 mt-0">
