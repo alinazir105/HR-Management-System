@@ -34,15 +34,11 @@ export const SessionProvider = ({ children }) => {
       const response = await api.get("/auth/me", { withCredentials: true });
       const data = response.data.message;
       setSessionData(data);
-    } catch {
-      if (!publicRoutes.includes(location.pathname)) {
-        navigate("/login");
-      }
     } finally {
       setIsLoading(false);
       setIsRedirecting(false);
     }
-  }, [navigate, sessionData, location.pathname]);
+  }, [sessionData, location.pathname]);
 
   useEffect(() => {
     fetchSessionData();

@@ -136,4 +136,85 @@ router.post("/update", async (req, res) => {
   }
 });
 
+router.get("/home/me", async (req, res) => {
+  const { employeeid } = req.session.data;
+  const { id } = req.session.data;
+  try {
+    const [
+      attendanceAllResult,
+      attendanceTodayResult,
+      performanceResult,
+      leaveBalanceResult,
+      leaveRequestResult,
+    ] = await Promise.all([
+      pool.query(
+        `SELECT 
+      COUNT(*) FILTER (WHERE status = 'Present')::FLOAT / COUNT(*) * 100 AS attendance_percentage
+      FROM attendance
+      WHERE userid = $1`,
+        [id]
+      ),
+      pool.query(
+        "SELECT * FROM attendance WHERE userid = $1 AND date = CURRENT_DATE",
+        [id]
+      ),
+      pool.query(
+        `SELECT 
+      AVG(rating)::numeric(3,2) AS overall_rating
+      FROM 
+      performance_reviews
+        WHERE 
+      employeeid = $1
+        AND EXTRACT(YEAR FROM reviewed_at) = EXTRACT(YEAR FROM CURRENT_DATE);`,
+        [employeeid]
+      ),
+      pool.query(
+        `SELECT
+      (sick_leave_total - sick_leave_used) AS sick_leave_remaining,
+      (annual_leave_total - annual_leave_used) AS annual_leave_remaining,
+      (casual_leave_total - casual_leave_used) AS casual_leave_remaining,
+      (parental_leave_total - parental_leave_used) AS parental_leave_remaining,
+      last_updated
+      FROM leave_balances
+      WHERE employeeid = $1`,
+        [employeeid]
+      ),
+      pool.query(
+        `SELECT * 
+      FROM leave_requests 
+      WHERE employeeid = $1 
+      AND status = 'pending'`,
+        [employeeid]
+      ),
+    ]);
+    const attendancePercentage = parseFloat(
+      (attendanceAllResult.rows[0]?.attendance_percentage ?? 0).toFixed(2)
+    );
+    const overallRating = performanceResult.rows[0].overall_rating || 0;
+    const attendanceToday = attendanceTodayResult.rows[0];
+    const remainingLeaves = leaveBalanceResult.rows[0] || null;
+    const pendingLeaveRequests = leaveRequestResult.rowCount;
+
+    const checkInStatus = attendanceToday
+      ? {
+          checkedIn: true,
+          checkedOut: attendanceToday.checkout !== null,
+          data: attendanceToday,
+        }
+      : { checkedIn: false };
+    res.json({
+      home: {
+        attendancePercentage,
+        pendingLeaveRequests,
+        remainingLeaves,
+        overallRating,
+        checkInStatus,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching dashboard data:", error);
+    res.status(500).json({ message: "Server ERROR! Employee not found!" });
+  }
+});
+
 export default router;

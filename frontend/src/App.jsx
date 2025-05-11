@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Error404 from "./pages/Error404";
 import Login from "./pages/Login";
 import { Toaster } from "sonner";
@@ -105,6 +105,7 @@ const App = () => {
       <SessionProvider>
         <Toaster position="top-center" />
         <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route index path="/login" element={<Login />} />
           <Route path="/jobs" element={<Jobs />} />
 
