@@ -26,28 +26,28 @@ const PayrollSummary = () => {
           <CardTitle>Total Employees</CardTitle>
           <Users className="h-6 w-6 text-muted-foreground" />
         </CardHeader>
-        <CardContent className="text-2xl font-bold">{summary.total_employees}</CardContent>
+        <CardContent className="text-2xl font-bold">{summary.totalEmployees}</CardContent>
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Total Amount</CardTitle>
           <Wallet className="h-6 w-6 text-muted-foreground" />
         </CardHeader>
-        <CardContent className="text-2xl font-bold">${summary.total_amount}</CardContent>
+        <CardContent className="text-2xl font-bold">${summary.totalAmount}</CardContent>
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Paid</CardTitle>
           <CheckCircle className="h-6 w-6 text-green-500" />
         </CardHeader>
-        <CardContent className="text-2xl font-bold">${summary.total_paid}</CardContent>
+        <CardContent className="text-2xl font-bold">${summary.paid}</CardContent>
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Unpaid</CardTitle>
           <AlertCircle className="h-6 w-6 text-red-500" />
         </CardHeader>
-        <CardContent className="text-2xl font-bold">${summary.total_unpaid}</CardContent>
+        <CardContent className="text-2xl font-bold">${summary.unpaid}</CardContent>
       </Card>
     </div>
   );

@@ -34,12 +34,20 @@ router.get("/employees", async (req, res) => {
     const { name, department, month } = req.query;
     const values = [];
     let query = `
-      SELECT e.employeeid, e.name, e.department, e.salary,
-             p.bonus, p.deductions, p.status,
-             (e.salary + COALESCE(p.bonus, 0) - COALESCE(p.deductions, 0)) AS netpay
+      SELECT 
+      e.employeeid, 
+      e.name, 
+      e.department, 
+      e.salary,
+      p.bonus, 
+      p.deductions, 
+      p.status,
+      (e.salary + COALESCE(p.bonus, 0) - COALESCE(p.deductions, 0)) AS netpay
       FROM employees e
-      LEFT JOIN payroll p ON e.employeeid = p.employeeid
+      LEFT JOIN payroll p ON e.employeeid = p.employeeid AND TO_CHAR(p.month, 'YYYY-MM') = $1
     `;
+
+    values.push(month || new Date().toISOString().slice(0, 7)); // Default to current month if none
 
     const filters = [];
 
@@ -53,11 +61,6 @@ router.get("/employees", async (req, res) => {
       values.push(department);
     }
 
-    if (month) {
-      filters.push(`TO_CHAR(p.month, 'YYYY-MM') = $${values.length + 1}`);
-      values.push(month);
-    }
-
     if (filters.length > 0) {
       query += " WHERE " + filters.join(" AND ");
     }
@@ -65,32 +68,81 @@ router.get("/employees", async (req, res) => {
     const result = await pool.query(query, values);
     res.json(result.rows);
   } catch (err) {
-    console.error(err);
+    console.error("Error in /employees endpoint:", err);
     res.status(500).send("Server Error");
   }
 });
+router.post("/generate", async (req, res) => {
+  const { month } = req.body;
+  if (!month) return res.status(400).send("Month is required");
+
+  try {
+    const employees = await pool.query("SELECT employeeid, salary FROM employees");
+
+    for (const emp of employees.rows) {
+      const { employeeid, salary } = emp;
+
+      // Generate random bonus % between 5–20
+      const bonusPercent = Math.floor(Math.random() * (20 - 5 + 1)) + 5;
+      const bonus = Math.round(salary * (bonusPercent / 100));
+
+      // Random deduction between $0 - $200
+      const deductions = Math.floor(Math.random() * 201);
+
+      const amount = salary + bonus - deductions;
+
+      // Insert if not already exists
+      await pool.query(
+        `
+        INSERT INTO payroll (employeeid, bonus, deductions, amount, status, month)
+        VALUES ($1, $2, $3, $4, 'pending', $5)
+        ON CONFLICT (employeeid, month) DO NOTHING
+        `,
+        [employeeid, bonus, deductions, amount, `${month}-01`] // convert to DATE
+      );
+    }
+
+    res.status(200).json({ message: "Payrolls generated successfully" });
+  } catch (err) {
+    console.error("Error generating payrolls:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
 
 // POST to pay employee
 router.post("/pay", async (req, res) => {
   const { employeeid, bonus = 0, deductions = 0, month } = req.body;
 
+  // Convert month (YYYY-MM) to the first day of the month (YYYY-MM-01)
+  const monthStartDate = `${month}-01`;
+
   try {
-    await pool.query(
+    // Update the existing payroll record for the employee in the specified month
+    const result = await pool.query(
       `
-      INSERT INTO payroll (employeeid, bonus, deductions, amount, status, month)
-      VALUES ($1, $2, $3, (
-        SELECT salary + $2 - $3 FROM employees WHERE employeeid = $1
-      ), 'paid', $4)
-      ON CONFLICT (employeeid, month)
-      DO UPDATE SET bonus = $2, deductions = $3, status = 'paid'
+      UPDATE payroll
+      SET 
+        bonus = $2, 
+        deductions = $3, 
+        amount = (SELECT salary + $2 - $3 FROM employees WHERE employeeid = $1), 
+        status = 'paid'
+      WHERE employeeid = $1 AND month = $4
+      RETURNING *  -- This will return the updated record
       `,
-      [employeeid, bonus, deductions, month]
+      [employeeid, bonus, deductions, monthStartDate]
     );
-    res.json({ message: "Payment successful" });
+
+    if (result.rowCount === 0) {
+      return res.status(404).send("Payroll not found or already paid.");
+    }
+
+    res.json({ message: "Payment successful", payroll: result.rows[0] });
   } catch (err) {
-    console.error(err);
+    console.error("Payment error:", err);
     res.status(500).send("Payment failed");
   }
 });
+
 
 export default router;
