@@ -40,7 +40,7 @@ export default function PayrollTable() {
   useEffect(() => {
     fetchPayroll();
   }, [monthFilter, nameFilter, departmentFilter]);
-
+  
 
   const handlePayClick = async (employee) => {
     try {
@@ -78,9 +78,9 @@ export default function PayrollTable() {
         }}
         onFilter={fetchPayroll}
       />
+     
 
-
-      <Table>
+     <Table>
         <TableCaption>Employee Payroll for {monthFilter}</TableCaption>
         <TableHeader>
           <TableRow className="bg-gray-50 text-left">
@@ -96,50 +96,50 @@ export default function PayrollTable() {
           </TableRow>
         </TableHeader>
 
-        <TableBody>
-          {payrollData.map((emp) => {
-            const status = emp.status?.toLowerCase() || "pending";
-            const displayStatus = status === "paid" ? "Paid" : "Pending";
+          <TableBody>
+            {payrollData.map((emp) => {
+              const status = emp.status?.toLowerCase() || "pending";
+              const displayStatus = status === "paid" ? "Paid" : "Pending";
 
-            return (
-              <TableRow key={emp.employeeid}>
-                <TableCell>{emp.name}</TableCell>
-                <TableCell>{emp.employeeid}</TableCell>
-                <TableCell>{emp.department}</TableCell>
-                <TableCell>${emp.salary}</TableCell>
-                <TableCell>${emp.bonus || 0}</TableCell>
-                <TableCell>-${emp.deductions || 0}</TableCell>
-                <TableCell>${emp.netpay}</TableCell>
-                <TableCell
-                  className={`font-semibold ${status === "paid" ? "text-green-600" : "text-yellow-600"}`}
-                >
-                  {displayStatus}
-                </TableCell>
-                <TableCell>
-                  {status !== "paid" && (
-                    <Button
-                      className="bg-green-500 px-6"
-                      onClick={() => handlePayClick(emp)}
-                    >
-                      Pay
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
+              return (
+                <TableRow key={emp.employeeid}>
+                  <TableCell>{emp.name}</TableCell>
+                  <TableCell>{emp.employeeid}</TableCell>
+                  <TableCell>{emp.department}</TableCell>
+                  <TableCell>${emp.salary}</TableCell>
+                  <TableCell>${emp.bonus || 0}</TableCell>
+                  <TableCell>-${emp.deductions || 0}</TableCell>
+                  <TableCell>${emp.netpay}</TableCell>
+                  <TableCell
+                    className={`font-semibold ${status === "paid" ? "text-green-600" : "text-yellow-600"}`}
+                  >
+                    {displayStatus}
+                  </TableCell>
+                  <TableCell>
+                    {status !== "paid" && (
+                      <Button
+                        className="bg-green-500 px-6"
+                        onClick={() => handlePayClick(emp)}
+                      >
+                        Pay
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
 
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan="6" className="text-right font-bold">
-              Total Payroll
-            </TableCell>
-            <TableCell className="font-bold">${getTotalPayroll()}</TableCell>
-            <TableCell></TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
+          <TableFooter>
+            <TableRow>
+              <TableCell colSpan="6" className="text-right font-bold">
+                Total Payroll
+              </TableCell>
+              <TableCell className="font-bold">${getTotalPayroll()}</TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
     </div>
   );
 }

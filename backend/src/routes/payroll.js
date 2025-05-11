@@ -147,4 +147,39 @@ router.post("/pay", async (req, res) => {
 });
 
 
+// GET payrolls for a specific employee
+router.get("/employee/payrolls", async (req, res) => {
+  const { employeeid } = req.session.data; // ✅ Pull from session
+  console.log("Session set:", req.session.data);
+  console.log("Employee ID:", employeeid);
+  if (!employeeid) {
+    return res.status(401).send("Not logged in");
+  }
+
+  try {
+    const result = await pool.query(
+      `
+      SELECT 
+        month, 
+        bonus, 
+        deductions, 
+        amount AS net_pay, 
+        status,
+        (SELECT salary FROM employees WHERE employeeid = $1) AS base_salary
+      FROM payroll
+      WHERE employeeid = $1
+      ORDER BY month DESC
+      `,
+      [employeeid]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching employee payrolls:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
+
+
 export default router;
