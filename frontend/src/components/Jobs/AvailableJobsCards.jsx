@@ -4,14 +4,20 @@ import { Badge } from "@/components/ui/badge";
 const AvailableJobsCards = ({ job }) => {
   return (
     <div className="relative border-2 w-full rounded-2xl p-5 bg-white shadow-md transition-transform hover:scale-102 cursor-pointer">
-      <div className="absolute top-2 right-2 bg-blue-100 text-xs font-semibold rounded-full ">
-        <Badge variant="outline">
-          {job.location}/ {job.job_type}
-        </Badge>
-      </div>
+      <div className="flex justify-between flex-wrap">
 
-      <h1 className="text-xl font-bold  mb-2">{job.title}</h1>
-      <p className="text-sm text-gray-600">{job.description}</p>
+        <h1 className="text-xl font-bold  mb-2">{job.title}</h1>
+
+        <div className="mb-3">
+
+          <Badge variant="outline" className={"rounded-2xl bg-blue-100 font-semibold text-sx"}>
+            {job.location}/ {job.job_type}
+          </Badge>
+        </div>
+
+
+      </div>
+      <p className="text-sm text-gray-600 mb-3">{job.description}</p>
       <div className="absolute bottom-1 right-2 text-xs">
         <p>
           Deadline:{" "}
