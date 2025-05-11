@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import React from 'react'
 import LeaveRequestCancel from './LeaveRequestCancel';
+import { Badge } from '@/components/ui/badge';
 
 const headings = [
     "Leave Type",
@@ -60,7 +61,10 @@ const LeaveRequestsTable = ({ allLeaves, setRefreshData }) => {
                                     {row.reason}
                                 </TableCell>
                                 <TableCell className="px-5 py-2">
-                                    {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
+                                    <Badge className={`capitalize ${row.status == "rejected" ? "border border-red-600 bg-red-50 text-red-500" : row.status == "pending" ? "border border-yellow-600 bg-yellow-50 text-yellow-500" : "border border-green-600 bg-green-50 text-green-500"}`}>
+                                        {row.status}
+                                    </Badge>
+
                                 </TableCell>
                                 <TableCell className="px-6 py-2">
                                     {row.hrremarks || "N/A"}
