@@ -3,8 +3,11 @@ from sentence_transformers import SentenceTransformer
 from sklearn.linear_model import RidgeCV
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
+import torch
+import torch.nn as nn
+import torch.optim as optim
 import numpy as np
-import joblib
+from torch.utils.data import DataLoader, TensorDataset
 
 # Load your CSV dataset
 df = pd.read_csv('./Data/Match_Scores.csv')  # Path to your labeled resume-job dataset
