@@ -1,83 +1,132 @@
 import {
-    Table,
-    TableHeader,
-    TableBody,
-    TableFooter,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableCaption,
-  } from "@/components/ui/table"; // adjust the path if needed
-  import { Button } from "@/components/ui/button";
-  import {useState, useEffect} from "react";
-  export default function PayrollTable() {
-    const[payrollData, setPayrollData] = useState([]);
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import PayrollFilterPanel from "./PayrollFilterPanel";
 
-    useEffect(()=>{
-        //fetch payroll data from API
-        
-    },[])
-    const handlePayClick=()=>{
-        // Handle the pay action here
-        console.log("Pay button clicked");
+export default function PayrollTable() {
+  const [payrollData, setPayrollData] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState("2025-04"); // Example default month
+
+  const [nameFilter, setNameFilter] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState("all");
+  const [monthFilter, setMonthFilter] = useState("2025-04");
+
+  const fetchPayroll = () => {
+    axios
+      .get("http://localhost:3000/api/payroll/employees", {
+        params: {
+          month: monthFilter,
+          name: nameFilter,
+          department: departmentFilter !== "all" ? departmentFilter : undefined,
+        },
+        withCredentials: true,
+      })
+      .then((res) => setPayrollData(res.data))
+      .catch((err) => console.error("Error fetching payroll data:", err));
+  };
+
+  useEffect(() => {
+    fetchPayroll();
+  }, []);
+
+  const handlePayClick = async (employee) => {
+    try {
+      await axios.post("http://localhost:3000/api/payroll/pay", {
+        employeeid: employee.employeeid,
+        bonus: employee.bonus || 0,
+        deductions: employee.deductions || 0,
+        month: selectedMonth, // from filter
+      }, { withCredentials: true });
+      
+      // Refetch data after payment
+      fetchPayroll();
+    } catch (err) {
+      console.error("Payment failed", err);
     }
-    
-    return (
-      <div className="p-4">
-        <Table>
-          <TableCaption>Employee Payroll for April 2025</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Employee Name</TableHead>
-              <TableHead>Employee ID</TableHead>
-              <TableHead>Department</TableHead>
-              <TableHead>Base Salary</TableHead>
-              <TableHead>Bonus</TableHead>
-              <TableHead>Deductions</TableHead>
-              <TableHead>Net Pay</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
+  };
   
-          <TableBody>
-            <TableRow>
-              <TableCell>John Doe</TableCell>
-              <TableCell>EMP123</TableCell>
-              <TableCell>Engineering</TableCell>
-              <TableCell>$5,000</TableCell>
-              <TableCell>$500</TableCell>
-              <TableCell>-$100</TableCell>
-              <TableCell>$5,400</TableCell>
-              <TableCell className="text-green-600 font-semibold">Paid</TableCell>
-            </TableRow>
-  
-            <TableRow>
-              <TableCell>Jane Smith</TableCell>
-              <TableCell>EMP456</TableCell>
-              <TableCell>Marketing</TableCell>
-              <TableCell>$4,000</TableCell>
-              <TableCell>$400</TableCell>
-              <TableCell>-$50</TableCell>
-              <TableCell>$4,350</TableCell>
-              <TableCell className="text-yellow-600 font-semibold">Pending</TableCell>
+
+  const getTotalPayroll = () =>
+    payrollData.reduce((sum, emp) => sum + (emp.net_pay || 0), 0);
+
+  return (
+    <div className="p-4">
+      <PayrollFilterPanel
+        nameFilter={nameFilter}
+        departmentFilter={departmentFilter}
+        monthFilter={monthFilter}
+        onNameChange={setNameFilter}
+        onDepartmentChange={setDepartmentFilter}
+        onMonthChange={setMonthFilter}
+        onFilter={fetchPayroll}
+      />
+
+      <Table>
+        <TableCaption>Employee Payroll for April 2025</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Employee Name</TableHead>
+            <TableHead>Employee ID</TableHead>
+            <TableHead>Department</TableHead>
+            <TableHead>Base Salary</TableHead>
+            <TableHead>Bonus</TableHead>
+            <TableHead>Deductions</TableHead>
+            <TableHead>Net Pay</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          {payrollData.map((emp) => (
+            <TableRow key={emp.employeeid}>
+              <TableCell>{emp.name}</TableCell>
+              <TableCell>{emp.employeeid}</TableCell>
+              <TableCell>{emp.department}</TableCell>
+              <TableCell>${emp.base_salary}</TableCell>
+              <TableCell>${emp.bonus || 0}</TableCell>
+              <TableCell>-${emp.deductions || 0}</TableCell>
+              <TableCell>${emp.net_pay}</TableCell>
+              <TableCell
+                className={`font-semibold ${emp.status === "Paid" ? "text-green-600" : "text-yellow-600"
+                  }`}
+              >
+                {emp.status}
+              </TableCell>
               <TableCell>
-                <Button className="bg-green-500 px-6" onClick={handlePayClick}>Pay</Button>
+                {emp.status === "Pending" && (
+                  <Button
+                    className="bg-green-500 px-6"
+                    onClick={() => handlePayClick(emp.employeeid)}
+                  >
+                    Pay
+                  </Button>
+                )}
               </TableCell>
             </TableRow>
-          </TableBody>
-  
-          <TableFooter>
-            <TableRow>
-              <TableCell colSpan="6" className="text-right font-bold">
-                Total Payroll
-              </TableCell>
-              <TableCell className="font-bold">$9,750</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </div>
-    );
-  }
-  
+          ))}
+        </TableBody>
+
+        <TableFooter>
+          <TableRow>
+            <TableCell colSpan="6" className="text-right font-bold">
+              Total Payroll
+            </TableCell>
+            <TableCell className="font-bold">${getTotalPayroll()}</TableCell>
+            <TableCell></TableCell>
+          </TableRow>
+        </TableFooter>
+      </Table>
+    </div>
+  );
+}

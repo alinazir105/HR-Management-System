@@ -19,6 +19,7 @@ import announcements from "./routes/announcements.js";
 import profile from "./routes/profile.js";
 import performance from "./routes/performance.js";
 import recruitment from "./routes/recruitment.js";
+import payroll from "./routes/payroll.js";
 import hrDashboard from "./routes/hrDashboard.js";
 
 dotenv.config();
@@ -65,6 +66,7 @@ app.use("/api/announcements", announcements);
 app.use("/api/profile", profile);
 app.use("/api/performance", performance);
 app.use("/api/recruitment", recruitment);
+app.use("/api/payroll", payroll);
 app.use("/api/hrDashboard", hrDashboard);
 
 const PORT = process.env.SERVER_PORT || 3000;
