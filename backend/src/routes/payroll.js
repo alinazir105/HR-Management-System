@@ -5,10 +5,12 @@ const router = express.Router();
 // GET summary
 router.get("/summary", async (req, res) => {
   try {
-    const totalEmployees = await pool.query("SELECT COUNT(*) FROM employees");
+    const totalEmployees = await pool.query("SELECT * FROM employees");
     const totalAmount = await pool.query("SELECT SUM(salary) FROM employees");
 
-    const paid = await pool.query("SELECT COALESCE(SUM(amount), 0) FROM payroll WHERE status = 'paid'");
+    const paid = await pool.query(
+      "SELECT COALESCE(SUM(amount), 0) FROM payroll WHERE status = 'paid'"
+    );
     const unpaid = await pool.query(`
       SELECT COALESCE(SUM(e.salary), 0)
       FROM employees e
@@ -17,7 +19,7 @@ router.get("/summary", async (req, res) => {
     `);
 
     res.json({
-      totalEmployees: totalEmployees.rows[0].count,
+      totalEmployees: totalEmployees.rowCount,
       totalAmount: totalAmount.rows[0].sum,
       paid: paid.rows[0].coalesce,
       unpaid: unpaid.rows[0].coalesce,

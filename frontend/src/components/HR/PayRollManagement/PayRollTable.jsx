@@ -47,14 +47,14 @@ export default function PayrollTable() {
         deductions: employee.deductions || 0,
         month: selectedMonth, // from filter
       }, { withCredentials: true });
-      
+
       // Refetch data after payment
       fetchPayroll();
     } catch (err) {
       console.error("Payment failed", err);
     }
   };
-  
+
 
   const getTotalPayroll = () =>
     payrollData.reduce((sum, emp) => sum + (emp.net_pay || 0), 0);
@@ -72,18 +72,18 @@ export default function PayrollTable() {
       />
 
       <Table>
-        <TableCaption>Employee Payroll for April 2025</TableCaption>
+        <TableCaption>Employee Payroll for {monthFilter}</TableCaption>
         <TableHeader>
-          <TableRow>
-            <TableHead>Employee Name</TableHead>
-            <TableHead>Employee ID</TableHead>
-            <TableHead>Department</TableHead>
-            <TableHead>Base Salary</TableHead>
-            <TableHead>Bonus</TableHead>
-            <TableHead>Deductions</TableHead>
-            <TableHead>Net Pay</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
+          <TableRow className="bg-gray-50 text-left">
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Employee Name</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Employee ID</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Department</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Base Salary</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Bonus</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Deductions</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Net Pay</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Status</TableHead>
+            <TableHead className="text-base font-semibold text-gray-800 px-6 py-3 border-b border-gray-200 first:rounded-tl-lg last:rounded-tr-lg transition-all duration-200 hover:bg-gray-100 ">Actions</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -104,14 +104,14 @@ export default function PayrollTable() {
                 {emp.status}
               </TableCell>
               <TableCell>
-                {emp.status === "Pending" && (
+                {emp.status === "Pending" ? (
                   <Button
                     className="bg-green-500 px-6"
                     onClick={() => handlePayClick(emp.employeeid)}
                   >
                     Pay
                   </Button>
-                )}
+                ) : "-"}
               </TableCell>
             </TableRow>
           ))}
