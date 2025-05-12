@@ -259,7 +259,7 @@ router.post("/apply-for-job", upload.single("resume"), async (req, res) => {
 
     const { match_score, resume } = mlResponse.data;
 
-    const match_score_percentage = match_score * 100;
+    const match_score_percentage = Math.round(match_score * 100);
 
     await client.query(
       `INSERT INTO job_applications (job_id, candidate_id, resume_text,match_score_percentage)

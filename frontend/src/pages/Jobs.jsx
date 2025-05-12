@@ -35,13 +35,13 @@ const Jobs = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-8 ">
+      <div className="flex flex-col gap-8 mb-10">
         <div>
           <JobsHeroSection />
         </div>
         <div className="ml-6 mr-6 flex flex-col justify-center gap-4">
           <h1 className="text-2xl font-bold ml-1">Available Jobs</h1>
-          <div className="flex gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {allJobs.filter((job) => job.openings > 0).length > 0 ? (
               allJobs
                 .filter((job) => job.openings > 0)

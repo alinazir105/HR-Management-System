@@ -30,13 +30,11 @@ router.get("/summary", async (req, res) => {
     );
     const pendingLeaves = parseInt(pendingLeavesRes.rows[0].count, 10);
 
-    // Fetch pending payrolls (assuming a payrolls table exists)
-    // const pendingPayrollsRes = await client.query(
-    //   `SELECT COUNT(*) FROM payrolls WHERE status = 'Pending'`
-    // );
-    // const pendingPayrolls = parseInt(pendingPayrollsRes.rows[0].count, 10);
+    const pendingPayrollsRes = await client.query(
+      `SELECT COUNT(*) FROM payroll WHERE status = 'pending'`
+    );
+    const pendingPayrolls = parseInt(pendingPayrollsRes.rows[0].count, 10);
 
-    // Fetch job applications (total or filtered by status if needed)
     const jobApplicationsRes = await client.query(
       `SELECT COUNT(*) FROM job_applications`
     );
@@ -60,6 +58,7 @@ router.get("/summary", async (req, res) => {
       // pendingPayrolls,
       jobApplications,
       pendingReviews,
+      pendingPayrolls,
     });
   } catch (error) {
     console.error("Error fetching summary:", error);

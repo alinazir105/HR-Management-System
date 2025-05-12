@@ -91,7 +91,7 @@ const Home = () => {
               <SummaryCard
                 to="#"
                 logo={CircleDollarSign}
-                number="7"
+                number={summaryData.pendingPayrolls}
                 text="Pending Payrolls"
               />
               <SummaryCard
@@ -112,12 +112,12 @@ const Home = () => {
         <div className="mr-10 mt-5">
           <h1 className="font-bold text-2xl mb-4">Quick Actions</h1>
           <div className="flex gap-4 flex-wrap">
-            <AddEmployeeForm setIsLoading={() => { }} setRefresh={() => { }} />
+            <AddEmployeeForm setIsLoading={() => {}} setRefresh={() => {}} />
             <AnnouncementsDialog
-              setRefreshData={() => { }}
-              setIsAdding={() => { }}
+              setRefreshData={() => {}}
+              setIsAdding={() => {}}
             />
-            <RecruitmentJobAdd setRefresh={() => { }} />
+            <RecruitmentJobAdd setRefresh={() => {}} />
           </div>
         </div>
       </div>
