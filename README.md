@@ -38,7 +38,58 @@ An all-in-one, intelligent Human Resource Management System built to streamline 
 
 ## Screenshots
 
+### Login
+
 ![Login](./screenshots/login.png)
+
+### HR Dashboard
+
+![HR Dashboard](./screenshots/hr-home.png)
+
+### HR Add Employee
+
+![HR Add Employee](./screenshots/hr-add_employee.png)
+
+### HR Leave Management
+
+![HR Leave Management](./screenshots/hr-leave.png)
+
+### HR Payroll Management
+
+![HR Payroll Management](./screenshots/hr-payroll.png)
+
+### HR Performance Management
+
+![HR Performance Management](./screenshots/hr-performance.png)
+
+### Announcements
+
+![Announcements](./screenshots/announcements.png)
+
+### HR Recruitment Panel
+
+![HR Recruitment Panel](./screenshots/hr-recruitment.png)
+
+### Employee Dashboard
+
+![Employee Dashboard](./screenshots/emp-home.png)
+
+### Employee Attendance
+
+![Employee Attendance](./screenshots/emp-attendance.png)
+
+### Employee Leave Request
+
+![Employee Leave Request](./screenshots/emp-leave.png)
+
+### Employee Performance
+
+![Employee Performance](./screenshots/emp-performance.png)
+
+### Employee Profile
+
+![Employee Profile](./screenshots/emp-profile.png)
+
 
 ## 🎯 Use Case
 
