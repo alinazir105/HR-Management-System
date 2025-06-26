@@ -34,7 +34,11 @@ An all-in-one, intelligent Human Resource Management System built to streamline 
 - **Frontend**: React, Tailwind, ShadCN UI  
 - **Backend**: Express (Node.js)  
 - **Machine Learning**: Python  
-- **Database**: PostgreSQL  
+- **Database**: PostgreSQL
+
+## Screenshots
+
+![Login](./screenshots/login.png)
 
 ## 🎯 Use Case
 
